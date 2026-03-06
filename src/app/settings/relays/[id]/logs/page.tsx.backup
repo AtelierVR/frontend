@@ -1,0 +1,497 @@
+'use client';
+
+import { useEffect, useState, useRef, useCallback } from 'react';
+import { useParams } from 'next/navigation';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle, RefreshCw, Play, Pause, FileText, Server, Maximize2, X } from 'lucide-react';
+import { useApi, isError, RelayLog, RelayDetails } from '@/lib/api';
+import { cn } from '@/lib/cn';
+import { format } from 'date-fns';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+
+export default function RelayLogsPage() {
+  const params = useParams();
+  const Api = useApi();
+  const [relay, setRelay] = useState<RelayDetails | null>(null);
+  const [logs, setLogs] = useState<RelayLog[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>();
+  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [lastTimestamp, setLastTimestamp] = useState<number | undefined>(undefined);
+  const [fullscreenOpen, setFullscreenOpen] = useState(false);
+  const logsContainerRef = useRef<HTMLDivElement>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const relayId = Number(params.id);
+
+  const fetchLogs = useCallback(async (since?: number) => {
+    if (!Api || !relayId) return;
+
+    try {
+      setError(undefined);
+      
+      // Check if relay is connected
+      const relayRes = await Api.fetchRelay(relayId);
+      if (isError(relayRes)) {
+        setError(relayRes.message);
+        setLoading(false);
+        return;
+      }
+      
+      setRelay(relayRes);
+      
+      if (!relayRes.running) {
+        setError('Relay is not connected');
+        setLoading(false);
+        return;
+      }
+
+      const res = await Api.fetchRelayLogs(relayId, since, 100);
+      if (isError(res)) {
+        setError(res.message);
+        return;
+      }
+
+      if (since && res.length > 0) {
+        // Append new logs
+        setLogs(prev => [...prev, ...res]);
+      } else if (!since) {
+        // Initial load
+        setLogs(res);
+      }
+
+      // Update last timestamp
+      if (res.length > 0) {
+        setLastTimestamp(res[res.length - 1].timestamp);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load logs');
+    } finally {
+      setLoading(false);
+    }
+  }, [Api, relayId]);
+
+  // Initial fetch
+  useEffect(() => {
+    fetchLogs();
+  }, []);
+
+  // Auto-refresh every 5 seconds
+  useEffect(() => {
+    if (autoRefresh && relay?.running) {
+      intervalRef.current = setInterval(() => {
+        fetchLogs(lastTimestamp);
+      }, 5000);
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [autoRefresh, lastTimestamp, fetchLogs, relay]);
+
+  // Auto-scroll to bottom when new logs arrive
+  useEffect(() => {
+    if (logsContainerRef.current) {
+      logsContainerRef.current.scrollTop = logsContainerRef.current.scrollHeight;
+    }
+  }, [logs]);
+
+  const getLevelColor = (level: string) => {
+    switch (level.toUpperCase()) {
+      case 'ERROR':
+      case 'EXCEPTION':
+        return 'text-red-500';
+      case 'WARNING':
+      case 'WARN':
+        return 'text-yellow-500';
+      case 'DEBUG':
+        return 'text-blue-500';
+      default:
+        return 'text-fd-foreground';
+    }
+  };
+
+  const getLevelBgColor = (level: string) => {
+    switch (level.toUpperCase()) {
+      case 'ERROR':
+      case 'EXCEPTION':
+        return 'bg-red-500/10';
+      case 'WARNING':
+      case 'WARN':
+        return 'bg-yellow-500/10';
+      case 'DEBUG':
+        return 'bg-blue-500/10';
+      default:
+        return '';
+    }
+  };
+
+  if (loading && logs.length === 0) {
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-64 w-full" />
+      </div>
+    );
+  }
+
+  if (!relay?.running) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-fd-muted-foreground">
+        <FileText className="size-12 mb-4 opacity-50" />
+        <p>Relay is not connected</p>
+        <p className="text-sm">Connect the relay to view logs</p>
+      </div>
+    );
+  }
+
+  const renderLogsContent = (isModal: boolean = false) => (
+    <>
+      {/* Controls */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={() => setAutoRefresh(!autoRefresh)}
+            variant={autoRefresh ? ('primary' as const) : ('outline' as const)}
+            size="sm"
+            className="gap-2"
+          >
+            {autoRefresh ? (
+              <>
+                <Pause className="size-4" />
+                Auto-refresh ON
+              </>
+            ) : (
+              <>
+                <Play className="size-4" />
+                Auto-refresh OFF
+              </>
+            )}
+          </Button>
+          {autoRefresh && (
+            <span className="text-xs text-fd-muted-foreground">
+              Refreshing every 5s
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-fd-muted-foreground">
+            {logs.length} logs
+          </span>
+          <Button
+            onClick={() => {
+              setLogs([]);
+              setLastTimestamp(undefined);
+              setLoading(true);
+              fetchLogs();
+            }}
+            disabled={loading}
+            variant="outline"
+            size="sm"
+            className="gap-2"
+          >
+            <RefreshCw className={cn('size-4', loading && 'animate-spin')} />
+            Reload
+          </Button>
+          {!isModal && (
+            <Button
+              onClick={() => setFullscreenOpen(true)}
+              variant="outline"
+              size="sm"
+              className="gap-2"
+            >
+              <Maximize2 className="size-4" />
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* Error */}
+      {error && (
+        <Alert variant="destructive">
+          <AlertCircle />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      {/* Logs Container */}
+      <Card className="p-0 overflow-hidden">
+        <div 
+          ref={isModal ? undefined : logsContainerRef}
+          className={cn(
+            "bg-zinc-950 overflow-auto font-mono text-xs",
+            isModal ? "h-[80vh]" : "h-[500px]"
+          )}
+        >
+          {loading && logs.length === 0 ? (
+            <div className="flex items-center justify-center h-full text-fd-muted-foreground">
+              <RefreshCw className="size-6 animate-spin mr-2" />
+              Loading logs...
+            </div>
+          ) : logs.length === 0 ? (
+            <div className="flex items-center justify-center h-full text-fd-muted-foreground">
+              No logs available
+            </div>
+          ) : (
+            <div className="p-2">
+              {logs.map((log, index) => (
+                <div 
+                  key={`${log.timestamp}-${index}`}
+                  className={cn(
+                    'py-1 px-2 hover:bg-white/5 rounded',
+                    getLevelBgColor(log.level)
+                  )}
+                >
+                  <span className="text-zinc-500">
+                    {format(new Date(log.timestamp), 'HH:mm:ss.SSS')}
+                  </span>
+                  <span className={cn('mx-2 font-semibold', getLevelColor(log.level))}>
+                    [{log.level}]
+                  </span>
+                  <span className="text-zinc-200 whitespace-pre-wrap break-all">
+                    {log.message}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </Card>
+    </>
+  );
+
+  return (
+    <>
+      <div className="space-y-4">
+        {renderLogsContent(false)}
+      </div>
+
+      {/* Fullscreen Modal */}
+      <Dialog open={fullscreenOpen} onOpenChange={setFullscreenOpen}>
+        <DialogContent className="max-w-[95vw] w-[95vw]">
+          <div className="space-y-4">
+            {renderLogsContent(true)}
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
+      {/* Controls */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={() => setAutoRefresh(!autoRefresh)}
+            variant={autoRefresh ? ('primary' as const) : ('outline' as const)}
+            size="sm"
+            className="gap-2"
+          >
+            {autoRefresh ? (
+              <>
+                <Pause className="size-4" />
+                Auto-refresh ON
+              </>
+            ) : (
+              <>
+                <Play className="size-4" />
+                Auto-refresh OFF
+              </>
+            )}
+          </Button>
+          {autoRefresh && (
+            <span className="text-xs text-fd-muted-foreground">
+              Refreshing every 5s
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-fd-muted-foreground">
+            {logs.length} logs
+          </span>
+          <Button
+            onClick={() => setFullscreenOpen(true)}
+            variant="outline"
+            size="sm"
+            className="gap-2"
+          >
+            <Maximize2 className="size-4" />
+            Fullscreen
+          </Button>
+          <Button
+            onClick={() => {
+              setLogs([]);
+              setLastTimestamp(undefined);
+              setLoading(true);
+              fetchLogs();
+            }}
+            disabled={loading}
+            variant="outline"
+            size="sm"
+            className="gap-2"
+          >
+            <RefreshCw className={cn('size-4', loading && 'animate-spin')} />
+            Reload
+          </Button>
+        </div>
+      </div>
+
+      {/* Error */}
+      {error && (
+        <Alert variant="destructive">
+          <AlertCircle />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      {/* Logs Container */}
+      <Card className="p-0 overflow-hidden">
+        <div 
+          ref={logsContainerRef}
+          className="bg-zinc-950 h-[500px] overflow-auto font-mono text-xs"
+        >
+          {loading && logs.length === 0 ? (
+            <div className="flex items-center justify-center h-full text-fd-muted-foreground">
+              <RefreshCw className="size-6 animate-spin mr-2" />
+              Loading logs...
+            </div>
+          ) : logs.length === 0 ? (
+            <div className="flex items-center justify-center h-full text-fd-muted-foreground">
+              No logs available
+            </div>
+          ) : (
+            <div className="p-2">
+              {logs.map((log, index) => (
+                <div 
+                  key={`${log.timestamp}-${index}`}
+                  className={cn(
+                    'py-1 px-2 hover:bg-white/5 rounded',
+                    getLevelBgColor(log.level)
+                  )}
+                >
+                  <span className="text-zinc-500">
+                    {format(new Date(log.timestamp), 'HH:mm:ss.SSS')}
+                  </span>
+                  <span className={cn('mx-2 font-semibold', getLevelColor(log.level))}>
+                    [{log.level}]
+                  </span>
+
+      {/* Fullscreen Modal */}
+      <Dialog open={fullscreenOpen} onOpenChange={setFullscreenOpen}>
+        <DialogContent 
+          className="max-w-[100vw] w-[100vw] h-[100vh] p-0 gap-0 rounded-none border-0"
+          showCloseButton={false}
+        >
+          <div className="flex flex-col h-full overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b backdrop-blur-xl bg-fd-background/80">
+              <div className="flex items-center gap-3">
+                <Server className="size-5" />
+                <div>
+                  <h2 className="text-lg font-semibold">Relay #{relayId} Logs</h2>
+                  <p className="text-sm text-fd-muted-foreground">{logs.length} logs</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={() => setAutoRefresh(!autoRefresh)}
+                  variant={autoRefresh ? ('primary' as const) : ('outline' as const)}
+                  size="sm"
+                  className="gap-2"
+                >
+                  {autoRefresh ? (
+                    <>
+                      <Pause className="size-4" />
+                      Auto-refresh
+                    </>
+                  ) : (
+                    <>
+                      <Play className="size-4" />
+                      Auto-refresh
+                    </>
+                  )}
+                </Button>
+                <Button
+                  onClick={() => {
+                    setLogs([]);
+                    setLastTimestamp(undefined);
+                    setLoading(true);
+                    fetchLogs();
+                  }}
+                  disabled={loading}
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                >
+                  <RefreshCw className={cn('size-4', loading && 'animate-spin')} />
+                  Reload
+                </Button>
+                <Button
+                  onClick={() => setFullscreenOpen(false)}
+                  variant="ghost"
+                  size="icon"
+                >
+                  <X className="size-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Logs */}
+            <div className="flex-1 bg-zinc-950 overflow-hidden">
+              <div 
+                ref={fullscreenLogsRef}
+                className="h-full overflow-auto font-mono text-xs"
+              >
+                {loading && logs.length === 0 ? (
+                  <div className="flex items-center justify-center h-full text-fd-muted-foreground">
+                    <RefreshCw className="size-6 animate-spin mr-2" />
+                    Loading logs...
+                  </div>
+                ) : logs.length === 0 ? (
+                  <div className="flex items-center justify-center h-full text-fd-muted-foreground">
+                    No logs available
+                  </div>
+                ) : (
+                  <div className="p-4">
+                    {logs.map((log, index) => (
+                      <div 
+                        key={`${log.timestamp}-${index}`}
+                        className={cn(
+                          'py-1 px-2 hover:bg-white/5 rounded',
+                          getLevelBgColor(log.level)
+                        )}
+                      >
+                        <span className="text-zinc-500">
+                          {format(new Date(log.timestamp), 'HH:mm:ss.SSS')}
+                        </span>
+                        <span className={cn('mx-2 font-semibold', getLevelColor(log.level))}>
+                          [{log.level}]
+                        </span>
+                        <span className="text-zinc-200 whitespace-pre-wrap break-all">
+                          {log.message}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+                  <span className="text-zinc-200 whitespace-pre-wrap break-all">
+                    {log.message}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </Card>
+    </div>
+  );
+}
