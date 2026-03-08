@@ -28,18 +28,11 @@ export async function fetchApi<T = unknown>(
     onVerificationRequired?: any
 ): Promise<Response<T>> {
     try {
-        // Get token from localStorage if it exists
-        const token = localStorage.getItem("nox.token");
-        const authHeaders = token
-            ? { 'Authorization': `Bearer ${token}` }
-            : { 'Authorization': '' };
-
         let res = await fetch(new URL(url, API_CONFIG.baseUrl), {
             ...options,
             credentials: 'include',
             headers: {
                 ...(options.headers || {}),
-                ...authHeaders,
                 ...(options.body && typeof options.body === 'string' ? { 'Content-Type': 'application/json' } : {}),
             },
         });

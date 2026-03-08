@@ -20,22 +20,12 @@ export class AuthService {
         
         if (isResponseError(res)) return res.error;
         
-        // Save token and expiration date to localStorage
-        const token = res.data.token;
-        const expires = res.data.expires;
-        localStorage.setItem("nox.token", token);
-        localStorage.setItem("nox.token_expires", expires);
-        
         return res.data.user;
     }
 
     async logout(): Promise<boolean | ApiError> {
         let res = await fetchApi<Logout>("/api/auth/logout");
         if (isResponseError(res)) return res.error;
-        
-        // Remove token and expiration date from localStorage
-        localStorage.removeItem("nox.token");
-        localStorage.removeItem("nox.token_expires");
         
         return true;
     }
@@ -52,12 +42,6 @@ export class AuthService {
         });
         
         if (isResponseError(res)) return res.error;
-        
-        // Save token and expiration date to localStorage
-        const token = res.data.token;
-        const expires = res.data.expires;
-        localStorage.setItem("nox.token", token);
-        localStorage.setItem("nox.token_expires", expires);
         
         return res.data.user;
     }

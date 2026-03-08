@@ -203,12 +203,9 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
     // WebSocket initialization
     useEffect(() => {
         if (!currentUser) {
-            const token = localStorage.getItem("nox.token");
-            if (token) fetchCurrentUser();
+            fetchCurrentUser();
         } else if (!webSocket) {
-            const token = localStorage.getItem("nox.token");
             let url = new URL(API_CONFIG.wsUrl);
-            if (token) url.searchParams.set("auth", token);
             
             let ws = new WebSocket(url);
             
