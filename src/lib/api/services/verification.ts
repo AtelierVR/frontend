@@ -1,6 +1,5 @@
 import type { SendVerificationCodeResponse, ApiError } from '../types';
 import { fetchApi, isResponseError } from '../utils';
-import { API_CONFIG } from '../config';
 
 export class VerificationService {
     async sendVerificationCode(type: string): Promise<SendVerificationCodeResponse | ApiError> {
