@@ -50,7 +50,7 @@ export default function EmailSection({
 
     try {
       const res = await Api.updateUser({ email });
-      
+
       if (isError(res)) {
         setError(res.message);
       } else {
@@ -74,7 +74,7 @@ export default function EmailSection({
     setSuccess(undefined);
 
     try {
-      const res = await Api.sendVerificationCode('email');
+      const res = await Api.sendVerificationCode('email', { target: currentUser!.id });
       if (isError(res)) {
         setError(res.message);
       } else {
@@ -194,7 +194,7 @@ export default function EmailSection({
                   'Save Email'
                 )}
               </Button>
-              
+
               {isEditingEmail && (
                 <Button
                   variant="ghost"

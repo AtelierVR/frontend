@@ -10,18 +10,11 @@ const config = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'api.dicebear.com',
-        pathname: '/**',
+        hostname: '**',
       },
       {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'nox.hactazia.fr',
-        pathname: '/**',
+        protocol: 'http',
+        hostname: '**',
       },
     ],
     dangerouslyAllowSVG: true,
