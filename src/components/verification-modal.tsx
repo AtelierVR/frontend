@@ -85,6 +85,12 @@ export function VerificationModal({
         setResendCooldown(0);
     }, [isOpen]);
 
+    // Auto-send when a can_send method is selected
+    useEffect(() => {
+        if (!selectedMethod?.can_send) return;
+        sendVerificationCode();
+    }, [selectedMethod]);
+
     // Send new verification code
     const sendVerificationCode = async () => {
         setLoading(true);
@@ -94,7 +100,7 @@ export function VerificationModal({
         if (!current || !current.can_send) return;
 
         try {
-            const result = await api.sendVerificationCode(current.type);
+            const result = await api.sendVerificationCode(current.type, current.send_data || {});
 
             if ('status' in result) {
                 setError(result.message);

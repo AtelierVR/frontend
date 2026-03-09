@@ -34,7 +34,7 @@ export interface ApiInterface {
     fetchRegister: (data: RegisterForm) => Promise<CurrentUser | ApiError>;
 
     // Verification methods
-    sendVerificationCode: (type: string) => Promise<SendVerificationCodeResponse | ApiError>;
+    sendVerificationCode: (type: string, data: Record<string, any>) => Promise<SendVerificationCodeResponse | ApiError>;
 
     // Session methods
     fetchMySessions: (limit?: number, offset?: number) => Promise<MultiResponse & { sessions: IRSession[] } | ApiError>;

@@ -109,9 +109,9 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
     };
 
     // Verification methods
-    const sendVerificationCode = async (type: string) => {
-        return await verificationService.sendVerificationCode(type);
-    };
+    const sendVerificationCode = async (type: string, data: Record<string, any>) => {
+        return await verificationService.sendVerificationCode(type, data);
+    }
 
     // Session methods
     const fetchMySessions = async (limit?: number, offset?: number) => {

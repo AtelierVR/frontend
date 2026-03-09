@@ -157,6 +157,10 @@ export interface VerificationMethod {
     enabled: boolean;
     can_send: boolean;
     cooldown?: number;
+    send_data?: {
+        target: number;
+        [key: string]: any;
+    };
 }
 
 export type VerificationRequiredFunction = (error: ApiError, methods: VerificationMethod[]) => string | null | Promise<string | null>;
