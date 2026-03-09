@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
-import { AuthService, UserService, VerificationService, SessionService, FollowService, RelayService } from './services';
+import { AuthService, UserService, VerificationService, SessionService, FollowService, RelayService, MessageService } from './services';
 import { getSIDById, isError } from './utils';
 import { API_CONFIG } from './config';
 import type { ApiInterface } from './interface';
@@ -23,6 +23,7 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
     const sessionService = new SessionService();
     const followService = new FollowService();
     const relayService = new RelayService();
+    const messageService = new MessageService();
 
     // User methods
     const fetchCurrentUser = async () => {
@@ -206,30 +207,30 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
             fetchCurrentUser();
         } else if (!webSocket) {
             let url = new URL(API_CONFIG.wsUrl);
-            
+
             let ws = new WebSocket(url);
-            
+
             ws.onopen = () => {
                 console.log("WebSocket connected");
                 setWebSocket(ws);
             };
-            
+
             ws.onmessage = (event) => {
                 try {
                     const data = JSON.parse(event.data);
                     let eventType = data.type;
-                    
+
                     // Handle event:xxx messages from subscription system
                     if (eventType.startsWith('event:')) {
                         eventType = eventType.substring(6); // Remove 'event:' prefix
                     }
-                    
+
                     // Notifier tous les listeners pour ce type d'événement exact
                     const listeners = socketListenersRef.current.get(eventType);
                     if (listeners) {
                         listeners.forEach(listener => listener(data.data || data));
                     }
-                    
+
                     // Notifier tous les listeners avec regex qui matchent
                     regexListenersRef.current.forEach(({ pattern, callback }) => {
                         if (pattern.test(eventType)) {
@@ -240,12 +241,12 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
                     console.error('Failed to parse WebSocket message:', error);
                 }
             };
-            
+
             ws.onclose = () => {
                 console.log("WebSocket disconnected");
                 setWebSocket(null);
             };
-            
+
             ws.onerror = (error) => {
                 console.error("WebSocket error:", error);
             };
@@ -262,7 +263,7 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
     const onSocketEvent = useCallback((eventType: string, callback: (data: any) => void) => {
         const listeners = socketListenersRef.current.get(eventType) || new Set();
         const isFirstListener = listeners.size === 0;
-        
+
         listeners.add(callback);
         socketListenersRef.current.set(eventType, listeners);
 
@@ -280,11 +281,11 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
             const listeners = socketListenersRef.current.get(eventType);
             if (listeners) {
                 listeners.delete(callback);
-                
+
                 // Send unsubscribe message if no more listeners for this event
                 if (listeners.size === 0) {
                     socketListenersRef.current.delete(eventType);
-                    
+
                     if (webSocket && webSocket.readyState === WebSocket.OPEN) {
                         webSocket.send(JSON.stringify({
                             type: 'unsubscribe',
@@ -353,6 +354,13 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
         deleteRelay,
         stopRelay,
         restartRelay,
+
+        fetchConversations: messageService.fetchConversations,
+        fetchConversation: messageService.fetchConversation,
+        createConversation: messageService.createConversation,
+        sendMessage: messageService.sendMessage,
+        fetchMessages: messageService.fetchMessages,
+        markAsRead: messageService.markAsRead,
 
         // WebSocket methods
         onSocketEvent,

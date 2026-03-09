@@ -13,6 +13,12 @@ import type {
     RelayClientsResult,
     RelayPlayersResult,
     VerificationMethod,
+    ConversationsResponse,
+    Conversation,
+    Message,
+    SendMessageData,
+    MessagesResponse,
+    CreateConversationData,
 } from './types';
 
 type VerificationCallback = (error: ApiError, methods: VerificationMethod[]) => Promise<string | null>;
@@ -63,7 +69,15 @@ export interface ApiInterface {
     stopRelay: (id: number) => Promise<{ success: boolean } | ApiError>;
     restartRelay: (id: number) => Promise<{ success: boolean } | ApiError>;
 
+    // Message methods
+    fetchConversations(limit?: number, offset?: number): Promise<ConversationsResponse | ApiError>;
+    fetchConversation(conversationId: string): Promise<Conversation | ApiError>;
+    createConversation(data: CreateConversationData): Promise<Conversation | ApiError>;
+    sendMessage(conversationId: string, data: SendMessageData): Promise<Message | ApiError>;
+    fetchMessages(conversationId: string, limit?: number, before?: string): Promise<MessagesResponse | ApiError>;
+    markAsRead(conversationId: string): Promise<{ success: boolean } | ApiError>;
+
     // WebSocket methods
     onSocketEvent: (eventType: string, callback: (data: any) => void) => () => void;
     onSocketEventRegex: (pattern: RegExp, callback: (data: any) => void) => () => void;
-}
+};
