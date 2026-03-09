@@ -47,8 +47,8 @@ export function ConversationsProvider({ children }: { children: ReactNode }) {
 
       for (const conv of result.conversations) {
         for (const member of conv.members) {
-          if (member.user_ref !== iid) {
-            oids.add(member.user_ref);
+          if (member.id !== iid) {
+            oids.add(member.id);
           }
         }
       }

@@ -40,8 +40,8 @@ export interface Logout {
 }
 
 export interface UserAlias {
-    type: string;
-    url: string;
+    key: string;
+    value: string;
 }
 
 export interface UserLink {
@@ -247,11 +247,18 @@ export interface RelayPlayersResult {
 
 export interface Conversation {
     id: string;
-    participants: string[];
+    server: string;
+    title: string | null;
+    thumbnail: string | null;
     created_at: number;
     updated_at: number;
-    last_message?: Message;
-    unread_count?: number;
+    last_message: number | null;
+    members: {
+        id: string;
+        reference: string;
+        last_read_at: number | null;
+        joined_at: number;
+    }[];
 }
 
 export interface Message {

@@ -180,7 +180,7 @@ export default function EmailSection({
 
             <div className="flex gap-2">
               <Button
-                variant="default"
+                variant="primary"
                 size="sm"
                 onClick={handleSaveEmail}
                 disabled={isSavingEmail || !email || email !== confirmEmail}

@@ -48,7 +48,7 @@ export default function FollowProfile({ sid, at }: FollowProfileProps) {
   }, [sid, Api, user]);
 
   // Find profile alias URL if present
-  const profileUrl = user?.alias?.find((a: any) => a.type === 'profile')?.url;
+  const profileUrl = user?.alias?.find((a: any) => a.type === 'profile')?.value;
 
   const content = (
     <div className="flex items-center gap-3 p-4 rounded-lg border border-fd-border bg-fd-accent/10 hover:bg-fd-accent/20 transition-colors">
