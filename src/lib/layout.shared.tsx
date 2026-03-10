@@ -1,6 +1,7 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import { ThemeLogo } from './theme-logo';
 import { APP_CONFIG } from './api/config';
+import { GlobalSearch } from '../components/layout/global-search';
 
 export function baseOptions(): BaseLayoutProps {
   return {
@@ -10,6 +11,12 @@ export function baseOptions(): BaseLayoutProps {
         <span className='sr-only'>{APP_CONFIG.name}</span>
       </div>,
       transparentMode: 'top',
+    },
+    searchToggle: {
+      components: {
+        lg: <GlobalSearch />,
+        sm: <GlobalSearch sm />,
+      },
     },
     links: [
       {
