@@ -8,7 +8,7 @@ import { getSIDById } from '@/lib/api/utils';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
-import { Pencil, Shield, Globe, Users, AlertCircle, CheckCircle } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import { Button } from '@/components/ui/button';
 import { useCountries } from '@/lib/hooks/useCountries';
 import { useLanguages } from '@/lib/hooks/useLanguages';
@@ -30,22 +30,22 @@ const getTagConfig = (tag: string, countries: Country[], languages: Language[]):
 
     // Tags système avec icônes
     if (tag === 'sys:auto_reject_follow') {
-        return { text: "Auto reject", color: [255, 0, 0], icon: <AlertCircle className="size-4" /> };
+        return { text: "Auto reject", color: [255, 0, 0], icon: <Icon icon="material-symbols:cancel-rounded" className="size-4" /> };
     }
     if (tag === 'sys:manual_follow_validation') {
-        return { text: "Manual validation", color: [255, 128, 128], icon: <CheckCircle className="size-4" /> };
+        return { text: "Manual validation", color: [255, 128, 128], icon: <Icon icon="material-symbols:check-circle-rounded" className="size-4" /> };
     }
     if (tag === 'dft:can_instance_create') {
-        return { text: "Create instances", color: [0, 166, 244], icon: <Users className="size-4" /> };
+        return { text: "Create instances", color: [0, 166, 244], icon: <Icon icon="material-symbols:group-rounded" className="size-4" /> };
     }
     if (tag === 'dft:can_world_create') {
-        return { text: "Create worlds", color: [0, 201, 80], icon: <Globe className="size-4" /> };
+        return { text: "Create worlds", color: [0, 201, 80], icon: <Icon icon="material-symbols:travel-explore-rounded" className="size-4" /> };
     }
     if (tag === 'sys:unverified') {
-        return { text: "Unverified", color: [240, 177, 0], icon: <AlertCircle className="size-4" /> };
+        return { text: "Unverified", color: [240, 177, 0], icon: <Icon icon="material-symbols:error-circle-rounded" className="size-4" /> };
     }
     if (tag === 'sys:admin') {
-        return { text: "Admin", color: [255, 128, 128], icon: <Shield className="size-4" /> };
+        return { text: "Admin", color: [255, 128, 128], icon: <Icon icon="material-symbols:shield-rounded" className="size-4" /> };
     }
 
     // Tags de pays (usr:country_XX)
@@ -112,7 +112,7 @@ export default function TagBox({ user }: { user: User | null }) {
                                 size="icon" 
                                 className={cn("size-6", !hover && "opacity-0", "transition-opacity")}
                             >
-                                <Pencil className="size-4" />
+                                <Icon icon="material-symbols:edit-rounded" className="size-4" />
                             </Button>
                         </Link>
                     ) : (

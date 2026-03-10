@@ -5,7 +5,7 @@ import { useApi } from '@/lib/api';
 import type { User } from '@/lib/api/types';
 import { getSIDById } from '@/lib/api/utils';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Users, UserCheck } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import Link from 'next/link';
 
 export default function FollowStats({ user }: { user: User | null }) {
@@ -54,7 +54,7 @@ export default function FollowStats({ user }: { user: User | null }) {
                             count={followers} 
                             label="Followers" 
                             href={isSame ? "/settings/follow/followers" : undefined}
-                            icon={<Users className="h-5 w-5" />}
+                            icon={<Icon icon="material-symbols:group-rounded" className="size-5" />}
                         />
                     )}
                     {followers > -1 && following > -1 && (
@@ -65,7 +65,7 @@ export default function FollowStats({ user }: { user: User | null }) {
                             count={following} 
                             label="Following" 
                             href={isSame ? "/settings/follow/followings" : undefined}
-                            icon={<UserCheck className="h-5 w-5" />}
+                            icon={<Icon icon="material-symbols:how-to-reg-rounded" className="size-5" />}
                         />
                     )}
                 </div>

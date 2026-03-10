@@ -2,7 +2,7 @@
 
 import { isError, useApi } from "@/lib/api";
 import type { User } from "@/lib/api/types";
-import { Plus } from "lucide-react";
+import { Icon } from '@iconify/react';
 import { useState } from "react";
 
 export function FollowAddButton({ user, setUser }: { user: User, setUser: (user: User) => void }) {
@@ -45,7 +45,7 @@ export function FollowAddButton({ user, setUser }: { user: User, setUser: (user:
                 ${followSent ? "cursor-wait opacity-60" : ""}
             `}
         >
-            <Plus className="size-5" />
+            <Icon icon="material-symbols:add-rounded" className="size-5" />
             <span className="ms-1">Follow</span>
         </button>
     );

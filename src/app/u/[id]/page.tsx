@@ -16,7 +16,7 @@ import TagBox from "./TagBox";
 import FollowStats from "./FollowStats";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Pencil } from "lucide-react";
+import { Icon } from '@iconify/react';
 import { PresenceIcon } from "@/components/ui/presence-icon";
 import { HomeLayout } from '@/components/layout/home';
 import { baseOptions } from '@/lib/layout.shared';
@@ -122,7 +122,7 @@ export default function UserPage() {
         return (
             <div className="container max-w-6xl mx-auto py-8 px-4">
                 <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
+                    <Icon icon="material-symbols:error-circle-rounded" className="h-4 w-4" />
                     <AlertDescription>
                         {error || 'User not found'}
                     </AlertDescription>
@@ -166,7 +166,7 @@ export default function UserPage() {
                                         "overflow-hidden transition-all duration-200",
                                         user.presence.text ? "w-0 group-hover:w-4" : "w-0 group-hover:w-4 group-hover:ml-1.5"
                                     )}>
-                                        <Pencil className="size-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-150 delay-150" />
+                                        <Icon icon="material-symbols:edit-rounded" className="size-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-150 delay-150" />
                                     </div>
                                 </Link>
                             ) : (

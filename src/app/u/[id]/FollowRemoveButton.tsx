@@ -2,7 +2,7 @@
 
 import { isError, useApi } from "@/lib/api";
 import type { User } from "@/lib/api/types";
-import { Minus } from "lucide-react";
+import { Icon } from '@iconify/react';
 import { useState } from "react";
 
 export function FollowRemoveButton({ user, setUser, type }: { user: User, setUser: (user: User) => void, type: string }) {
@@ -45,7 +45,7 @@ export function FollowRemoveButton({ user, setUser, type }: { user: User, setUse
                 ${unfollowSent ? "cursor-wait opacity-60" : ""}
             `}
         >
-            <Minus className="size-5" />
+            <Icon icon="material-symbols:remove-rounded" className="size-5" />
             {type === "FOLLOW" && <span className="ms-1">Unfollow</span>}
             {type === "REQUEST" && <span className="ms-1">Pending</span>}
         </button>

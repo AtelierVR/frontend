@@ -6,7 +6,7 @@ import { useState } from 'react';
 import type { User } from '@/lib/api/types';
 import { getSIDById } from '@/lib/api/utils';
 import Link from 'next/link';
-import { Pencil, Copy, Check } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import { Button } from '@/components/ui/button';
 
 export default function Display({ user }: { user: User | null }) {
@@ -45,7 +45,7 @@ export default function Display({ user }: { user: User | null }) {
                 {isSame && (
                     <Link href="/settings/profile#display">
                         <Button variant="ghost" size="icon" className={cn("size-6", !hover && "opacity-0", "transition-opacity")}>
-                            <Pencil className="size-4" />
+                            <Icon icon="material-symbols:edit-rounded" className="size-4" />
                         </Button>
                     </Link>
                 )}
@@ -60,9 +60,9 @@ export default function Display({ user }: { user: User | null }) {
                     >
                         <span className="text-sm">{user.username}@{user.server}</span>
                         {copied ? (
-                            <Check className="ml-1 size-3 text-green-500" />
+                            <Icon icon="material-symbols:check-rounded" className="ml-1 size-3 text-green-500" />
                         ) : (
-                            <Copy className="ml-1 size-3" />
+                            <Icon icon="material-symbols:content-copy-rounded" className="ml-1 size-3" />
                         )}
                     </Button>
                     {user?.pronoun && (

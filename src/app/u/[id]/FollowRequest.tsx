@@ -2,7 +2,7 @@
 
 import { isError, useApi } from "@/lib/api";
 import type { User } from "@/lib/api/types";
-import { Minus, Check } from "lucide-react";
+import { Icon } from '@iconify/react';
 import { useState } from "react";
 
 export function FollowRequestButton({ user, setUser }: { user: User, setUser: (user: User) => void }) {
@@ -58,7 +58,7 @@ export function FollowRequestButton({ user, setUser }: { user: User, setUser: (u
                     text-sm
                 `}
             >
-                <Check className="size-5" />
+                <Icon icon="material-symbols:check-rounded" className="size-5" />
                 <span className="ms-1">Accept</span>
             </button>
             <button
@@ -75,7 +75,7 @@ export function FollowRequestButton({ user, setUser }: { user: User, setUser: (u
                     flex items-center
                 `}
             >
-                <Minus className="size-5" />
+                <Icon icon="material-symbols:remove-rounded" className="size-5" />
                 <span className="ms-1">Reject</span>
             </button>
         </div>

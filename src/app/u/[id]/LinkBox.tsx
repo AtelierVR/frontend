@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
-import { Pencil, ExternalLink } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import Image from 'next/image';
 
 // Simplified link structure - adapt based on your actual API
@@ -59,7 +59,7 @@ export default function LinkBox({ user }: { user: User | null }) {
                                 size="icon" 
                                 className={cn("size-6", !hover && "opacity-0", "transition-opacity")}
                             >
-                                <Pencil className="size-4" />
+                                <Icon icon="material-symbols:edit-rounded" className="size-4" />
                             </Button>
                         </Link>
                     ) : (
