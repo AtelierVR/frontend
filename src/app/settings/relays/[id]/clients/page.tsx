@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Icon } from '@iconify/react';
-import { useApi, isError, RelayClientsResult } from '@/lib/api';
+import { useApi, isError, RelayClientsResult, RelayClientDetail, useSocket } from '@/lib/api';
 
 export default function RelayClientsPage() {
   const params = useParams();
@@ -35,6 +35,33 @@ export default function RelayClientsPage() {
     load();
   }, [Api, relayId]);
 
+  // Real-time: new QUIC client connected
+  useSocket('relay_client_connected', (event) => {
+    if (event.relay_id !== relayId) return;
+    const incoming: RelayClientDetail = {
+      id: event.client.id,
+      address: event.client.address,
+      platform: '',
+      engine: '',
+      user: null,
+    };
+    setData(prev => {
+      if (!prev) return prev;
+      if (prev.clients.some(c => c.id === incoming.id)) return prev;
+      return { ...prev, total: prev.total + 1, clients: [...prev.clients, incoming] };
+    });
+  });
+
+  // Real-time: QUIC client disconnected
+  useSocket('relay_client_disconnected', (event) => {
+    if (event.relay_id !== relayId) return;
+    setData(prev => {
+      if (!prev) return prev;
+      const filtered = prev.clients.filter(c => c.id !== event.client.id);
+      return { ...prev, total: filtered.length, clients: filtered };
+    });
+  });
+
   if (loading) return (
     <div className="space-y-3">
       <Skeleton className="h-16 w-full" />
@@ -61,8 +88,12 @@ export default function RelayClientsPage() {
   return (
     <div className="space-y-3">
       {data && (
-        <div className="text-sm text-fd-muted-foreground mb-2">
-          {data.total} client{data.total !== 1 ? 's' : ''} connecté{data.total !== 1 ? 's' : ''}
+        <div className="flex items-center gap-2 text-sm text-fd-muted-foreground mb-2">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+          </span>
+          {data.total} client{data.total !== 1 ? 's' : ''} connecté{data.total !== 1 ? 's' : ''} — live
         </div>
       )}
       {clients.map((client, idx) => (

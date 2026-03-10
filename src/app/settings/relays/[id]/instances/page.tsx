@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Icon } from '@iconify/react';
-import { useApi, isError, RelayInstancesResult } from '@/lib/api';
+import { useApi, isError, RelayInstancesResult, useSocket } from '@/lib/api';
 import { cn } from '@/lib/cn';
 
 export default function RelayInstancesPage() {
@@ -37,6 +37,38 @@ export default function RelayInstancesPage() {
     load();
   }, [Api, relayId]);
 
+  // Real-time: player joined an instance → increment player_count
+  useSocket('relay_player_join', (event) => {
+    if (event.relay_id !== relayId) return;
+    setData(prev => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        instances: prev.instances.map(inst =>
+          inst.internal_id.toString() === event.player.instance_id
+            ? { ...inst, player_count: inst.player_count + 1 }
+            : inst
+        ),
+      };
+    });
+  });
+
+  // Real-time: player left an instance → decrement player_count
+  useSocket('relay_player_leave', (event) => {
+    if (event.relay_id !== relayId) return;
+    setData(prev => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        instances: prev.instances.map(inst =>
+          inst.internal_id.toString() === event.player.instance_id
+            ? { ...inst, player_count: Math.max(0, inst.player_count - 1) }
+            : inst
+        ),
+      };
+    });
+  });
+
   if (loading) return (
     <div className="space-y-3">
       <Skeleton className="h-20 w-full" />
@@ -63,8 +95,12 @@ export default function RelayInstancesPage() {
   return (
     <div className="space-y-3">
       {data && (
-        <div className="text-sm text-fd-muted-foreground mb-2">
-          {data.total} instance{data.total !== 1 ? 's' : ''} active{data.total !== 1 ? 's' : ''}
+        <div className="flex items-center gap-2 text-sm text-fd-muted-foreground mb-2">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+          </span>
+          {data.total} instance{data.total !== 1 ? 's' : ''} active{data.total !== 1 ? 's' : ''} — live
         </div>
       )}
       {instances.map(instance => (
