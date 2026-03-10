@@ -297,7 +297,7 @@ export function GlobalSearch({ sm }: { sm?: boolean }) {
     const handleOpen = (v: boolean) => {
         setOpen(v);
         if (!v) {
-            setQuery('');
+            // setQuery('');
             setResults([]);
         }
     };
