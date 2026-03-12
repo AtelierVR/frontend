@@ -14,11 +14,23 @@ import { Line } from 'react-chartjs-2';
 // Enregistrer les composants Chart.js nécessaires
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Filler);
 
+export interface MiniChartOptions {
+  data: number[]
+  min: number
+  max: number
+  color: string
+}
+
 /**
  * Composant mini graphique avec Chart.js
  * Affiche un graphique linéaire pour visualiser l'historique des données
  */
-export function MiniChart({ data, color }: { data: number[]; color: string }) {
+export function MiniChart({ 
+  data, 
+  color ,
+  min,
+  max
+}: MiniChartOptions) {
   const chartData = {
     labels: data.map((_, i) => i.toString()),
     datasets: [
@@ -30,7 +42,7 @@ export function MiniChart({ data, color }: { data: number[]; color: string }) {
         fill: true,
         tension: 0.3,
         pointRadius: 0,
-        pointHoverRadius: 0,
+        pointHoverRadius: 0
       },
     ],
   };
@@ -46,8 +58,8 @@ export function MiniChart({ data, color }: { data: number[]; color: string }) {
       x: { display: false },
       y: { 
         display: false, 
-        min: 0, 
-        max: 100,
+        min: min,
+        max: max
       },
     },
     animation: false,

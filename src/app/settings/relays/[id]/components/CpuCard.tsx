@@ -5,24 +5,27 @@ import { Card } from '@/components/ui/card';
 import { Icon } from '@iconify/react';
 import { MiniChart } from './MiniChart';
 import { useLerpedValue } from '../hooks';
+import { formatPercentage } from '../utils';
 
 interface CpuCardProps {
-  cpu: number;
+  value: {
+    u: number,
+    c: number
+  } | null
 }
 
-export function CpuCard({ cpu }: CpuCardProps) {
-  const [history, setHistory] = useState<number[]>([]);
-  const lerpedCpu = useLerpedValue(cpu, 500);
-  
-  // Créer une clé pour détecter les changements réels
-  const cpuKey = useMemo(() => cpu, [cpu]);
+const maxHistory = 30;
+
+export function CpuCard(props: CpuCardProps) {
+  const [history, setHistory] = useState<number[]>(Array.from<number>({ length: maxHistory }).fill(0));
+  const used = useLerpedValue(props.value?.u ?? 0, 100);
+  const cores = props.value?.c ?? 0;
+
+  const memo = useMemo(() => props.value?.u ?? 0, [props]);
 
   useEffect(() => {
-    if (cpu === undefined || cpu === null) return;
-    
-    const maxHistory = 30;
-    setHistory(prev => [...prev.slice(-maxHistory + 1), cpu]);
-  }, [cpuKey]);
+    setHistory(prev => [...prev.slice(-maxHistory + 1), props.value?.u ?? 0]);
+  }, [memo]);
 
   return (
     <Card className="p-6 relative overflow-hidden">
@@ -34,15 +37,15 @@ export function CpuCard({ cpu }: CpuCardProps) {
           <div className="text-sm text-fd-muted-foreground uppercase tracking-wider">CPU</div>
         </div>
         <div className="text-3xl font-bold font-mono mb-1 whitespace-nowrap">
-          {isNaN(lerpedCpu) || lerpedCpu === undefined ? '0.0' : lerpedCpu.toFixed(1)}%
+          {formatPercentage(used, cores)}
         </div>
         <div className="text-xs text-fd-muted-foreground">
-          Process Usage
+          {formatPercentage(cores * 100, cores, false)} total
         </div>
       </div>
       {/* Line chart visualization */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 opacity-15">
-        <MiniChart data={history} color="rgb(59, 130, 246)" />
+      <div className="absolute bottom-0 left-0 right-0 h-full opacity-15">
+        <MiniChart data={history} min={0} max={cores} color="rgb(59, 130, 246)" />
       </div>
     </Card>
   );

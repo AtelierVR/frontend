@@ -14,7 +14,7 @@ export type Response<T> = {
 }
 
 // Presence types
-export type PresenceStatus = 
+export type PresenceStatus =
     | 'oja'      // cyan - online join all
     | 'ojf'      // bleu - online join friend
     | 'online'   // vert
@@ -183,14 +183,27 @@ export interface RelayStatus {
     uptime: number;
     response: number;
     specs: RelaySpecs;
+    // is frontend only, used to trigger refresh of specs when they change
+    specs_time: Date;
 }
 
 export interface RelaySpecs {
-    cpu: number; // CPU usage percentage of the relay process (0-100)
-    memory: [number, number]; // Memory usage [used, total] in bytes
-    upload: [number, number]; // Upload usage [used, total] in bytes/s
-    download: [number, number]; // Download usage [used, total] in bytes/s
-    storage: [number, number]; // Storage usage [used, total] in bytes
+    c: {
+        u: number;
+        c: number;
+    };
+    m: {
+        u: number;
+        t: number;
+    };
+    u: {
+        u: number;
+        b: number;
+    };
+    d: {
+        u: number;
+        b: number;
+    };
 }
 
 export interface RelayLog {

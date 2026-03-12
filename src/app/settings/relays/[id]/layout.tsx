@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Icon } from '@iconify/react';
-import { useApi, isError, RelayDetails, useSocket } from '@/lib/api';
+import { useApi, isError, RelayDetails, useSocket, RelaySpecs } from '@/lib/api';
 import { cn } from '@/lib/cn';
 import { Badge } from '@/components/ui/badge';
 import ActionButton from '../../ActionButton';
@@ -21,8 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { CpuCard, MemoryCard, StorageCard, NetworkCard } from './components';
-import { useLerpedValue } from './hooks';
+import { CpuCard, MemoryCard, NetworkCard } from './components';
 
 export default function RelayLayout({ children }: { children: React.ReactNode }) {
   const params = useParams();
@@ -35,6 +34,12 @@ export default function RelayLayout({ children }: { children: React.ReactNode })
   const [stopping, setStopping] = useState(false);
   const [restarting, setRestarting] = useState(false);
   const [confirmAction, setConfirmAction] = useState<'stop' | 'restart' | null>(null);
+
+  function getSpecs() {
+    if (!relay || typeof relay.status !== "object")
+      return null;
+    return relay.status.specs;
+  }
 
   const relayId = Number(params.id);
 
@@ -100,37 +105,46 @@ export default function RelayLayout({ children }: { children: React.ReactNode })
   }, [relayId]);
 
   // Écouter les changements de statut du relay via WebSocket
-  useSocket('relay_status_change', (data: { relay_id: number; status: string; timestamp: number; relay?: RelayDetails | null }) => {
+  useSocket('relay_status_change', (data: { relay_id: number; status: string; time: number; relay?: RelayDetails | null }) => {
     // Ignorer si ce n'est pas le bon relay
     if (data.relay_id !== relayId) return;
-    
+
     console.log('Relay status changed:', data);
-    
+
     if (data.status === 'destroyed') {
       // Rediriger vers la page des relays
       router.push('/settings/relays');
     } else if (data.relay) {
       // Mettre à jour le relay avec les nouvelles données
-      setRelay(data.relay);
+      setRelay({
+        ...data.relay,
+        status: typeof data.relay.status === 'string'
+          ? data.relay.status
+          : {
+            ...data.relay.status,
+            specs_time: new Date(data.time) // Mettre à jour le timestamp des specs pour forcer le rafraîchissement
+          }
+      });
     }
   });
 
   // Écouter les mises à jour de specs en temps réel
-  useSocket('relay_specs_update', (data: { relayId: number; timestamp: number; specs: any }) => {
+  useSocket('relay_specs_update', (data: { relay_id: number; time: number; details: any }) => {
     // Ignorer si ce n'est pas le bon relay
-    if (data.relayId !== relayId) return;
-    
+    if (data.relay_id !== relayId) return;
+
     // Mettre à jour uniquement les specs du relay
     setRelay(prevRelay => {
       if (!prevRelay) return prevRelay;
       if (typeof prevRelay.status === 'string') return prevRelay;
       if (!prevRelay.running) return prevRelay;
-      
+
       return {
         ...prevRelay,
         status: {
           ...prevRelay.status,
-          specs: data.specs
+          specs: data.details,
+          specs_time: new Date(data.time)
         }
       };
     });
@@ -179,23 +193,6 @@ export default function RelayLayout({ children }: { children: React.ReactNode })
   const clientsCount = status?.clients ?? 0;
   const responseTime = status?.response ?? 0;
 
-  // Interpoler les valeurs des specs pour des animations fluides
-  const lerpedCpu = useLerpedValue(specs?.cpu || 0, 500);
-  const lerpedMemory0 = useLerpedValue(specs?.memory[0] || 0, 500);
-  const lerpedMemory1 = useLerpedValue(specs?.memory[1] || 0, 500);
-  const lerpedStorage0 = useLerpedValue(specs?.storage[0] || 0, 500);
-  const lerpedStorage1 = useLerpedValue(specs?.storage[1] || 0, 500);
-  const lerpedUpload = useLerpedValue(specs?.upload[0] || 0, 500);
-  const lerpedDownload = useLerpedValue(specs?.download[0] || 0, 500);
-
-  // Créer un objet specs avec les valeurs interpolées
-  const displaySpecs = specs ? {
-    cpu: lerpedCpu,
-    memory: [lerpedMemory0, lerpedMemory1] as [number, number],
-    storage: [lerpedStorage0, lerpedStorage1] as [number, number],
-    upload: [lerpedUpload, specs.upload[1]] as [number, number],
-    download: [lerpedDownload, specs.download[1]] as [number, number]
-  } : null;
 
   const tabs = [
     { id: 'info', label: 'General', icon: 'material-symbols:info-rounded' },
@@ -203,6 +200,8 @@ export default function RelayLayout({ children }: { children: React.ReactNode })
     { id: 'clients', label: 'Clients', icon: 'material-symbols:dns', count: clientsCount },
     { id: 'logs', label: 'Logs', icon: 'material-symbols:description-rounded' },
   ];
+
+  let s = getSpecs();
 
   return (
     <DocsPage toc={[]} footer={{ enabled: false }}>
@@ -241,26 +240,18 @@ export default function RelayLayout({ children }: { children: React.ReactNode })
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
+                <ActionButton
+                  variant="stop"
                   onClick={() => setConfirmAction('stop')}
-                  disabled={stopping || !relay?.running}
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20 border-red-200 dark:border-red-800"
-                >
-                  <Icon icon="material-symbols:power-settings-new-rounded" className="size-4" />
-                  {stopping ? 'Stopping...' : 'Stop'}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
+                  isLoading={stopping}
+                  disabled={!relay?.running}
+                />
+                <ActionButton
+                  variant="restart"
                   onClick={() => setConfirmAction('restart')}
-                  disabled={restarting || !relay?.running}
-                  className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950/20 border-orange-200 dark:border-orange-800"
-                >
-                  <Icon icon="material-symbols:refresh-rounded" className="size-4" />
-                  {restarting ? 'Restarting...' : 'Restart'}
-                </Button>
+                  isLoading={restarting}
+                  disabled={stopping || !relay?.running}
+                />
                 <ActionButton
                   variant="refresh"
                   onClick={loadRelay}
@@ -277,34 +268,31 @@ export default function RelayLayout({ children }: { children: React.ReactNode })
                     {confirmAction === 'stop' ? 'Stop Relay' : 'Restart Relay'}
                   </DialogTitle>
                   <DialogDescription>
-                    {confirmAction === 'stop' 
+                    {confirmAction === 'stop'
                       ? 'Are you sure you want to stop this relay? All active instances and connections will be terminated.'
                       : 'Are you sure you want to restart this relay? This will temporarily disconnect all active instances and connections.'}
                   </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => setConfirmAction(null)}>
+                  <Button variant="outline" onClick={() => setConfirmAction(null)} className="px-4">
                     Cancel
                   </Button>
-                  <Button
-                    variant={'primary'}
+                  <ActionButton
+                    variant={confirmAction === 'stop' ? 'stop' : 'restart'}
                     onClick={confirmAction === 'stop' ? handleStop : handleRestart}
-                  >
-                    {confirmAction === 'stop' ? 'Stop' : 'Restart'}
-                  </Button>
+                    className="px-4"
+                    isLoading={confirmAction === 'stop' ? stopping : restarting}
+                  />
                 </DialogFooter>
               </DialogContent>
             </Dialog>
 
             {/* Stats Overview */}
-            {displaySpecs && (
-              <div className="grid grid-cols-4 gap-4">
-                <CpuCard cpu={displaySpecs.cpu} />
-                <MemoryCard memory={displaySpecs.memory} />
-                <StorageCard storage={displaySpecs.storage} />
-                <NetworkCard upload={displaySpecs.upload} download={displaySpecs.download} />
+            <div className="grid grid-cols-3 gap-4">
+                <CpuCard value={s? s.c : null} />
+                <MemoryCard value={s? s.m : null} />
+                <NetworkCard upload={s? s.u : null} download={s? s.d : null} />
               </div>
-            )}
 
             {/* Tabs */}
             <Tabs value={getActiveTab()} onValueChange={handleTabChange}>

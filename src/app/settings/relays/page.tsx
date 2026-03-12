@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/layouts/docs/page';
 import { useApi, isError, RelayDetails, useSocket } from '@/lib/api';
 import { cn } from '@/lib/cn';
+import ActionButton from '../ActionButton';
 
 function RelayCard({ relay, onSelect }: { relay: RelayDetails; onSelect: () => void }) {
   const getStatusColor = () => {
@@ -138,10 +139,12 @@ export default function RelaysPage() {
     <DocsPage toc={[]} footer={{ enabled: false }}>
       <DocsTitle className="flex items-center justify-between">
         <span>Relays</span>
-        <Button onClick={loadRelays} variant="outline" size="sm" disabled={loading} className="gap-2">
-          <Icon icon="material-symbols:refresh-rounded" className={cn('size-4', loading && 'animate-spin')} />
-          Refresh
-        </Button>
+
+        <ActionButton
+          variant="refresh"
+          onClick={loadRelays}
+          isLoading={loading}
+        />
       </DocsTitle>
       <DocsDescription>
         Manage your relay servers. Relays handle multiplayer sessions and world hosting.
