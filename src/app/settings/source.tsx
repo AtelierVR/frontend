@@ -81,6 +81,12 @@ export const getPageTree = (currentUser: CurrentUser | null): Root => {
         name: 'Server Logs',
         url: '/settings/logs',
         icon: <Icon icon="material-symbols:list-alt-rounded" />,
+      },
+      {
+        type: 'page',
+        name: 'Server Configuration',
+        url: '/settings/configs',
+        icon: <Icon icon="material-symbols:tune-rounded" />,
       }] as any : [])
     ]
   };
