@@ -17,9 +17,10 @@ interface ConfigEntry {
   label: string;
   description: string | null;
   default: string;
-  env: string | null;
-  db: string | null;
+  environment: string | null;
+  override: string | null;
   forced: boolean;
+  risky: boolean;
 }
 
 type ConfigsResponse = ConfigEntry[];
@@ -32,17 +33,17 @@ interface PatchResult {
 
 /** Returns the effective value shown to the server at runtime */
 function effectiveValue(cfg: ConfigEntry): string {
-  if (cfg.forced && cfg.env !== null) return cfg.env;
-  if (cfg.db !== null) return cfg.db;
-  if (cfg.env !== null) return cfg.env;
+  if (cfg.forced && cfg.environment !== null) return cfg.environment;
+  if (cfg.override !== null) return cfg.override;
+  if (cfg.environment !== null) return cfg.environment;
   return cfg.default;
 }
 
 /** Which source is active */
 function valueSource(cfg: ConfigEntry): 'forced' | 'db' | 'env' | 'default' {
   if (cfg.forced) return 'forced';
-  if (cfg.db !== null) return 'db';
-  if (cfg.env !== null) return 'env';
+  if (cfg.override !== null) return 'db';
+  if (cfg.environment !== null) return 'env';
   return 'default';
 }
 
@@ -123,7 +124,7 @@ function ConfigRow({
             onClick={onReset}
             color="outline"
             size="icon-sm"
-            disabled={cfg.db === null}
+            disabled={cfg.override === null}
             className="shrink-0 h-9 w-9"
           >
             <Icon icon="material-symbols:settings-backup-restore-rounded" className="size-4" />
@@ -133,10 +134,10 @@ function ConfigRow({
 
       {/* Context hints */}
       <div className="flex gap-4 text-xs text-fd-muted-foreground flex-wrap">
-        {cfg.env !== null && (
+        {cfg.environment !== null && (
           <span>
             <span className="opacity-60">env:</span>{' '}
-            <code className="bg-fd-muted px-1 py-0.5 rounded-sm font-mono">{cfg.env}</code>
+            <code className="bg-fd-muted px-1 py-0.5 rounded-sm font-mono">{cfg.environment}</code>
           </span>
         )}
         <span>
@@ -166,6 +167,7 @@ export default function ConfigsPage() {
   const [saveErrors, setSaveErrors] = useState<Record<string, string>>({});
   const [filterText, setFilterText] = useState('');
   const [filterSources, setFilterSources] = useState<Set<string>>(new Set());
+  const [showRisky, setShowRisky] = useState(false);
 
   const loadConfigs = useCallback(async () => {
     setLoading(true);
@@ -184,7 +186,7 @@ export default function ConfigsPage() {
       // Initialise edits from current db overrides
       const init: Record<string, string> = {};
       for (const cfg of res.data) {
-        init[cfg.key] = cfg.db ?? '';
+        init[cfg.key] = cfg.override ?? '';
       }
       setEdits(init);
       setResets(new Set());
@@ -206,7 +208,7 @@ export default function ConfigsPage() {
     (cfg: ConfigEntry) => {
       if (resets.has(cfg.key)) return true; // marked for reset
       const editVal = edits[cfg.key] ?? '';
-      const currentDb = cfg.db ?? '';
+      const currentDb = cfg.override ?? '';
       return editVal !== currentDb;
     },
     [edits, resets],
@@ -227,6 +229,7 @@ export default function ConfigsPage() {
   const hasAnyChanges = configs.some(isDirty);
 
   const filteredConfigs = configs.filter(cfg => {
+    if (!showRisky && cfg.risky) return false;
     if (filterSources.size > 0 && !filterSources.has(valueSource(cfg))) return false;
     if (filterText.trim()) {
       const q = filterText.toLowerCase();
@@ -327,6 +330,19 @@ export default function ConfigsPage() {
               </Button>
             )}
           </div>
+          {/* Risky toggle */}
+          <button
+            onClick={() => setShowRisky(v => !v)}
+            className={cn(
+              'inline-flex items-center gap-1.5 h-9 px-3 rounded-md text-xs font-medium border transition-colors whitespace-nowrap flex-shrink-0',
+              showRisky
+                ? 'bg-orange-500 text-black border-orange-500/80 hover:bg-orange-500/80'
+                : 'border-fd-border bg-fd-background text-fd-muted-foreground hover:bg-fd-accent hover:text-fd-accent-foreground',
+            )}
+          >
+            <Icon icon="material-symbols:warning-rounded" className="size-3.5" />
+            Risky
+          </button>
           {/* Source filter chips */}
           <div className="flex items-center gap-1.5 flex-shrink-0">
             {(['forced', 'db', 'env', 'default'] as const).map(s => {
