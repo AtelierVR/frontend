@@ -15,25 +15,29 @@ const variantConfig = {
     iconName: 'material-symbols:save-rounded',
     label: 'Save',
     loadingLabel: 'Saving...',
-    className: 'bg-green-500/1 text-green-500 hover:bg-green-500/5 hover:text-green-400',
+    color: 'primary' as const,
+    className: '',
   },
   refresh: {
     iconName: 'material-symbols:refresh-rounded',
     label: 'Refresh',
     loadingLabel: 'Refreshing...',
+    color: 'outline' as const,
     className: '',
   },
   stop: {
     iconName: 'material-symbols:power-settings-new-rounded',
     label: 'Stop',
     loadingLabel: 'Stopping...',
-    className: 'bg-red-500/1 text-red-500 hover:bg-red-500/5 hover:text-red-400',
+    color: undefined,
+    className: 'bg-red-500 text-black hover:bg-red-500/80',
   },
   restart: {
     iconName: 'material-symbols:restart-alt-rounded',
     label: 'Restart',
     loadingLabel: 'Restarting...',
-    className: 'bg-yellow-500/1 text-yellow-500 hover:bg-yellow-500/5 hover:text-yellow-400',
+    color: undefined,
+    className: 'bg-amber-500 text-black hover:bg-amber-500/80',
   },
 };
 
@@ -50,18 +54,18 @@ export default function ActionButton({
     <Button
       onClick={onClick}
       disabled={disabled || isLoading}
-      color={variant === 'save' ? 'primary' : 'outline'}
+      color={config.color}
       size="sm"
       className={cn(isLoading && "cursor-wait", config.className, className)}
     >
       {isLoading ? (
         <>
-          <Icon icon="material-symbols:progress-activity" className="mr-2 size-4 animate-spin" />
+          <Icon icon="material-symbols:progress-activity" className="mr-1 size-4 animate-spin" />
           {config.loadingLabel}
         </>
       ) : (
         <>
-          <Icon icon={config.iconName} className={cn("size-4 mr-2")} />
+          <Icon icon={config.iconName} className={cn("size-4 mr-1")} />
           {config.label}
         </>
       )}
