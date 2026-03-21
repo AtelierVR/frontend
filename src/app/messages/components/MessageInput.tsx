@@ -2,12 +2,14 @@ import { type RefObject, type FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Icon } from '@iconify/react';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 
 interface MessageInputProps {
   value: string;
   onChange: (value: string) => void;
   onSubmit: (e: FormEvent) => void;
-  inputRef?: RefObject<HTMLInputElement>;
+  inputRef?: RefObject<HTMLInputElement | null>;
 }
 
 export function MessageInput({
@@ -16,6 +18,7 @@ export function MessageInput({
   onSubmit,
   inputRef
 }: MessageInputProps) {
+  const { t } = useTranslation();
   return (
     <div className="sticky bottom-0 z-10">
       <form onSubmit={onSubmit} className="flex items-end gap-3 py-4 max-w-4xl mx-auto">
@@ -23,7 +26,7 @@ export function MessageInput({
           <Input
             ref={inputRef}
             type="text"
-            placeholder="Tapez votre message..."
+            placeholder={t('messages.type_message')}
             value={value}
             onChange={(e) => onChange(e.target.value)}
             className="py-6 resize-none rounded-2xl border-fd-border bg-fd-secondary focus-visible:ring-fd-ring"

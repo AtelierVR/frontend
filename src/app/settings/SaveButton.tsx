@@ -1,6 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { Icon } from '@iconify/react';
 import { cn } from '@/lib/cn';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 
 interface SaveButtonProps {
   onClick: () => void;
@@ -15,6 +17,7 @@ export default function SaveButton({
   isLoading,
   className,
 }: SaveButtonProps) {
+  const { t } = useTranslation();
   return (
     <Button
       onClick={onClick}
@@ -26,12 +29,12 @@ export default function SaveButton({
       {isLoading ? (
         <>
           <Icon icon="material-symbols:progress-activity" className="mr-2 size-4 animate-spin" />
-          Saving...
+          {t('settings.action_button.saving')}
         </>
       ) : (
         <>
           <Icon icon="material-symbols:save-rounded" className="mr-2 size-4" />
-          Save
+          {t('settings.action_button.save')}
         </>
       )}
     </Button>

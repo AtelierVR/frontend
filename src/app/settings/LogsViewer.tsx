@@ -18,6 +18,8 @@ import {
     DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import ActionButton from './ActionButton';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 
 interface LogEntry {
     timestamp: number;
@@ -139,6 +141,7 @@ export function LogsViewer({
     isInputable = false,
     onInput
 }: LogsViewerProps) {
+    const { t } = useTranslation();
     const [fullscreenOpen, setFullscreenOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [focusBottom, setFocusBottom] = useState(true);
@@ -428,11 +431,11 @@ export function LogsViewer({
                     {loading && logs.length === 0 ? (
                         <div className="flex items-center justify-center h-full text-fd-muted-foreground">
                             <Icon icon="material-symbols:refresh-rounded" className="size-6 animate-spin mr-2" />
-                            Loading logs...
+                            {t('settings.logs.loading')}
                         </div>
                     ) : filteredLogs.length === 0 ? (
                         <div className="flex items-center justify-center h-full text-fd-muted-foreground">
-                            {logs.length === 0 ? 'No logs available' : 'No logs match the selected levels'}
+                            {logs.length === 0 ? t('settings.logs.no_logs') : t('settings.logs.no_match')}
                         </div>
                     ) : (
                         <div className="p-2 pt-12 h-0">

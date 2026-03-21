@@ -1,0 +1,495 @@
+{
+  "common": {
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "close": "Close",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "remove": "Remove",
+    "refresh": "Refresh",
+    "refreshing": "Refreshing...",
+    "stop": "Stop",
+    "stopping": "Stopping...",
+    "restart": "Restart",
+    "restarting": "Restarting...",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "no_results": "No results",
+    "go_home": "Go Home",
+    "try_again": "Try Again",
+    "verify": "Verify",
+    "verifying": "Verifying...",
+    "send": "Send",
+    "sending": "Sending...",
+    "update": "Update",
+    "updating": "Updating...",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "verified": "Verified",
+    "unverified": "Unverified",
+    "coming_soon": "Coming Soon",
+    "done": "Done"
+  },
+  "nav": {
+    "guide": "Guide",
+    "getting_started": "Getting Started",
+    "getting_started_description": "Learn to use the platform"
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome back",
+      "description": "Login to your account to continue.",
+      "failed": "Login Failed",
+      "username_email": "Username / Email",
+      "password": "Password",
+      "forgot_password": "Forgot your password?",
+      "signing_in": "Signing in...",
+      "sign_in": "Login",
+      "no_account": "Don't have an account?",
+      "sign_up": "Sign up",
+      "terms_text": "By clicking continue, you agree to our",
+      "terms_of_service": "Terms of Service",
+      "privacy_policy": "Privacy Policy",
+      "error_occurred": "An error occurred. Please try again."
+    },
+    "register": {
+      "title": "Create an account",
+      "description": "Enter your information to create your account.",
+      "failed": "Registration Failed",
+      "username": "Username",
+      "display_name": "Display Name",
+      "password": "Password",
+      "confirm_password": "Confirm Password",
+      "creating_account": "Creating account...",
+      "create_account": "Create account",
+      "already_have_account": "Already have an account?",
+      "sign_in": "Sign in",
+      "password_mismatch": "Passwords do not match.",
+      "error_occurred": "An error occurred. Please try again.",
+      "terms_text": "By clicking continue, you agree to our",
+      "terms_of_service": "Terms of Service",
+      "privacy_policy": "Privacy Policy"
+    },
+    "verification": {
+      "title": "Two-Factor Verification",
+      "choose_method": "Choose verification method",
+      "select_method": "Select method",
+      "verification_code": "Verification code",
+      "resend_code": "Resend Code",
+      "resend_cooldown": "Resend ({{seconds}}s)",
+      "verify": "Verify",
+      "verifying": "Verifying...",
+      "having_trouble": "Having trouble signing in?",
+      "contact_support": "Contact support",
+      "failed": "Verification Failed",
+      "enter_code_for": "Enter the verification code for {{username}}.",
+      "failed_to_send": "Failed to send verification code"
+    }
+  },
+  "home": {
+    "node_online": "Node online",
+    "node_offline": "Node offline",
+    "join_this_node": "Join this node",
+    "sign_in": "Sign in",
+    "no_active_instances": "No active instances right now",
+    "instances_live": "{{count}} instance live",
+    "instances_live_plural": "{{count}} instances live",
+    "features": {
+      "vr_native": "VR Native",
+      "vr_native_desc": "Built for immersive headset experiences",
+      "federated": "Federated",
+      "federated_desc": "Connect across multiple nodes",
+      "social": "Social",
+      "social_desc": "Profiles, follows & presences",
+      "open_source": "Open source",
+      "open_source_desc": "Self-hosted, your data, your rules"
+    },
+    "carousel": {
+      "previous": "Previous",
+      "next": "Next",
+      "world": "World {{number}}"
+    }
+  },
+  "error": {
+    "title": "Oops! Something went wrong",
+    "description": "We encountered an unexpected error while processing your request. Don't worry, you can try reloading the page or return to the home page.",
+    "reference": "Error Reference:",
+    "try_again": "Try Again",
+    "go_home": "Go Home",
+    "copy_error": "Copy error details"
+  },
+  "not_found": {
+    "title": "Page Not Found",
+    "description": "The page you're looking for doesn't exist or has been moved.",
+    "go_home": "Go Home"
+  },
+  "messages": {
+    "title": "Messages",
+    "description": "Manage your conversations and private messages",
+    "no_conversations": "No conversations yet",
+    "no_messages": "No messages in this conversation",
+    "conversation_not_found": "Conversation not found",
+    "back_to_messages": "Back to messages",
+    "me": "Me",
+    "you": "You",
+    "participants": "{{count}} participant",
+    "participants_plural": "{{count}} participants",
+    "type_message": "Type your message...",
+    "today": "Today",
+    "yesterday": "Yesterday"
+  },
+  "settings": {
+    "nav": {
+      "root": "Settings",
+      "separator_general": "General",
+      "separator_access": "Access",
+      "separator_admin": "Administration",
+      "profile": "Public Profile",
+      "account": "Account",
+      "follow": "Follow",
+      "follow_overview": "Overview",
+      "follow_followers": "Followers",
+      "follow_followings": "Followings",
+      "security": "Security & Authentication",
+      "sessions": "Sessions",
+      "relays": "Relays",
+      "logs": "Logs",
+      "configs": "Configuration"
+    },
+    "profile": {
+      "title": "Public Profile",
+      "description": "Your display name is what others see when they visit your profile and in the app.",
+      "saved_success": "Profile saved successfully!",
+      "save_failed": "Failed to save profile",
+      "toc": {
+        "basic_info": "Basic Information",
+        "links": "Links",
+        "countries": "Countries",
+        "languages": "Languages",
+        "images": "Profile Images"
+      },
+      "display": {
+        "title": "Display",
+        "description": "Your display name is what others see when they visit your profile.",
+        "description_sub": "And in the Nameplate in the app.",
+        "placeholder": "Display name"
+      },
+      "pronoun": {
+        "title": "Pronoun",
+        "description": "Select or enter your preferred pronouns.",
+        "placeholder": "he/him, she/her, they/them..."
+      },
+      "bio": {
+        "title": "Bio",
+        "description": "Write a short bio to tell people about yourself.",
+        "placeholder": "Tell us about yourself...",
+        "characters": "characters"
+      },
+      "presence": {
+        "title": "Presence",
+        "description": "Set your current presence status visible to others.",
+        "status_placeholder": "Status message...",
+        "hidden_when_offline": "Hidden when offline",
+        "options": {
+          "oja": "Online - Join All",
+          "ojf": "Online - Join Friends",
+          "online": "Online",
+          "busy": "Busy",
+          "dnd": "Do Not Disturb",
+          "stream": "Streaming",
+          "offline": "Offline"
+        }
+      },
+      "links": {
+        "title": "Links",
+        "description": "Add links to your social profiles and websites.",
+        "add_link": "Add Link",
+        "no_links": "No links added",
+        "your_links": "Your links",
+        "untitled": "Untitled",
+        "label_field": "Label",
+        "label_placeholder": "e.g. Personal Blog",
+        "url_field": "URL",
+        "url_hint": "Enter a valid URL starting with https://",
+        "platform": "Platform",
+        "url": "URL",
+        "placeholder": "https://..."
+      },
+      "countries": {
+        "title": "Countries",
+        "description": "Add countries to your profile.",
+        "search_placeholder": "Search countries...",
+        "add_country": "Add Country",
+        "add": "Add",
+        "all_added": "All countries have been added",
+        "clear_search": "Clear search",
+        "load_error": "Failed to load countries",
+        "no_match": "No countries found",
+        "none": "No countries added",
+        "selected": "{{count}} selected"
+      },
+      "languages": {
+        "title": "Languages",
+        "description": "Add languages you speak to your profile.",
+        "search_placeholder": "Search languages...",
+        "add_language": "Add Language",
+        "add": "Add",
+        "all_added": "All languages have been added",
+        "load_error": "Failed to load languages",
+        "no_match": "No languages found",
+        "none": "No languages added",
+        "clear_search": "Clear search",
+        "selected": "{{count}} selected"
+      },
+      "images": {
+        "title": "Profile Images",
+        "profile_picture": "Profile Picture",
+        "banner_picture": "Banner Picture",
+        "thumbnail": "Profile Picture",
+        "banner": "Banner",
+        "upload_thumbnail": "Upload Picture",
+        "upload_banner": "Upload Banner",
+        "remove_thumbnail": "Remove Picture",
+        "remove_banner": "Remove Banner"
+      }
+    },
+    "security": {
+      "title": "Security & Authentication",
+      "description": "Manage your password and two-factor authentication settings to keep your account secure.",
+      "toc": {
+        "email": "Email Address",
+        "password": "Change Password",
+        "two_factor": "Two-Factor Authentication"
+      },
+      "email": {
+        "title": "Email Address",
+        "verified": "Verified",
+        "unverified": "Unverified",
+        "current_email": "Current email:",
+        "verified_description": "Your email address is verified. You can change it at any time.",
+        "unverified_description": "Please verify your email address to enable recovery and notifications.",
+        "no_email_description": "Add an email address for account recovery and notifications.",
+        "change_email": "Change Email",
+        "add_email": "Add Email",
+        "send_verification": "Send Verification",
+        "sending": "Sending...",
+        "remove_email": "Remove Email",
+        "removing": "Removing...",
+        "change_email_title": "Change Email Address",
+        "add_email_title": "Add Email Address",
+        "change_email_desc": "Enter your new email address. A verification link will be sent to confirm it.",
+        "add_email_desc": "Add an email address for account recovery and notifications.",
+        "new_email_placeholder": "new.email@example.com",
+        "confirm_email_placeholder": "Confirm new email",
+        "emails_mismatch": "Emails do not match",
+        "update_email": "Update Email",
+        "saving_email": "Saving...",
+        "updated_success": "Email updated successfully!",
+        "removed_success": "Email address removed successfully.",
+        "verification_sent": "Verification email sent! Please check your inbox.",
+        "failed_update": "Failed to update email",
+        "failed_remove": "Failed to remove email",
+        "failed_send_verification": "Failed to send verification email"
+      },
+      "password": {
+        "title": "Change Password",
+        "description": "Update your password to keep your account secure. Use a strong password with at least 8 characters.",
+        "change_button": "Change Password",
+        "dialog_title": "Change Password",
+        "dialog_desc": "Enter your current password and choose a new one. It must be at least 8 characters long.",
+        "current_password_placeholder": "Current password",
+        "new_password_placeholder": "New password",
+        "confirm_password_placeholder": "Confirm new password",
+        "changing": "Changing...",
+        "changed_success": "Password changed successfully!",
+        "mismatch": "New passwords do not match",
+        "too_short": "Password must be at least 8 characters long",
+        "failed": "Failed to change password"
+      },
+      "two_factor": {
+        "title": "Two-Factor Authentication",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "enabled_description": "Two-factor authentication is currently enabled. Your account is protected with an additional security layer.",
+        "disabled_description": "Add an extra layer of security to your account by requiring a code from your authenticator app.",
+        "disable": "Disable 2FA",
+        "disabling": "Disabling...",
+        "enable": "Enable 2FA",
+        "setting_up": "Setting up...",
+        "setup_title": "Set Up Two-Factor Authentication",
+        "setup_description": "Scan the QR code with your authenticator app, then enter the verification code.",
+        "manual_code": "Or enter this code manually:",
+        "verification_code": "Verification Code",
+        "enter_code": "Enter 6-digit code",
+        "verify_enable": "Verify & Enable",
+        "verifying": "Verifying...",
+        "enabled_success": "Two-factor authentication enabled successfully!",
+        "disabled_success": "Two-factor authentication disabled successfully!",
+        "failed_setup": "Failed to setup 2FA",
+        "failed_enable": "Failed to enable 2FA",
+        "failed_disable": "Failed to disable 2FA"
+      }
+    },
+    "account": {
+      "title": "Account",
+      "description": "Manage your account settings and preferences.",
+      "toc": {
+        "username": "Username",
+        "tags": "Tags"
+      },
+      "update_failed": "Failed to update account",
+      "updated_success": "Account updated successfully!",
+      "username": {
+        "title": "Username",
+        "description": "Your unique username used to identify your account.",
+        "placeholder": "username",
+        "change_button": "Change Username",
+        "changed_success": "Username changed successfully!"
+      },
+      "tags": {
+        "title": "Tags",
+        "description": "Tags help others find you.",
+        "no_tags": "No tags added",
+        "add_tag": "Add Tag",
+        "placeholder": "tag"
+      }
+    },
+    "follow": {
+      "title": "Follow Overview",
+      "description": "Manage your follow settings, privacy and notifications.",
+      "save_failed": "Failed to save settings",
+      "save_settings": "Save Settings",
+      "saved_success": "Settings saved successfully!",
+      "followers": {
+        "title": "Followers",
+        "description": "People who follow you. You can see who follows you here.",
+        "none": "No followers yet",
+        "count": "{{count}} follower",
+        "count_plural": "{{count}} followers"
+      },
+      "followings": {
+        "title": "Followings",
+        "description": "People you follow. Manage your following list here.",
+        "none": "No followings yet",
+        "count": "{{count}} following",
+        "count_plural": "{{count}} followings"
+      },
+      "load_more": "Load More",
+      "privacy": {
+        "title": "Privacy",
+        "description": "Control the visibility of your followers and following lists.",
+        "private_account": "Private Account",
+        "private_account_desc": "Only approved followers can see your content",
+        "hide_followers": "Hide Followers",
+        "hide_followers_desc": "Your followers count and list will be hidden from your profile",
+        "hide_following": "Hide Following",
+        "hide_following_desc": "Your following count and list will be hidden from your profile"
+      },
+      "policy": {
+        "title": "Follow Policy",
+        "description": "Control how follow requests are handled.",
+        "manual_approval": "Manual Approval",
+        "manual_approval_desc": "New followers must be approved manually before they can follow you",
+        "auto_reject": "Auto-Reject Follow Requests",
+        "auto_reject_desc": "Automatically reject all incoming follow requests"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "follow_requests": "Follow Requests",
+        "follow_requests_desc": "Get notified when someone sends you a follow request",
+        "new_followers": "New Followers",
+        "new_followers_desc": "Get notified when someone starts following you"
+      },
+      "requests": {
+        "title": "Follow Requests",
+        "manual_approval": "Manual Approval",
+        "manual_approval_desc": "Manually approve or deny follow requests"
+      }
+    },
+    "sessions": {
+      "title": "Sessions",
+      "description": "Manage your active sessions.",
+      "current_session": "Current session",
+      "other_sessions": "Other sessions",
+      "no_other_sessions": "No other sessions",
+      "no_other_sessions_found": "No other sessions found",
+      "devices": "Devices",
+      "user_agent": "User agent",
+      "last_seen": "Last seen",
+      "created": "Created",
+      "expires": "Expires",
+      "unknown_device": "Unknown device",
+      "more": "Load more",
+      "revoke": "Revoke",
+      "revoke_all": "Revoke All",
+      "revoking": "Revoking...",
+      "revoke_session": "Revoke Session",
+      "revoke_session_desc": "Are you sure you want to revoke this session? You will be signed out from this device.",
+      "revoke_all_title": "Revoke All Sessions",
+      "revoke_all_desc": "Are you sure you want to revoke all other sessions?",
+      "revoke_all_warning": "This will sign you out from all other devices.",
+      "revoke_all_logout": "Revoke and Logout"
+    },
+    "relays": {
+      "title": "Relays",
+      "description": "Manage relay servers.",
+      "load_failed": "Failed to load relays",
+      "no_relays": "No relays configured",
+      "offline": "Offline",
+      "running": "Running",
+      "not_found": "Relay not found",
+      "general_info": "General Information",
+      "addresses": "Addresses",
+      "stats": "Statistics",
+      "status": "Status",
+      "max_instances": "Max Capacity"
+    },
+    "logs": {
+      "title": "Server Logs",
+      "description": "View server logs.",
+      "loading": "Loading logs...",
+      "no_logs": "No logs available",
+      "no_match": "No logs match the selected levels"
+    },
+    "configs": {
+      "title": "Configuration",
+      "description": "Manage server configuration.",
+      "filter_placeholder": "Filter configuration...",
+      "risky": "Risky",
+      "save_failed": "Failed to save configuration"
+    },
+    "action_button": {
+      "save": "Save",
+      "saving": "Saving...",
+      "refresh": "Refresh",
+      "refreshing": "Refreshing...",
+      "stop": "Stop",
+      "stopping": "Stopping...",
+      "restart": "Restart",
+      "restarting": "Restarting..."
+    }
+  },
+  "user_profile": {
+    "presence": {
+      "oja": "Online - Join All",
+      "ojf": "Online - Join Friends",
+      "online": "Online",
+      "busy": "Busy",
+      "dnd": "Do Not Disturb",
+      "stream": "Streaming",
+      "offline": "Offline"
+    }
+  },
+  "language": {
+    "name": "English",
+    "choose": "Choose Language"
+  }
+}

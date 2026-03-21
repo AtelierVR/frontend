@@ -1,5 +1,7 @@
 import ImageUploader from '@/components/ui/image-uploader';
 import { CurrentUser } from '@/lib/api/types';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 
 interface ProfileImagesSectionProps {
   thumbnail: string | null | undefined;
@@ -24,10 +26,11 @@ export default function ProfileImagesSection({
   onBannerChange,
   onFlagChange,
 }: ProfileImagesSectionProps) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-6" id="profile-images">
       <div className="space-y-3">
-        <h2 className="text-lg font-semibold">Profile picture</h2>
+        <h2 className="text-lg font-semibold">{t('settings.profile.images.profile_picture')}</h2>
         <ImageUploader
           value={thumbnail}
           onChange={(val) => {
@@ -48,7 +51,7 @@ export default function ProfileImagesSection({
       </div>
       
       <div className="space-y-3">
-        <h2 className="text-lg font-semibold">Banner picture</h2>
+        <h2 className="text-lg font-semibold">{t('settings.profile.images.banner_picture')}</h2>
         <ImageUploader
           value={banner}
           onChange={(val) => {

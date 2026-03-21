@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
-import { AuthService, UserService, VerificationService, SessionService, FollowService, RelayService, MessageService } from './services';
+import { AuthService, UserService, VerificationService, SessionService, FollowService, RelayService, MessageService, TotpService } from './services';
 import { getSIDById, isError } from './utils';
 import { API_CONFIG } from './config';
 import type { ApiInterface } from './interface';
@@ -24,6 +24,7 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
     const followService = new FollowService();
     const relayService = new RelayService();
     const messageService = new MessageService();
+    const totpService = new TotpService();
 
     // User methods
     const fetchCurrentUser = async () => {
@@ -112,6 +113,10 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
     // Verification methods
     const sendVerificationCode = async (type: string, data: Record<string, any>) => {
         return await verificationService.sendVerificationCode(type, data);
+    }
+
+    const resendEmailVerification = async () => {
+        return await verificationService.resendEmailVerification();
     }
 
     // Session methods
@@ -327,6 +332,7 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
 
         // Verification methods
         sendVerificationCode,
+        resendEmailVerification,
 
         // Session methods
         fetchMySessions,
@@ -354,6 +360,11 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
         deleteRelay,
         stopRelay,
         restartRelay,
+
+        // TOTP / 2FA methods
+        setupTotp: () => totpService.setup(),
+        enableTotp: (secret, token) => totpService.enable(secret, token),
+        disableTotp: (factor_code, onVerificationRequired) => totpService.disable(factor_code, onVerificationRequired),
 
         fetchConversations: messageService.fetchConversations,
         fetchConversation: messageService.fetchConversation,

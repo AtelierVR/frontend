@@ -7,6 +7,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Icon } from '@iconify/react';
 import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/layouts/docs/page';
 import { useApi, isError } from '@/lib/api';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 import FollowProfile from '../FollowProfile';
 
 const FOLLOWING_PER_PAGE = 20;
@@ -18,6 +20,7 @@ interface Following {
 
 export default function FollowingsPage() {
   const Api = useApi();
+  const { t } = useTranslation();
   const [followings, setFollowings] = useState<Following[]>([]);
   const [total, setTotal] = useState(-1);
   const [loading, setLoading] = useState(false);
@@ -75,13 +78,13 @@ export default function FollowingsPage() {
             <Skeleton className="h-5 w-32" />
           ) : (
             <p className="text-sm text-fd-muted-foreground">
-              {total === 0 ? 'No followings yet' : `${total} following${total > 1 ? 's' : ''}`}
+              {total === 0 ? t('settings.follow.followings.none') : t('settings.follow.followings.count', { count: total })}
             </p>
           )}
         </div>
       </DocsTitle>
       <DocsDescription>
-        People you follow. Manage your following list here.
+        {t('settings.follow.followings.description')}
       </DocsDescription>
       <DocsBody>
         {error && (
@@ -125,7 +128,7 @@ export default function FollowingsPage() {
                 disabled={loading}
                 variant="outline"
               >
-                {loading ? 'Loading...' : 'Load More'}
+                {loading ? t('common.loading') : t('settings.follow.load_more')}
               </Button>
             </div>
           )}

@@ -10,8 +10,11 @@ import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/layo
 import { useApi, isError, RelayDetails, useSocket } from '@/lib/api';
 import { cn } from '@/lib/cn';
 import ActionButton from '../ActionButton';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 
 function RelayCard({ relay, onSelect }: { relay: RelayDetails; onSelect: () => void }) {
+  const { t } = useTranslation();
   const getStatusColor = () => {
     if (!relay.running) return 'bg-fd-muted';
     if (typeof relay.status === 'string') return 'bg-yellow-500';
@@ -19,9 +22,9 @@ function RelayCard({ relay, onSelect }: { relay: RelayDetails; onSelect: () => v
   };
 
   const getStatusText = () => {
-    if (!relay.running) return 'Offline';
+    if (!relay.running) return t('settings.relays.offline');
     if (typeof relay.status === 'string') return relay.status;
-    return 'Running';
+    return t('settings.relays.running');
   };
 
   const getInstanceCount = () => {
@@ -71,6 +74,7 @@ function RelayCard({ relay, onSelect }: { relay: RelayDetails; onSelect: () => v
 }
 
 export default function RelaysPage() {
+  const { t } = useTranslation();
   const Api = useApi();
   const router = useRouter();
   const [relays, setRelays] = useState<RelayDetails[]>([]);
@@ -95,7 +99,7 @@ export default function RelaysPage() {
 
       setRelays(res);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load relays');
+      setError(err instanceof Error ? err.message : t('settings.relays.load_failed'));
     } finally {
       setLoading(false);
     }
@@ -138,7 +142,7 @@ export default function RelaysPage() {
   return (
     <DocsPage toc={[]} footer={{ enabled: false }}>
       <DocsTitle className="flex items-center justify-between">
-        <span>Relays</span>
+        <span>{t('settings.relays.title')}</span>
 
         <ActionButton
           variant="refresh"
@@ -147,7 +151,7 @@ export default function RelaysPage() {
         />
       </DocsTitle>
       <DocsDescription>
-        Manage your relay servers. Relays handle multiplayer sessions and world hosting.
+        {t('settings.relays.description')}
       </DocsDescription>
       <DocsBody>
         {error && (
@@ -167,7 +171,7 @@ export default function RelaysPage() {
           ) : relays.length === 0 ? (
             <div className="text-center py-12 text-fd-muted-foreground">
               <Icon icon="material-symbols:dns-rounded" className="size-12 mx-auto mb-4 opacity-50" />
-              <p>No relays configured yet.</p>
+              <p>{t('settings.relays.no_relays')}</p>
             </div>
           ) : (
             relays.map((relay) => (

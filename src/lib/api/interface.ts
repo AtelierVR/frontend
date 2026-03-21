@@ -20,6 +20,7 @@ import type {
     MessagesResponse,
     CreateConversationData,
 } from './types';
+import type { TotpSetupResult, TotpEnableResult, TotpDisableResult } from './services/totp';
 
 type VerificationCallback = (error: ApiError, methods: VerificationMethod[]) => Promise<string | null>;
 
@@ -41,6 +42,7 @@ export interface ApiInterface {
 
     // Verification methods
     sendVerificationCode: (type: string, data: Record<string, any>) => Promise<SendVerificationCodeResponse | ApiError>;
+    resendEmailVerification: () => Promise<{ success: boolean } | ApiError>;
 
     // Session methods
     fetchMySessions: (limit?: number, offset?: number) => Promise<MultiResponse & { sessions: IRSession[] } | ApiError>;
@@ -76,6 +78,11 @@ export interface ApiInterface {
     sendMessage(conversationId: string, data: SendMessageData): Promise<Message | ApiError>;
     fetchMessages(conversationId: string, limit?: number, before?: string): Promise<MessagesResponse | ApiError>;
     markAsRead(conversationId: string): Promise<{ success: boolean } | ApiError>;
+
+    // TOTP / 2FA methods
+    setupTotp: () => Promise<TotpSetupResult | ApiError>;
+    enableTotp: (secret: string, token: string) => Promise<TotpEnableResult | ApiError>;
+    disableTotp: (factor_code?: string, onVerificationRequired?: VerificationCallback) => Promise<TotpDisableResult | ApiError>;
 
     // WebSocket methods
     onSocketEvent: (eventType: string, callback: (data: any) => void) => () => void;

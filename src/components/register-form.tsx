@@ -5,6 +5,8 @@ import { useApi, isError } from '@/lib/api';
 import type { ApiError } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -28,6 +30,7 @@ export function RegisterForm({
     className,
     ...props
 }: React.ComponentProps<'div'>) {
+    const { t } = useTranslation();
     const [username, setUsername] = useState('');
     const [display, setDisplay] = useState('');
     const [password, setPassword] = useState('');
@@ -42,7 +45,7 @@ export function RegisterForm({
         setError('');
 
         if (password !== confirmPassword) {
-            setError('Passwords do not match.');
+            setError(t('auth.register.password_mismatch'));
             return;
         }
 
@@ -61,7 +64,7 @@ export function RegisterForm({
                 router.push('/');
             }
         } catch (err) {
-            setError('An error occurred. Please try again.');
+            setError(t('auth.register.error_occurred'));
         } finally {
             setLoading(false);
         }
@@ -71,9 +74,9 @@ export function RegisterForm({
         <div className={cn('flex flex-col gap-6', className)} {...props}>
             <Card className="border-fd-border/50 shadow-lg">
                 <CardHeader className="text-center pb-10">
-                    <CardTitle className="text-xl font-semibold">Create an account</CardTitle>
+                    <CardTitle className="text-xl font-semibold">{t('auth.register.title')}</CardTitle>
                     <CardDescription className="text-fd-muted-foreground/80">
-                        Enter your information to create your account.
+                        {t('auth.register.description')}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="pb-6">
@@ -82,7 +85,7 @@ export function RegisterForm({
                             {error && (
                                 <Alert variant="destructive" className='mb-4'>
                                     <Icon icon="material-symbols:error-circle-rounded" />
-                                    <AlertTitle>Registration Failed</AlertTitle>
+                                    <AlertTitle>{t('auth.register.failed')}</AlertTitle>
                                     <AlertDescription>
                                         {error}
                                     </AlertDescription>
@@ -91,7 +94,7 @@ export function RegisterForm({
 
                             <Field>
                                 <FieldLabel htmlFor="username">
-                                    Username
+                                    {t('auth.register.username')}
                                     <span className="text-red-500">*</span>
                                 </FieldLabel>
                                 <Input
@@ -105,7 +108,7 @@ export function RegisterForm({
                             </Field>
 
                             <Field>
-                                <FieldLabel htmlFor="display">Display Name</FieldLabel>
+                                <FieldLabel htmlFor="display">{t('auth.register.display_name')}</FieldLabel>
                                 <Input
                                     id="display"
                                     type="text"
@@ -117,7 +120,7 @@ export function RegisterForm({
 
                             <Field>
                                 <FieldLabel htmlFor="password">
-                                    Password
+                                    {t('auth.register.password')}
                                     <span className="text-red-500">*</span>
                                 </FieldLabel>
                                 <Input
@@ -131,7 +134,7 @@ export function RegisterForm({
 
                             <Field>
                                 <FieldLabel htmlFor="confirmPassword">
-                                    Confirm Password
+                                    {t('auth.register.confirm_password')}
                                     <span className="text-red-500">*</span>
                                 </FieldLabel>
                                 <Input
@@ -150,12 +153,12 @@ export function RegisterForm({
                                     disabled={loading}
                                     className="w-full"
                                 >
-                                    {loading ? 'Creating account...' : 'Create account'}
+                                    {loading ? t('auth.register.creating_account') : t('auth.register.create_account')}
                                 </Button>
                                 <FieldDescription className="text-center">
-                                    Already have an account?{' '}
+                                    {t('auth.register.already_have_account')}{' '}
                                     <Link href="/login" className="text-fd-foreground underline-offset-4 hover:underline">
-                                        Sign in
+                                        {t('auth.register.sign_in')}
                                     </Link>
                                 </FieldDescription>
                             </Field>
@@ -165,13 +168,13 @@ export function RegisterForm({
             </Card>
 
             <FieldDescription className="text-center text-xs text-fd-muted-foreground/70">
-                By clicking continue, you agree to our{' '}
+                {t('auth.register.terms_text')}{' '}
                 <Link href="/terms" className="underline hover:text-fd-foreground">
-                    Terms of Service
+                    {t('auth.register.terms_of_service')}
                 </Link>{' '}
                 and{' '}
                 <Link href="/privacy" className="underline hover:text-fd-foreground">
-                    Privacy Policy
+                    {t('auth.register.privacy_policy')}
                 </Link>
                 .
             </FieldDescription>

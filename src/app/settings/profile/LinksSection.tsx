@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Icon } from '@iconify/react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 
 interface LinksSectionProps {
   links: UserLink[] | undefined;
@@ -24,6 +26,7 @@ export default function LinksSection({
   onLinksChange,
   onFlagChange,
 }: LinksSectionProps) {
+  const { t } = useTranslation();
   const currentLinks = links !== undefined ? links : (currentUser?.links || []);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
@@ -55,15 +58,15 @@ export default function LinksSection({
     <section id="links">
       <div className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold">Links</h2>
+          <h2 className="text-lg font-semibold">{t('settings.profile.links.title')}</h2>
           <p className="text-sm text-fd-muted-foreground">
-            Add links to your social media accounts, websites, or anything else you want to share.
+            {t('settings.profile.links.description')}
           </p>
         </div>
 
         {/* Current Links Section */}
         <div className="space-y-2">
-          <h3 className="text-sm font-medium">Your Links</h3>
+          <h3 className="text-sm font-medium">{t('settings.profile.links.your_links')}</h3>
           <div className="space-y-2">
             {currentLinks.length > 0 ? (
               currentLinks.map((link, index) => (
@@ -72,19 +75,19 @@ export default function LinksSection({
                     <div className="flex flex-col gap-2 p-3 rounded-lg border bg-fd-muted/50 transition-colors">
                       <div className="flex items-center gap-2">
                         <label className="text-xs font-medium text-fd-muted-foreground w-12 flex-shrink-0">
-                          Label:
+                          {t('settings.profile.links.label_field')}:
                         </label>
                         <Input
                           type="text"
                           value={link.label}
                           onChange={(e) => handleChange(index, 'label', e.target.value)}
-                          placeholder="e.g., Website, GitHub, Twitter..."
+                          placeholder={t('settings.profile.links.label_placeholder')}
                           className="flex-1"
                         />
                       </div>
                       <div className="flex items-center gap-2">
                         <label className="text-xs font-medium text-fd-muted-foreground w-12 flex-shrink-0">
-                          URL:
+                          {t('settings.profile.links.url_field')}:
                         </label>
                         <Input
                           type="url"
@@ -100,7 +103,7 @@ export default function LinksSection({
                           size="sm"
                           onClick={() => setEditingIndex(null)}
                         >
-                          Done
+                          {t('common.done')}
                         </Button>
                         <Button
                           variant="ghost"
@@ -117,7 +120,7 @@ export default function LinksSection({
                       <Icon icon="material-symbols:link-rounded" className="size-4 text-fd-muted-foreground flex-shrink-0" />
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-medium truncate">
-                          {link.label || 'Untitled'}
+                          {link.label || t('settings.profile.links.untitled')}
                         </div>
                         <div className="text-xs text-fd-muted-foreground truncate">
                           {link.value}
@@ -136,7 +139,7 @@ export default function LinksSection({
                 </div>
               ))
             ) : (
-              <p className="text-sm text-fd-muted-foreground">No links added</p>
+              <p className="text-sm text-fd-muted-foreground">{t('settings.profile.links.no_links')}</p>
             )}
           </div>
         </div>
@@ -150,12 +153,12 @@ export default function LinksSection({
             className="gap-2"
           >
             <Icon icon="material-symbols:add-rounded" className="h-4 w-4" />
-            Add Link
+            {t('settings.profile.links.add_link')}
           </Button>
         </div>
 
         <p className="text-xs text-fd-muted-foreground">
-          Make sure to include the full URL with the protocol (http:// or https://).
+          {t('settings.profile.links.url_hint')}
         </p>
       </div>
     </section>

@@ -89,7 +89,7 @@ export interface UpdateUser {
     display?: string;
     display_name?: string;
     bio?: string;
-    email?: string;
+    email?: string | null;
     pronoun?: string;
     presence?: PresenceStatus;
     presence_status?: string | null;

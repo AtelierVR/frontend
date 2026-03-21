@@ -8,26 +8,20 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@iconify/react';
 import { format, isToday, isYesterday } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 import { ConversationHeader, MessageBubble, MessageGroup, MessageInput, MessageListSkeleton } from '../components';
 
 function formatTime(timestamp: string): string {
   const date = new Date(timestamp);
-  return format(date, 'HH:mm', { locale: fr });
-}
-
-function formatDate(timestamp: string): string {
-  const date = new Date(timestamp);
-  
-  if (isToday(date)) return "Aujourd'hui";
-  if (isYesterday(date)) return 'Hier';
-  return format(date, 'd MMMM yyyy', { locale: fr });
+  return format(date, 'HH:mm');
 }
 
 export default function ConversationPage() {
   const params = useParams();
   const router = useRouter();
   const conversationId = params.id as string;
+  const { t } = useTranslation();
   const Api = useApi();
   const { conversations, users } = useConversations();
   
@@ -59,18 +53,18 @@ export default function ConversationPage() {
   const conversationData = useMemo(() => {
     if (!conversation) return null;
     
-    const otherMembers = conversation.members.filter(m => m.user_ref !== currentUserIid);
+    const otherMembers = conversation.members.filter(m => m.reference !== currentUserIid);
     let title = conversation.title?.trim() || '';
-    let avatar = conversation.avatar;
+    let avatar = conversation.thumbnail;
     
     if (!title && otherMembers.length === 1) {
-      const user = users.get(otherMembers[0].user_ref);
-      title = user?.display || user?.username || otherMembers[0].user_ref;
+      const user = users.get(otherMembers[0].reference);
+      title = user?.display || user?.username || otherMembers[0].reference;
       avatar ??= user?.thumbnail || null;
     } else if (!title && otherMembers.length > 1) {
       title = `${otherMembers.length} participants`;
     } else if (!title) {
-      title = 'Moi';
+      title = t('messages.me');
     }
     
     return { title, avatar, isGroup: otherMembers.length > 1 };
@@ -96,7 +90,7 @@ export default function ConversationPage() {
     } else if (isNewMessage) {
       // Nouveau message : scroll si c'est le mien ou si j'étais en bas
       const lastMessage = messages[messages.length - 1];
-      const isMyMessage = lastMessage?.sender_ref === currentUserIid;
+      const isMyMessage = lastMessage?.author === currentUserIid;
       
       if (isMyMessage || wasAtBottom) {
         setTimeout(() => scrollToBottom(), 50);
@@ -171,10 +165,9 @@ export default function ConversationPage() {
     const tempMessage: Message = {
       id: tempId,
       conversation_id: conversationId,
-      sender_ref: currentUserIid || '',
+      author: currentUserIid || '',
       content,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      created_at: Date.now(),
     };
 
     // Ajouter le message en pending
@@ -226,6 +219,13 @@ export default function ConversationPage() {
     }
   };
 
+  const formatDate = (timestamp: number | string): string => {
+    const date = new Date(timestamp);
+    if (isToday(date)) return t('messages.today');
+    if (isYesterday(date)) return t('messages.yesterday');
+    return format(date, 'd MMMM yyyy');
+  };
+
   const groupMessagesByDate = () => {
     const grouped: { [key: string]: Message[] } = {};
     
@@ -245,7 +245,7 @@ export default function ConversationPage() {
 
   const shouldGroupMessages = (msg1: Message, msg2: Message) => {
     // Même expéditeur
-    if (msg1.sender_ref !== msg2.sender_ref) return false;
+    if (msg1.author !== msg2.author) return false;
     
     // Différence de temps <= 5 minutes
     const time1 = new Date(msg1.created_at).getTime();
@@ -286,7 +286,7 @@ export default function ConversationPage() {
   };
 
   const getUserName = (userRef: string) => {
-    if (userRef === currentUserIid) return 'Vous';
+    if (userRef === currentUserIid) return t('messages.you');
     const user = users.get(userRef);
     return user?.display || user?.username || userRef.split('@')[0];
   };
@@ -308,10 +308,10 @@ export default function ConversationPage() {
         <DocsBody>
           <div className="flex flex-col items-center justify-center py-12">
             <Icon icon="material-symbols:error-outline-rounded" className="size-12 text-fd-muted-foreground mb-4" />
-            <p className="text-fd-muted-foreground mb-4">Conversation introuvable</p>
+            <p className="text-fd-muted-foreground mb-4">{t('messages.conversation_not_found')}</p>
             <Button onClick={() => router.push('/messages')} variant="outline">
               <Icon icon="material-symbols:arrow-back-rounded" className="size-4 mr-2" />
-              Retour aux messages
+              {t('messages.back_to_messages')}
             </Button>
           </div>
         </DocsBody>
@@ -325,11 +325,11 @@ export default function ConversationPage() {
         <div className="relative flex flex-col">
           {/* Header - Sticky */}
           <ConversationHeader
-            title={conversationData?.title || 'Chargement...'}
+            title={conversationData?.title || t('common.loading')}
             avatar={conversationData?.avatar}
             isGroup={conversationData?.isGroup || false}
             participantCount={conversation?.members.length || 0}
-            initials={getUserInitials(conversation?.members[0]?.user_ref || '')}
+            initials={getUserInitials(conversation?.members[0]?.reference || '')}
             onBack={() => router.push('/messages')}
           />
 
@@ -348,7 +348,7 @@ export default function ConversationPage() {
               ) : messages.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-fd-muted-foreground">
                   <Icon icon="material-symbols:chat-bubble-outline-rounded" className="size-12 mb-4 opacity-50" />
-                  <p>Aucun message dans cette conversation</p>
+                  <p>{t('messages.no_messages')}</p>
                 </div>
               ) : (
                 Object.entries(groupMessagesByDate()).map(([date, msgs]) => {
@@ -369,7 +369,7 @@ export default function ConversationPage() {
                           <MessageGroup
                             key={`group-${date}-${groupIndex}`}
                             messages={group}
-                            isOwn={group[0]?.sender_ref === currentUserIid}
+                            isOwn={group[0]?.author === currentUserIid}
                             users={users}
                             currentUserAvatar={Api.currentUser?.thumbnail}
                             currentUserDisplay={Api.currentUser?.display || Api.currentUser?.username}

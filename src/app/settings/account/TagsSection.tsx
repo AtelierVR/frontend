@@ -3,6 +3,8 @@ import { CurrentUser } from '@/lib/api/types';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@iconify/react';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 import { TAG_EDIT_REGEX } from './page';
 
 interface TagsSectionProps {
@@ -22,6 +24,7 @@ export default function TagsSection({
   onTagsChange,
   onFlagChange,
 }: TagsSectionProps) {
+  const { t } = useTranslation();
   const currentTags = tags !== undefined ? tags : (currentUser?.tags || []);
 
   const handleAddTag = () => {
@@ -53,13 +56,9 @@ export default function TagsSection({
   return (
     <section id="tags">
       <div className="space-y-2">
-        <h2 className="text-lg font-semibold">Tags</h2>
+        <h2 className="text-lg font-semibold">{t('settings.account.tags.title')}</h2>
         <p className="text-sm text-fd-muted-foreground">
-          Tags help categorize your profile.
-          <br />
-          Use the format snake case (like <code className="px-1 py-0.5 rounded bg-fd-muted text-xs">usr:tag_name</code>) to create custom tags.
-          <br />
-          System tags (without <code className="px-1 py-0.5 rounded bg-fd-muted">usr:</code> prefix) cannot be edited.
+          {t('settings.account.tags.description')}
         </p>
         <p className="text-xs text-fd-muted-foreground pt-1">
         </p>
@@ -67,7 +66,7 @@ export default function TagsSection({
         <div className="space-y-2 pt-2">
           {(!currentTags || currentTags.length === 0) && (
             <div className="text-sm text-fd-muted-foreground text-center py-4 border border-dashed border-fd-border rounded-lg">
-              No tags
+              {t('settings.account.tags.no_tags')}
             </div>
           )}
 

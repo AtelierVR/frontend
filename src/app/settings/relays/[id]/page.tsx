@@ -7,6 +7,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Icon } from '@iconify/react';
 import { useApi, isError, RelayDetails } from '@/lib/api';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 
 export default function RelayInfoPage() {
   const params = useParams();
@@ -17,6 +19,7 @@ export default function RelayInfoPage() {
   const [refreshing, setRefreshing] = useState(false);
 
   const relayId = Number(params.id);
+  const { t } = useTranslation();
 
   const loadRelay = async () => {
     if (!Api || !relayId) return;
@@ -63,7 +66,7 @@ export default function RelayInfoPage() {
         <>
           {/* General Information */}
           <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Informations générales</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('settings.relays.general_info')}</h3>
             <div className="space-y-3">
               <div className="flex items-center justify-between py-2 border-b border-fd-border">
                 <span className="text-sm text-fd-muted-foreground">ID</span>
@@ -74,10 +77,10 @@ export default function RelayInfoPage() {
                 <span className="font-medium">{relay.runtime}</span>
               </div>
               <div className="flex items-center justify-between py-2 border-b border-fd-border">
-                <span className="text-sm text-fd-muted-foreground">État</span>
+                <span className="text-sm text-fd-muted-foreground">{t('settings.relays.status')}</span>
                 <span className="font-medium flex items-center gap-2">
                   <div className={`size-2 rounded-full ${relay.running ? 'bg-green-500' : 'bg-red-500'}`} />
-                  {relay.running ? 'En ligne' : 'Hors ligne'}
+                  {relay.running ? t('settings.relays.running') : t('settings.relays.offline')}
                 </span>
               </div>
             </div>
@@ -85,7 +88,7 @@ export default function RelayInfoPage() {
 
           {/* Address Information */}
           <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Adresses</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('settings.relays.addresses')}</h3>
             <div className="space-y-3">
               {Object.entries(relay.address).map(([protocol, address]) => (
                 <div key={protocol} className="flex items-center justify-between py-2 border-b border-fd-border last:border-0">
@@ -99,7 +102,7 @@ export default function RelayInfoPage() {
           {/* Stats Summary */}
           {status && (
             <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Statistiques</h3>
+              <h3 className="text-lg font-semibold mb-4">{t('settings.relays.stats')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center gap-3">
                   <div className="p-3 rounded-lg bg-blue-500/10">
@@ -116,7 +119,7 @@ export default function RelayInfoPage() {
                   </div>
                   <div>
                     <div className="text-2xl font-bold">{status.max_instances}</div>
-                    <div className="text-sm text-fd-muted-foreground">Capacité max</div>
+                    <div className="text-sm text-fd-muted-foreground">{t('settings.relays.max_instances')}</div>
                   </div>
                 </div>
               </div>
@@ -128,7 +131,7 @@ export default function RelayInfoPage() {
       {!relay && (
         <div className="flex flex-col items-center justify-center py-12 text-fd-muted-foreground">
           <Icon icon="material-symbols:dns-rounded" className="size-12 mb-4 opacity-50" />
-          <p>Relay introuvable</p>
+          <p>{t('settings.relays.not_found')}</p>
         </div>
       )}
     </div>

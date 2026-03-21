@@ -2,11 +2,10 @@ import { type Message, type User } from '@/lib/api';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/cn';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 
-function formatTime(timestamp: string): string {
+function formatTime(timestamp: number | string): string {
     const date = new Date(timestamp);
-    return format(date, 'HH:mm', { locale: fr });
+    return format(date, 'HH:mm');
 }
 
 interface MessageBubbleProps {
@@ -46,9 +45,9 @@ export function MessageBubble({
                     {showAvatar ? (
                         <>
                             <Avatar className="size-8">
-                                <AvatarImage src={getUserAvatar(message.sender_ref)} alt={getUserName(message.sender_ref)} />
+                                <AvatarImage src={getUserAvatar(message.author)} alt={getUserName(message.author)} />
                                 <AvatarFallback className="text-xs bg-fd-accent">
-                                    {getUserInitials(message.sender_ref)}
+                                    {getUserInitials(message.author)}
                                 </AvatarFallback>
                             </Avatar>
                             <div className="text-[10px] text-fd-muted-foreground flex items-center gap-0.5">
@@ -70,7 +69,7 @@ export function MessageBubble({
             <div className={cn("max-w-[70%] space-y-0.5", isOwn && "items-end")}>
                 {showName && (
                     <div className="text-xs text-fd-muted-foreground px-2.5">
-                        {getUserName(message.sender_ref)}
+                        {getUserName(message.author)}
                     </div>
                 )}
                 <div
@@ -104,7 +103,7 @@ export function MessageBubble({
                                     alt={currentUserDisplay}
                                 />
                                 <AvatarFallback className="text-xs bg-fd-primary/10">
-                                    {getUserInitials(message.sender_ref)}
+                                    {getUserInitials(message.author)}
                                 </AvatarFallback>
                             </Avatar>
                             <div className="text-[10px] text-fd-muted-foreground flex items-center gap-0.5">

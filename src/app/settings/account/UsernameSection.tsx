@@ -1,5 +1,7 @@
 import { InputGroup, InputGroupInput, InputGroupAddon, InputGroupText } from '@/components/ui/input-group';
 import { CurrentUser } from '@/lib/api/types';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 
 interface UsernameSectionProps {
   username: string | undefined;
@@ -18,16 +20,15 @@ export default function UsernameSection({
   onUsernameChange,
   onFlagChange,
 }: UsernameSectionProps) {
+  const { t } = useTranslation();
   const currentServer = currentUser?.server || 'unknown';
 
   return (
     <section id="username">
       <div className="space-y-2">
-        <h2 className="text-lg font-semibold">Username</h2>
+        <h2 className="text-lg font-semibold">{t('settings.account.username.title')}</h2>
         <p className="text-sm text-fd-muted-foreground">
-          Your username is your unique identifier on the platform.
-          <br />
-          It is used to log in and is visible to others.
+          {t('settings.account.username.description')}
         </p>
         <InputGroup>
           <InputGroupInput
@@ -37,7 +38,7 @@ export default function UsernameSection({
               onUsernameChange(e.target.value);
               onFlagChange(usernameFlag | canSaveFlag);
             }}
-            placeholder={currentUser?.username || "Username"}
+            placeholder={currentUser?.username || t('settings.account.username.placeholder')}
           />
           <InputGroupAddon align="inline-end">
             <InputGroupText>@{currentServer}</InputGroupText>

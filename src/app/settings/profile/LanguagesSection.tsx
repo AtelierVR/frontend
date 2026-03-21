@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { X, Plus, Search, XCircle } from 'lucide-react';
 import { useLanguages } from '@/lib/hooks/useLanguages';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 import {
   languageCodeToTag,
   tagToLanguageCode,
@@ -28,6 +30,7 @@ export default function LanguagesSection({
   onTagsChange,
   onFlagChange,
 }: LanguagesSectionProps) {
+  const { t } = useTranslation();
   const { languages, loading, error } = useLanguages();
   const allTags = tags !== undefined ? tags : (currentUser?.tags || []);
   const selectedLanguages = extractLanguageTags(allTags);
@@ -65,9 +68,9 @@ export default function LanguagesSection({
     return (
       <section id="languages">
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold">Languages</h2>
+          <h2 className="text-lg font-semibold">{t('settings.profile.languages.title')}</h2>
           <p className="text-sm text-fd-destructive">
-            Failed to load languages. Please try again later.
+            {t('settings.profile.languages.load_error')}
           </p>
         </div>
       </section>
@@ -78,15 +81,15 @@ export default function LanguagesSection({
     <section id="languages">
       <div className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold">Languages</h2>
+          <h2 className="text-lg font-semibold">{t('settings.profile.languages.title')}</h2>
           <p className="text-sm text-fd-muted-foreground">
-            Select the languages you speak or are learning.
+            {t('settings.profile.languages.description')}
           </p>
         </div>
 
         {/* Selected Languages Section */}
         <div className="space-y-2">
-          <h3 className="text-sm font-medium">Selected Languages</h3>
+          <h3 className="text-sm font-medium">{t('settings.profile.languages.selected', { count: selectedLanguages.length })}</h3>
           <div className="flex flex-wrap gap-2">
             {loading ? (
               [1, 2, 3].map((i) => (
@@ -117,7 +120,7 @@ export default function LanguagesSection({
                 );
               })
             ) : (
-              <p className="text-sm text-fd-muted-foreground">No languages selected</p>
+              <p className="text-sm text-fd-muted-foreground">{t('settings.profile.languages.none')}</p>
             )}
           </div>
         </div>
@@ -126,13 +129,13 @@ export default function LanguagesSection({
         {!loading && (
           <div className="space-y-2">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-              <h3 className="text-sm font-medium">Add Languages</h3>
+              <h3 className="text-sm font-medium">{t('settings.profile.languages.add')}</h3>
               <div className="relative w-full sm:w-64">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-fd-muted-foreground" />
                 <Input
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search languages..."
+                  placeholder={t('settings.profile.languages.search_placeholder')}
                   className="pl-9 pr-9"
                 />
                 {searchQuery && (
@@ -170,7 +173,7 @@ export default function LanguagesSection({
               ) : searchQuery ? (
                 <div className="text-center py-4">
                   <p className="text-sm text-fd-muted-foreground">
-                    No languages match your search
+                    {t('settings.profile.languages.no_match')}
                   </p>
                   <Button
                     onClick={() => setSearchQuery('')}
@@ -178,12 +181,12 @@ export default function LanguagesSection({
                     size="sm"
                     className="mt-2"
                   >
-                    Clear search
+                    {t('settings.profile.languages.clear_search')}
                   </Button>
                 </div>
               ) : (
                 <p className="text-sm text-fd-muted-foreground py-2">
-                  All languages have been added
+                  {t('settings.profile.languages.all_added')}
                 </p>
               )}
             </div>
@@ -194,10 +197,7 @@ export default function LanguagesSection({
         {loading && (
           <div className="space-y-2">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-              <h3 className="text-sm font-medium">Add Languages</h3>
-              <div className="relative w-full sm:w-64">
-                <div className="h-9 bg-fd-muted animate-pulse rounded-md" />
-              </div>
+              <h3 className="text-sm font-medium">{t('settings.profile.languages.add')}</h3>
             </div>
             <div className="h-48 overflow-y-auto pr-1">
               <div className="flex flex-wrap gap-2">

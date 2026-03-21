@@ -1,6 +1,8 @@
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@iconify/react';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 
 interface ConversationHeaderProps {
   title: string;
@@ -19,6 +21,7 @@ export function ConversationHeader({
   initials,
   onBack
 }: ConversationHeaderProps) {
+  const { t } = useTranslation();
   return (
     <div className="sticky top-0 z-10 bg-fd-background flex items-center gap-3 py-4 border-b border-fd-border">
       <Button 
@@ -44,7 +47,7 @@ export function ConversationHeader({
       <div className="flex-1 min-w-0">
         <div className="font-semibold truncate">{title}</div>
         <div className="text-xs text-fd-muted-foreground">
-          {participantCount} participant{participantCount > 1 ? 's' : ''}
+          {t('messages.participants', { count: participantCount })}
         </div>
       </div>
     </div>

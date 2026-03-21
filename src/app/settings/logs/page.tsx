@@ -6,6 +6,8 @@ import { useApi } from '@/lib/api';
 import { fetchApi, isResponseError } from '@/lib/api/utils';
 import { useRouter } from 'next/navigation';
 import { useSocket } from '@/lib/api/hooks/useSocket';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 import { LogsViewer } from '../LogsViewer';
 
 interface LogEntry {
@@ -20,6 +22,7 @@ interface LogsResponse {
 }
 
 export default function LogsPage() {
+  const { t } = useTranslation();
   const Api = useApi();
   const router = useRouter();
   const [logs, setLogs] = useState<LogEntry[]>([]);
@@ -124,9 +127,9 @@ export default function LogsPage() {
 
   return (
     <DocsPage toc={[]} footer={{ enabled: false }}>
-      <DocsTitle>Server Logs</DocsTitle>
+      <DocsTitle>{t('settings.logs.title')}</DocsTitle>
       <DocsDescription>
-        View real-time server logs. Requires administrator access.
+        {t('settings.logs.description')}
       </DocsDescription>
       <DocsBody>
         <LogsViewer 

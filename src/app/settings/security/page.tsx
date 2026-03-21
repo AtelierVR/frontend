@@ -4,12 +4,15 @@ import { useState } from 'react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/layouts/docs/page';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 import { useApi } from '@/lib/api';
 import PasswordChangeSection from './PasswordChangeSection';
 import TwoFactorAuthSection from './TwoFactorAuthSection';
-import EmailSection from '../account/EmailSection';
+import EmailSection from './EmailSection';
 
 export default function PasswordPage() {
+  const { t } = useTranslation();
   const Api = useApi();
   const [error, setError] = useState<string>();
   const [successMessage, setSuccessMessage] = useState<string>();
@@ -21,16 +24,16 @@ export default function PasswordPage() {
   const [canSaveFlag] = useState(0);
 
   const toc = [
-    { title: 'Email Address', url: '#email', depth: 2 },
-    { title: 'Change Password', url: '#password', depth: 2 },
-    { title: 'Two-Factor Authentication', url: '#2fa', depth: 2 },
+    { title: t('settings.security.toc.email'), url: '#email', depth: 2 },
+    { title: t('settings.security.toc.password'), url: '#password', depth: 2 },
+    { title: t('settings.security.toc.two_factor'), url: '#2fa', depth: 2 },
   ];
 
   return (
     <DocsPage toc={toc} footer={{ enabled: false }}>
-      <DocsTitle>Security & Authentication</DocsTitle>
+      <DocsTitle>{t('settings.security.title')}</DocsTitle>
       <DocsDescription>
-        Manage your password and two-factor authentication settings to keep your account secure.
+        {t('settings.security.description')}
       </DocsDescription>
       <DocsBody>
         {/* Messages */}

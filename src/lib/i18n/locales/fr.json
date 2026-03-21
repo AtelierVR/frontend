@@ -1,0 +1,494 @@
+{
+  "common": {
+    "save": "Sauvegarder",
+    "saving": "Sauvegarde...",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "remove": "Retirer",
+    "refresh": "Actualiser",
+    "refreshing": "Actualisation...",
+    "stop": "Arrêter",
+    "stopping": "Arrêt...",
+    "restart": "Redémarrer",
+    "restarting": "Redémarrage...",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "search": "Rechercher",
+    "no_results": "Aucun résultat",
+    "go_home": "Accueil",
+    "try_again": "Réessayer",
+    "verify": "Vérifier",
+    "verifying": "Vérification...",
+    "send": "Envoyer",
+    "sending": "Envoi...",
+    "update": "Mettre à jour",
+    "updating": "Mise à jour...",
+    "enabled": "Activé",
+    "disabled": "Désactivé",
+    "verified": "Vérifié",
+    "unverified": "Non vérifié",
+    "coming_soon": "Bientôt disponible",
+    "done": "Terminé"
+  },
+  "nav": {
+    "guide": "Guide",
+    "getting_started": "Démarrage",
+    "getting_started_description": "Apprendre à utiliser la plateforme"
+  },
+  "auth": {
+    "login": {
+      "title": "Bon retour",
+      "description": "Connectez-vous à votre compte pour continuer.",
+      "failed": "Échec de la connexion",
+      "username_email": "Nom d'utilisateur / Email",
+      "password": "Mot de passe",
+      "forgot_password": "Mot de passe oublié ?",
+      "signing_in": "Connexion...",
+      "sign_in": "Se connecter",
+      "no_account": "Pas encore de compte ?",
+      "sign_up": "S'inscrire",
+      "terms_text": "En cliquant sur continuer, vous acceptez nos",
+      "terms_of_service": "Conditions d'utilisation",
+      "privacy_policy": "Politique de confidentialité",
+      "error_occurred": "Une erreur s'est produite. Veuillez réessayer."
+    },
+    "register": {
+      "title": "Créer un compte",
+      "description": "Entrez vos informations pour créer votre compte.",
+      "failed": "Échec de l'inscription",
+      "username": "Nom d'utilisateur",
+      "display_name": "Nom affiché",
+      "password": "Mot de passe",
+      "confirm_password": "Confirmer le mot de passe",
+      "creating_account": "Création du compte...",
+      "create_account": "Créer le compte",
+      "already_have_account": "Déjà un compte ?",
+      "sign_in": "Se connecter",
+      "password_mismatch": "Les mots de passe ne correspondent pas.",
+      "error_occurred": "Une erreur s'est produite. Veuillez réessayer.",
+      "terms_text": "En cliquant sur continuer, vous acceptez nos",
+      "terms_of_service": "Conditions d'utilisation",
+      "privacy_policy": "Politique de confidentialité"
+    },
+    "verification": {
+      "title": "Vérification en deux étapes",
+      "choose_method": "Choisir la méthode de vérification",
+      "select_method": "Sélectionner une méthode",
+      "verification_code": "Code de vérification",
+      "resend_code": "Renvoyer le code",
+      "resend_cooldown": "Renvoyer ({{seconds}}s)",
+      "verify": "Vérifier",
+      "verifying": "Vérification...",
+      "having_trouble": "Des difficultés pour vous connecter ?",
+      "contact_support": "Contacter le support",
+      "failed": "Échec de la vérification",
+      "enter_code_for": "Entrez le code de vérification pour {{username}}.",
+      "failed_to_send": "Échec de l'envoi du code de vérification"
+    }
+  },
+  "home": {
+    "node_online": "Nœud en ligne",
+    "node_offline": "Nœud hors ligne",
+    "join_this_node": "Rejoindre ce nœud",
+    "sign_in": "Se connecter",
+    "no_active_instances": "Aucune instance active pour le moment",
+    "instances_live": "{{count}} instance en direct",
+    "instances_live_plural": "{{count}} instances en direct",
+    "features": {
+      "vr_native": "VR Natif",
+      "vr_native_desc": "Conçu pour les expériences immersives en casque",
+      "federated": "Fédéré",
+      "federated_desc": "Connectez-vous à plusieurs nœuds",
+      "social": "Social",
+      "social_desc": "Profils, abonnements et présences",
+      "open_source": "Open source",
+      "open_source_desc": "Auto-hébergé, vos données, vos règles"
+    },
+    "carousel": {
+      "previous": "Précédent",
+      "next": "Suivant",
+      "world": "Monde {{number}}"
+    }
+  },
+  "error": {
+    "title": "Oups ! Quelque chose s'est mal passé",
+    "description": "Nous avons rencontré une erreur inattendue lors du traitement de votre demande. Ne vous inquiétez pas, vous pouvez recharger la page ou retourner à l'accueil.",
+    "reference": "Référence d'erreur :",
+    "try_again": "Réessayer",
+    "go_home": "Accueil",
+    "copy_error": "Copier les détails de l'erreur"
+  },
+  "not_found": {
+    "title": "Page introuvable",
+    "description": "La page que vous recherchez n'existe pas ou a été déplacée.",
+    "go_home": "Accueil"
+  },
+  "messages": {
+    "title": "Messages",
+    "description": "Gérez vos conversations et messages privés",
+    "no_conversations": "Aucune conversation pour le moment",
+    "no_messages": "Aucun message dans cette conversation",
+    "conversation_not_found": "Conversation introuvable",
+    "back_to_messages": "Retour aux messages",
+    "me": "Moi",
+    "you": "Vous",
+    "participants": "{{count}} participant",
+    "participants_plural": "{{count}} participants",
+    "type_message": "Tapez votre message...",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier"
+  },
+  "settings": {
+    "nav": {
+      "root": "Paramètres",
+      "separator_general": "Général",
+      "separator_access": "Accès",
+      "separator_admin": "Administration",
+      "profile": "Profil public",
+      "account": "Compte",
+      "follow": "Abonnements",
+      "follow_overview": "Vue d'ensemble",
+      "follow_followers": "Abonnés",
+      "follow_followings": "Abonnements",
+      "security": "Sécurité & Authentification",
+      "sessions": "Sessions",
+      "relays": "Relais",
+      "logs": "Journaux",
+      "configs": "Configuration"
+    },
+    "profile": {
+      "description": "Votre nom affiché est ce que les autres voient quand ils visitent votre profil et dans l'application.",
+      "saved_success": "Profil sauvegardé avec succès !",
+      "save_failed": "Échec de la sauvegarde du profil",
+      "toc": {
+        "basic_info": "Informations de base",
+        "links": "Liens",
+        "countries": "Pays",
+        "languages": "Langues",
+        "images": "Images de profil"
+      },
+      "display": {
+        "title": "Affichage",
+        "description": "Votre nom affiché est ce que les autres voient quand ils visitent votre profil.",
+        "description_sub": "Et dans la plaque de nom dans l'application.",
+        "placeholder": "Nom affiché"
+      },
+      "pronoun": {
+        "title": "Pronom",
+        "description": "Sélectionnez ou entrez vos pronoms préférés.",
+        "placeholder": "il/lui, elle, ils/elles..."
+      },
+      "bio": {
+        "title": "Bio",
+        "description": "Rédigez une courte bio pour vous présenter.",
+        "placeholder": "Parlez-nous de vous...",
+        "characters": "caractères"
+      },
+      "presence": {
+        "title": "Présence",
+        "description": "Définissez votre statut de présence visible par les autres.",
+        "status_placeholder": "Message de statut...",
+        "hidden_when_offline": "Masqué hors ligne",
+        "options": {
+          "oja": "En ligne - Rejoindre tous",
+          "ojf": "En ligne - Rejoindre les amis",
+          "online": "En ligne",
+          "busy": "Occupé",
+          "dnd": "Ne pas déranger",
+          "stream": "En stream",
+          "offline": "Hors ligne"
+        }
+      },
+      "links": {
+        "title": "Liens",
+        "description": "Ajoutez des liens vers vos profils sociaux et sites web.",
+        "add_link": "Ajouter un lien",
+        "no_links": "Aucun lien ajouté",
+        "your_links": "Vos liens",
+        "untitled": "Sans titre",
+        "label_field": "Libellé",
+        "label_placeholder": "ex. Blog personnel",
+        "url_field": "URL",
+        "url_hint": "Entrez une URL valide commençant par https://",
+        "platform": "Plateforme",
+        "url": "URL",
+        "placeholder": "https://..."
+      },
+      "countries": {
+        "title": "Pays",
+        "description": "Ajoutez des pays à votre profil.",
+        "search_placeholder": "Rechercher des pays...",
+        "add_country": "Ajouter un pays",
+        "add": "Ajouter",
+        "all_added": "Tous les pays ont été ajoutés",
+        "clear_search": "Effacer la recherche",
+        "load_error": "Échec du chargement des pays",
+        "no_match": "Aucun pays trouvé",
+        "none": "Aucun pays ajouté",
+        "selected": "{{count}} sélectionné(s)"
+      },
+      "languages": {
+        "title": "Langues",
+        "description": "Ajoutez les langues que vous parlez à votre profil.",
+        "search_placeholder": "Rechercher des langues...",
+        "add_language": "Ajouter une langue",
+        "add": "Ajouter",
+        "all_added": "Toutes les langues ont été ajoutées",
+        "load_error": "Échec du chargement des langues",
+        "no_match": "Aucune langue trouvée",
+        "none": "Aucune langue ajoutée",
+        "clear_search": "Effacer la recherche",
+        "selected": "{{count}} sélectionné(s)"
+      },
+      "images": {
+        "title": "Images de profil",
+        "profile_picture": "Photo de profil",
+        "banner_picture": "Image de bannière",
+        "thumbnail": "Photo de profil",
+        "banner": "Bannière",
+        "upload_thumbnail": "Téléverser une photo",
+        "upload_banner": "Téléverser une bannière",
+        "remove_thumbnail": "Supprimer la photo",
+        "remove_banner": "Supprimer la bannière"
+      }
+    },
+    "security": {
+      "title": "Sécurité & Authentification",
+      "description": "Gérez votre mot de passe et les paramètres d'authentification à deux facteurs pour sécuriser votre compte.",
+      "toc": {
+        "email": "Adresse email",
+        "password": "Changer le mot de passe",
+        "two_factor": "Authentification à deux facteurs"
+      },
+      "email": {
+        "title": "Adresse email",
+        "verified": "Vérifié",
+        "unverified": "Non vérifié",
+        "current_email": "Email actuel :",
+        "verified_description": "Votre adresse email est vérifiée. Vous pouvez la modifier à tout moment.",
+        "unverified_description": "Veuillez vérifier votre adresse email pour activer la récupération et les notifications.",
+        "no_email_description": "Ajoutez une adresse email pour la récupération du compte et les notifications.",
+        "change_email": "Changer l'email",
+        "add_email": "Ajouter un email",
+        "send_verification": "Envoyer la vérification",
+        "sending": "Envoi...",
+        "remove_email": "Supprimer l'email",
+        "removing": "Suppression...",
+        "change_email_title": "Changer l'adresse email",
+        "add_email_title": "Ajouter une adresse email",
+        "change_email_desc": "Entrez votre nouvelle adresse email. Un lien de vérification sera envoyé pour la confirmer.",
+        "add_email_desc": "Ajoutez une adresse email pour la récupération du compte et les notifications.",
+        "new_email_placeholder": "nouvel.email@exemple.com",
+        "confirm_email_placeholder": "Confirmer le nouvel email",
+        "emails_mismatch": "Les emails ne correspondent pas",
+        "update_email": "Mettre à jour l'email",
+        "saving_email": "Sauvegarde...",
+        "updated_success": "Email mis à jour avec succès !",
+        "removed_success": "Adresse email supprimée avec succès.",
+        "verification_sent": "Email de vérification envoyé ! Veuillez vérifier votre boîte de réception.",
+        "failed_update": "Échec de la mise à jour de l'email",
+        "failed_remove": "Échec de la suppression de l'email",
+        "failed_send_verification": "Échec de l'envoi de l'email de vérification"
+      },
+      "password": {
+        "title": "Changer le mot de passe",
+        "description": "Mettez à jour votre mot de passe pour sécuriser votre compte. Utilisez un mot de passe fort d'au moins 8 caractères.",
+        "change_button": "Changer le mot de passe",
+        "dialog_title": "Changer le mot de passe",
+        "dialog_desc": "Entrez votre mot de passe actuel et choisissez-en un nouveau. Il doit comporter au moins 8 caractères.",
+        "current_password_placeholder": "Mot de passe actuel",
+        "new_password_placeholder": "Nouveau mot de passe",
+        "confirm_password_placeholder": "Confirmer le nouveau mot de passe",
+        "changing": "Changement...",
+        "changed_success": "Mot de passe changé avec succès !",
+        "mismatch": "Les nouveaux mots de passe ne correspondent pas",
+        "too_short": "Le mot de passe doit comporter au moins 8 caractères",
+        "failed": "Échec du changement de mot de passe"
+      },
+      "two_factor": {
+        "title": "Authentification à deux facteurs",
+        "enabled": "Activé",
+        "disabled": "Désactivé",
+        "enabled_description": "L'authentification à deux facteurs est actuellement activée. Votre compte est protégé par une couche de sécurité supplémentaire.",
+        "disabled_description": "Ajoutez une couche de sécurité supplémentaire à votre compte en exigeant un code de votre application d'authentification.",
+        "disable": "Désactiver 2FA",
+        "disabling": "Désactivation...",
+        "enable": "Activer 2FA",
+        "setting_up": "Configuration...",
+        "setup_title": "Configurer l'authentification à deux facteurs",
+        "setup_description": "Scannez le QR code avec votre application d'authentification, puis entrez le code de vérification.",
+        "manual_code": "Ou entrez ce code manuellement :",
+        "verification_code": "Code de vérification",
+        "enter_code": "Entrez le code à 6 chiffres",
+        "verify_enable": "Vérifier & Activer",
+        "verifying": "Vérification...",
+        "enabled_success": "Authentification à deux facteurs activée avec succès !",
+        "disabled_success": "Authentification à deux facteurs désactivée avec succès !",
+        "failed_setup": "Échec de la configuration 2FA",
+        "failed_enable": "Échec de l'activation 2FA",
+        "failed_disable": "Échec de la désactivation 2FA"
+      }
+    },
+    "account": {
+      "title": "Compte",
+      "description": "Gérez les paramètres et préférences de votre compte.",
+      "toc": {
+        "username": "Nom d'utilisateur",
+        "tags": "Tags"
+      },
+      "update_failed": "Échec de la mise à jour du compte",
+      "updated_success": "Compte mis à jour avec succès !",
+      "username": {
+        "title": "Nom d'utilisateur",
+        "description": "Votre nom d'utilisateur unique pour identifier votre compte.",
+        "placeholder": "nom d'utilisateur",
+        "change_button": "Changer le nom d'utilisateur",
+        "changed_success": "Nom d'utilisateur changé avec succès !"
+      },
+      "tags": {
+        "title": "Tags",
+        "description": "Les tags aident les autres à vous trouver.",
+        "no_tags": "Aucun tag ajouté",
+        "add_tag": "Ajouter un tag",
+        "placeholder": "tag"
+      }
+    },
+    "follow": {
+      "title": "Aperçu des abonnements",
+      "description": "Gérez vos paramètres d'abonnement, confidentialité et notifications.",
+      "save_failed": "Échec de la sauvegarde des paramètres",
+      "save_settings": "Sauvegarder les paramètres",
+      "saved_success": "Paramètres sauvegardés avec succès !",
+      "followers": {
+        "title": "Abonnés",
+        "description": "Personnes qui vous suivent. Consultez ici qui vous suit.",
+        "none": "Aucun abonné pour le moment",
+        "count": "{{count}} abonné",
+        "count_plural": "{{count}} abonnés"
+      },
+      "followings": {
+        "title": "Abonnements",
+        "description": "Personnes que vous suivez. Gérez votre liste ici.",
+        "none": "Aucun abonnement pour le moment",
+        "count": "{{count}} abonnement",
+        "count_plural": "{{count}} abonnements"
+      },
+      "load_more": "Charger plus",
+      "privacy": {
+        "title": "Confidentialité",
+        "description": "Contrôlez la visibilité de vos abonnés et abonnements.",
+        "private_account": "Compte privé",
+        "private_account_desc": "Seuls les abonnés approuvés peuvent voir votre contenu",
+        "hide_followers": "Masquer les abonnés",
+        "hide_followers_desc": "Le nombre et la liste de vos abonnés seront masqués sur votre profil",
+        "hide_following": "Masquer les abonnements",
+        "hide_following_desc": "Le nombre et la liste de vos abonnements seront masqués sur votre profil"
+      },
+      "policy": {
+        "title": "Politique d'abonnement",
+        "description": "Contrôlez comment les demandes d'abonnement sont gérées.",
+        "manual_approval": "Approbation manuelle",
+        "manual_approval_desc": "Les nouveaux abonnés doivent être approuvés manuellement avant de pouvoir vous suivre",
+        "auto_reject": "Refus automatique des demandes",
+        "auto_reject_desc": "Refuser automatiquement toutes les demandes d'abonnement entrantes"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "follow_requests": "Demandes d'abonnement",
+        "follow_requests_desc": "Être notifié lorsque quelqu'un vous envoie une demande d'abonnement",
+        "new_followers": "Nouveaux abonnés",
+        "new_followers_desc": "Être notifié lorsque quelqu'un commence à vous suivre"
+      },
+      "requests": {
+        "title": "Demandes d'abonnement",
+        "manual_approval": "Approbation manuelle",
+        "manual_approval_desc": "Approuver ou refuser manuellement les demandes d'abonnement"
+      }
+    },
+    "sessions": {
+      "title": "Sessions",
+      "description": "Gérez vos sessions actives.",
+      "current_session": "Session actuelle",
+      "other_sessions": "Autres sessions",
+      "no_other_sessions": "Aucune autre session",
+      "no_other_sessions_found": "Aucune autre session trouvée",
+      "devices": "Appareils",
+      "user_agent": "Agent utilisateur",
+      "last_seen": "Dernière activité",
+      "created": "Créée",
+      "expires": "Expire",
+      "unknown_device": "Appareil inconnu",
+      "more": "Charger plus",
+      "revoke": "Révoquer",
+      "revoke_all": "Révoquer tout",
+      "revoking": "Révocation...",
+      "revoke_session": "Révoquer la session",
+      "revoke_session_desc": "Êtes-vous sûr de vouloir révoquer cette session ? Vous serez déconnecté de cet appareil.",
+      "revoke_all_title": "Révoquer toutes les sessions",
+      "revoke_all_desc": "Êtes-vous sûr de vouloir révoquer toutes les autres sessions ?",
+      "revoke_all_warning": "Cela vous déconnectera de tous les autres appareils.",
+      "revoke_all_logout": "Révoquer et déconnecter"
+    },
+    "relays": {
+      "title": "Relais",
+      "description": "Gérez les serveurs relais.",
+      "load_failed": "Échec du chargement des relais",
+      "no_relays": "Aucun relais configuré",
+      "offline": "Hors ligne",
+      "running": "En cours",
+      "not_found": "Relais introuvable",
+      "general_info": "Informations générales",
+      "addresses": "Adresses",
+      "stats": "Statistiques",
+      "status": "État",
+      "max_instances": "Capacité max"
+    },
+    "logs": {
+      "title": "Journaux serveur",
+      "description": "Consulter les journaux du serveur.",
+      "loading": "Chargement des journaux...",
+      "no_logs": "Aucun journal disponible",
+      "no_match": "Aucun journal ne correspond aux niveaux sélectionnés"
+    },
+    "configs": {
+      "title": "Configuration",
+      "description": "Gérer la configuration du serveur.",
+      "filter_placeholder": "Filtrer la configuration...",
+      "risky": "Risqué",
+      "save_failed": "Échec de la sauvegarde de la configuration"
+    },
+    "action_button": {
+      "save": "Sauvegarder",
+      "saving": "Sauvegarde...",
+      "refresh": "Actualiser",
+      "refreshing": "Actualisation...",
+      "stop": "Arrêter",
+      "stopping": "Arrêt...",
+      "restart": "Redémarrer",
+      "restarting": "Redémarrage..."
+    }
+  },
+  "user_profile": {
+    "presence": {
+      "oja": "En ligne - Rejoindre tous",
+      "ojf": "En ligne - Rejoindre les amis",
+      "online": "En ligne",
+      "busy": "Occupé",
+      "dnd": "Ne pas déranger",
+      "stream": "En stream",
+      "offline": "Hors ligne"
+    }
+  },
+  "language": {
+    "name": "Français",
+    "choose": "Choisir la langue"
+  }
+}

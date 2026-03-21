@@ -1,5 +1,7 @@
 import { InputGroup, InputGroupInput } from '@/components/ui/input-group';
 import { CurrentUser } from '@/lib/api/types';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 
 interface PronounSectionProps {
   pronoun: string | null | undefined;
@@ -18,12 +20,13 @@ export default function PronounSection({
   onPronounChange,
   onFlagChange,
 }: PronounSectionProps) {
+  const { t } = useTranslation();
   return (
     <section id="pronoun">
       <div className="space-y-2">
-        <h2 className="text-lg font-semibold">Pronoun</h2>
+        <h2 className="text-lg font-semibold">{t('settings.profile.pronoun.title')}</h2>
         <p className="text-sm text-fd-muted-foreground">
-          Your pronoun helps others know how to refer to you.
+          {t('settings.profile.pronoun.description')}
         </p>
         <InputGroup>
           <InputGroupInput
@@ -33,7 +36,7 @@ export default function PronounSection({
               onPronounChange(e.target.value);
               onFlagChange(pronounFlag | canSaveFlag);
             }}
-            placeholder={currentUser?.pronoun || "e.g., they/them, she/her, he/him"}
+            placeholder={currentUser?.pronoun || t('settings.profile.pronoun.placeholder')}
           />
         </InputGroup>
       </div>

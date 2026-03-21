@@ -1,5 +1,7 @@
 import { InputGroup, InputGroupInput } from '@/components/ui/input-group';
 import { CurrentUser } from '@/lib/api/types';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 
 interface DisplaySectionProps {
   display: string | undefined;
@@ -18,14 +20,13 @@ export default function DisplaySection({
   onDisplayChange,
   onFlagChange,
 }: DisplaySectionProps) {
+  const { t } = useTranslation();
   return (
     <section id="basic-information">
       <div className="space-y-2">
-        <h2 className="text-lg font-semibold">Display</h2>
+        <h2 className="text-lg font-semibold">{t('settings.profile.display.title')}</h2>
         <p className="text-sm text-fd-muted-foreground">
-          Your display name is what others see when they visit your profile.
-          <br />
-          And in the Nameplate in the app.
+          {t('settings.profile.display.description')}
         </p>
         <InputGroup>
           <InputGroupInput
@@ -35,7 +36,7 @@ export default function DisplaySection({
               onDisplayChange(e.target.value);
               onFlagChange(displayFlag | canSaveFlag);
             }}
-            placeholder={currentUser?.display || "Display name"}
+            placeholder={currentUser?.display || t('settings.profile.display.placeholder')}
           />
         </InputGroup>
       </div>

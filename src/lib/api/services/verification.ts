@@ -10,4 +10,12 @@ export class VerificationService {
         if (isResponseError(res)) return res.error;
         return res.data;
     }
+
+    async resendEmailVerification(): Promise<{ success: boolean } | ApiError> {
+        let res = await fetchApi<{ success: boolean }>(`/api/email/resend`, {
+            method: 'POST',
+        });
+        if (isResponseError(res)) return res.error;
+        return res.data;
+    }
 }

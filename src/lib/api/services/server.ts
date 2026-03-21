@@ -1,6 +1,18 @@
 import type { ApiError } from '../types';
 import { fetchApi, isResponseError } from '../utils';
 
+export interface ServerStatistics {
+    users: number;
+    active_users: number;
+    connected_users: number;
+    worlds: number;
+    avatars: number;
+    instances: number;
+    live_instances: number;
+    live_clients: number;
+    live_players: number;
+}
+
 export interface ServerInfo {
     id: string;
     title: string;
@@ -14,6 +26,7 @@ export interface ServerInfo {
         ws: string;
         web: string;
     };
+    statistics?: ServerStatistics;
 }
 
 export class ServerService {

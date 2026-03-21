@@ -6,6 +6,13 @@ const withMDX = createMDX();
 const config = {
   reactStrictMode: true,
   output: 'standalone',
+  async redirects() {
+    return [
+      { source: '/privacy.md', destination: '/privacy', permanent: true },
+      { source: '/terms.md', destination: '/terms', permanent: true },
+      { source: '/rules.md', destination: '/rules', permanent: true },
+    ];
+  },
   images: {
     remotePatterns: [
       {

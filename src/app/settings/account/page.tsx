@@ -7,12 +7,15 @@ import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/layo
 import { useApi, isError } from '@/lib/api';
 import ActionButton from '../ActionButton';
 import UsernameSection from './UsernameSection';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 import TagsSection from './TagsSection';
 
 export const TAG_EDIT_REGEX = /^usr:([a-z_]+)?$/;
 export const TAG_UPLOAD_REGEX = /^usr:([a-z_])([a-z_]+)?$/;
 
 export default function AccountPage() {
+  const { t } = useTranslation();
   const Api = useApi();
 
   // Flag system constants
@@ -65,11 +68,11 @@ export default function AccountPage() {
       setTags(undefined);
       setError(undefined);
       setCanSaveFlag(0);
-      setSuccessMessage('Account updated successfully!');
+      setSuccessMessage(t('settings.account.updated_success'));
 
       setTimeout(() => setSuccessMessage(undefined), 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update account');
+      setError(err instanceof Error ? err.message : t('settings.account.update_failed'));
       setCanSaveFlag(canSaveFlag & ~loadingFlag);
     }
   };
@@ -78,14 +81,14 @@ export default function AccountPage() {
   const hasChanges = canSaveFlag > 0 && !isLoading;
 
   const toc = [
-    { title: 'Username', url: '#username', depth: 2 },
-    { title: 'Tags', url: '#tags', depth: 2 },
+    { title: t('settings.account.toc.username'), url: '#username', depth: 2 },
+    { title: t('settings.account.toc.tags'), url: '#tags', depth: 2 },
   ];
 
   return (
     <DocsPage toc={toc} footer={{ enabled: false }}>
       <DocsTitle className="flex items-center justify-between">
-        <span>Account</span>
+        <span>{t('settings.account.title')}</span>
         <ActionButton
           variant="save"
           onClick={handleSave}
@@ -94,7 +97,7 @@ export default function AccountPage() {
         />
       </DocsTitle>
       <DocsDescription>
-        Manage your account settings, including username, email, and profile tags.
+        {t('settings.account.description')}
       </DocsDescription>
       <DocsBody>
         {/* Messages */}

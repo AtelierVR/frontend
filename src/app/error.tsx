@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { AlertCircle, Home, RefreshCw, ChevronDown, ChevronUp, Copy, Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from '@/components/ui/empty';
 import { HomeLayout } from '@/components/layout/home';
 import { baseOptions } from '@/lib/layout.shared';
@@ -15,6 +17,7 @@ interface ErrorProps {
 }
 
 export default function Error({ error, reset }: ErrorProps) {
+    const { t } = useTranslation();
     const [showDetails, setShowDetails] = useState(false);
     const [copied, setCopied] = useState(false);
 
@@ -47,10 +50,9 @@ export default function Error({ error, reset }: ErrorProps) {
                                 </div>
                             </div>
                         </EmptyMedia>
-                        <EmptyTitle className="text-2xl">Oops! Something went wrong</EmptyTitle>
+                        <EmptyTitle className="text-2xl">{t('error.title')}</EmptyTitle>
                         <EmptyDescription className="text-base">
-                            We encountered an unexpected error while processing your request.
-                            Don't worry, you can try reloading the page or return to the home page.
+                            {t('error.description')}
                         </EmptyDescription>
                     </EmptyHeader>
 
@@ -58,7 +60,7 @@ export default function Error({ error, reset }: ErrorProps) {
                         <div className="w-full max-w-md">
                             <div className="bg-muted/50 border border-border rounded-lg px-4 py-2.5">
                                 <p className="text-xs font-medium text-muted-foreground text-center">
-                                    Error Reference: <span className="font-mono text-foreground">{error.digest}</span>
+                                    {t('error.reference')} <span className="font-mono text-foreground">{error.digest}</span>
                                 </p>
                             </div>
                         </div>
@@ -89,7 +91,7 @@ export default function Error({ error, reset }: ErrorProps) {
                                     <button
                                         onClick={handleCopyError}
                                         className="absolute top-2 right-2 p-1.5 rounded-md hover:bg-destructive/10 transition-colors"
-                                        title="Copy error details"
+                                        title={t('error.copy_error')}
                                     >
                                         {copied ? (
                                             <Check className="h-4 w-4 text-green-600" />
@@ -113,12 +115,12 @@ export default function Error({ error, reset }: ErrorProps) {
                                 className="gap-2"
                             >
                                 <RefreshCw className="h-4 w-4" />
-                                Try Again
+                                {t('error.try_again')}
                             </Button>
                             <Link href="/">
                                 <Button variant="outline" className="gap-2 w-full sm:w-auto">
                                     <Home className="h-4 w-4" />
-                                    Go Home
+                                    {t('error.go_home')}
                                 </Button>
                             </Link>
                         </div>

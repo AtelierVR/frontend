@@ -16,9 +16,12 @@ import ProfileImagesSection from './ProfileImagesSection';
 import CountriesSection from './CountriesSection';
 import LanguagesSection from './LanguagesSection';
 import LinksSection from './LinksSection';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 import { TAG_UPLOAD_REGEX } from '../account/page';
 
 export default function ProfilePage() {
+  const { t } = useTranslation();
   const Api = useApi();
 
   // Flag system constants
@@ -126,11 +129,11 @@ export default function ProfilePage() {
 
       setError(undefined);
       setCanSaveFlag(0);
-      setSuccessMessage('Profile saved successfully!');
+      setSuccessMessage(t('settings.profile.saved_success'));
 
       setTimeout(() => setSuccessMessage(undefined), 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save profile');
+      setError(err instanceof Error ? err.message : t('settings.profile.save_failed'));
       setCanSaveFlag(canSaveFlag & ~loadingFlag);
     }
   };
@@ -139,17 +142,17 @@ export default function ProfilePage() {
   const hasChanges = canSaveFlag > 0 && !isLoading;
 
   const toc = [
-    { title: 'Basic Information', url: '#basic-information', depth: 2 },
-    { title: 'Links', url: '#links', depth: 2 },
-    { title: 'Countries', url: '#countries', depth: 2 },
-    { title: 'Languages', url: '#languages', depth: 2 },
-    { title: 'Profile Images', url: '#profile-images', depth: 2 },
+    { title: t('settings.profile.toc.basic_info'), url: '#basic-information', depth: 2 },
+    { title: t('settings.profile.toc.links'), url: '#links', depth: 2 },
+    { title: t('settings.profile.toc.countries'), url: '#countries', depth: 2 },
+    { title: t('settings.profile.toc.languages'), url: '#languages', depth: 2 },
+    { title: t('settings.profile.toc.images'), url: '#profile-images', depth: 2 },
   ];
 
   return (
     <DocsPage toc={toc} footer={{ enabled: false }}>
       <DocsTitle className="flex items-center justify-between">
-        <span>Public Profile</span>
+        <span>{t('settings.profile.title')}</span>
         <ActionButton
           variant="save"
           onClick={handleSave}
@@ -158,7 +161,7 @@ export default function ProfilePage() {
         />
       </DocsTitle>
       <DocsDescription>
-        Your display name is what others see when they visit your profile and in the app.
+        {t('settings.profile.description')}
       </DocsDescription>
       <DocsBody>
         {/* Messages */}

@@ -1,9 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useApi, isError } from '@/lib/api';
+import type { VerificationMethod, ApiError } from '@/lib/api';
 import { CurrentUser } from '@/lib/api/types';
 import { Icon } from '@iconify/react';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
+import { VerificationModal } from '@/components/verification-modal';
 import {
   Dialog,
   DialogContent,
@@ -12,6 +16,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { InputGroup, InputGroupInput } from '@/components/ui/input-group';
+import { Loader2, Trash2 } from 'lucide-react';
 
 interface TwoFactorAuthSectionProps {
   currentUser: CurrentUser | null;
@@ -24,6 +29,7 @@ export default function TwoFactorAuthSection({
   setError,
   setSuccess,
 }: TwoFactorAuthSectionProps) {
+  const { t } = useTranslation();
   const Api = useApi();
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -31,6 +37,9 @@ export default function TwoFactorAuthSection({
   const [qrCode, setQrCode] = useState<string>('');
   const [secret, setSecret] = useState<string>('');
   const [verificationCode, setVerificationCode] = useState('');
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [verificationMethods, setVerificationMethods] = useState<VerificationMethod[]>([]);
+  const verificationResolveRef = useRef<((code: string | null) => void) | null>(null);
 
   useEffect(() => {
     if (currentUser) {
@@ -45,17 +54,16 @@ export default function TwoFactorAuthSection({
     setError(undefined);
 
     try {
-      const res = null as any // await Api.setupTwoFactor();
-      throw new Error('Not implemented');
+      const res = await Api.setupTotp();
       if (isError(res)) {
         setError(res.message);
       } else {
-        setQrCode(res.qr_code);
+        setQrCode(res.qrCodeUrl);
         setSecret(res.secret);
         setShowSetupDialog(true);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to setup 2FA');
+      setError(err instanceof Error ? err.message : t('settings.security.two_factor.failed_setup'));
     } finally {
       setIsLoading(false);
     }
@@ -68,21 +76,58 @@ export default function TwoFactorAuthSection({
     setError(undefined);
 
     try {
-      const res = null as any // await Api.enableTwoFactor(verificationCode);
-      throw new Error('Not implemented');
+      const res = await Api.enableTotp(secret, verificationCode);
       if (isError(res)) {
         setError(res.message);
       } else {
-        setSuccess('Two-factor authentication enabled successfully!');
+        setSuccess(t('settings.security.two_factor.enabled_success'));
         setTwoFactorEnabled(true);
         setShowSetupDialog(false);
         setVerificationCode('');
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to enable 2FA');
+      setError(err instanceof Error ? err.message : t('settings.security.two_factor.failed_enable'));
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleVerificationRequired = async (_error: ApiError, methods: VerificationMethod[]): Promise<string | null> => {
+    setVerificationMethods(methods);
+    setShowVerificationModal(true);
+    setIsLoading(false);
+    return new Promise((resolve) => {
+      verificationResolveRef.current = resolve;
+    });
+  };
+
+  const handleVerificationSuccess = async (code: string) => {
+    setShowVerificationModal(false);
+    setIsLoading(true);
+    try {
+      const res = await Api!.disableTotp(code);
+      if (isError(res)) {
+        setError(res.message);
+        verificationResolveRef.current?.(null);
+      } else {
+        setSuccess(t('settings.security.two_factor.disabled_success'));
+        setTwoFactorEnabled(false);
+        verificationResolveRef.current?.(code);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t('settings.security.two_factor.failed_disable'));
+      verificationResolveRef.current?.(null);
+    } finally {
+      verificationResolveRef.current = null;
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerificationClose = () => {
+    setShowVerificationModal(false);
+    setIsLoading(false);
+    verificationResolveRef.current?.(null);
+    verificationResolveRef.current = null;
   };
 
   const handleDisable2FA = async () => {
@@ -92,16 +137,15 @@ export default function TwoFactorAuthSection({
     setError(undefined);
 
     try {
-      const res = null as any // await Api.disableTwoFactor();
-      throw new Error('Not implemented');
+      const res = await Api.disableTotp(undefined, handleVerificationRequired);
       if (isError(res)) {
         setError(res.message);
       } else {
-        setSuccess('Two-factor authentication disabled successfully!');
+        setSuccess(t('settings.security.two_factor.disabled_success'));
         setTwoFactorEnabled(false);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to disable 2FA');
+      setError(err instanceof Error ? err.message : t('settings.security.two_factor.failed_disable'));
     } finally {
       setIsLoading(false);
     }
@@ -112,17 +156,17 @@ export default function TwoFactorAuthSection({
       <section id="2fa">
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Two-Factor Authentication</h2>
+            <h2 className="text-lg font-semibold">{t('settings.security.two_factor.title')}</h2>
             <Badge variant={twoFactorEnabled ? "default" : "secondary"}>
               {twoFactorEnabled ? (
                 <>
                   <Icon icon="material-symbols:shield-rounded" className="mr-1 size-3" />
-                  Enabled
+                  {t('settings.security.two_factor.enabled')}
                 </>
               ) : (
                 <>
                   <Icon icon="material-symbols:shield-rounded" className="mr-1 size-3" />
-                  Disabled
+                  {t('settings.security.two_factor.disabled')}
                 </>
               )}
             </Badge>
@@ -130,8 +174,8 @@ export default function TwoFactorAuthSection({
 
           <p className="text-sm text-fd-muted-foreground">
             {twoFactorEnabled
-              ? 'Two-factor authentication is currently enabled. Your account is protected with an additional security layer.'
-              : 'Add an extra layer of security to your account by requiring a code from your authenticator app.'}
+              ? t('settings.security.two_factor.enabled_description')
+              : t('settings.security.two_factor.disabled_description')}
           </p>
 
           <div className="pt-2">
@@ -141,8 +185,14 @@ export default function TwoFactorAuthSection({
                 disabled={isLoading}
                 variant="outline"
                 size="sm"
+                className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
               >
-                {isLoading ? 'Disabling...' : 'Disable 2FA'}
+              {isLoading ? (
+                <Loader2 className="mr-2 size-4 animate-spin" />
+              ) : (
+                <Trash2 className="mr-2 size-4" />
+              )}
+                {isLoading ? t('settings.security.two_factor.disabling') : t('settings.security.two_factor.disable')}
               </Button>
             ) : (
               <Button
@@ -152,7 +202,7 @@ export default function TwoFactorAuthSection({
                 size="sm"
               >
                 <Icon icon="material-symbols:shield-rounded" className="mr-2 size-4" />
-                {isLoading ? 'Setting up...' : 'Enable 2FA'}
+                {isLoading ? t('settings.security.two_factor.setting_up') : t('settings.security.two_factor.enable')}
               </Button>
             )}
           </div>
@@ -161,11 +211,11 @@ export default function TwoFactorAuthSection({
 
       {/* 2FA Setup Dialog */}
       <Dialog open={showSetupDialog} onOpenChange={setShowSetupDialog}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="w-full max-w-[95vw] sm:max-w-lg md:max-w-xl transition-all duration-200">
           <DialogHeader>
-            <DialogTitle>Set Up Two-Factor Authentication</DialogTitle>
+            <DialogTitle>{t('settings.security.two_factor.setup_title')}</DialogTitle>
             <DialogDescription>
-              Scan the QR code with your authenticator app, then enter the verification code.
+              {t('settings.security.two_factor.setup_description')}
             </DialogDescription>
           </DialogHeader>
 
@@ -177,7 +227,7 @@ export default function TwoFactorAuthSection({
                 </div>
                 <div className="text-center">
                   <p className="text-sm text-fd-muted-foreground mb-2">
-                    Or enter this code manually:
+                    {t('settings.security.two_factor.manual_code')}
                   </p>
                   <code className="px-3 py-1.5 rounded bg-fd-muted text-sm font-mono">
                     {secret}
@@ -188,40 +238,47 @@ export default function TwoFactorAuthSection({
 
             <div className="space-y-2">
               <label htmlFor="2fa-code" className="text-sm font-medium">
-                Verification Code
+                {t('settings.security.two_factor.verification_code')}
               </label>
               <InputGroup>
                 <InputGroupInput
                   id="2fa-code"
                   value={verificationCode}
                   onChange={(e) => setVerificationCode(e.target.value)}
-                  placeholder="Enter 6-digit code"
+                  placeholder={t('settings.security.two_factor.enter_code')}
                   maxLength={6}
                 />
               </InputGroup>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex justify-end gap-2">
               <Button
                 onClick={handleVerify2FA}
                 disabled={!verificationCode || verificationCode.length !== 6 || isLoading}
-                className="flex-1"
+                variant="primary"
               >
-                {isLoading ? 'Verifying...' : 'Verify & Enable'}
+                {isLoading ? t('settings.security.two_factor.verifying') : t('settings.security.two_factor.verify_enable')}
               </Button>
               <Button
                 onClick={() => {
                   setShowSetupDialog(false);
                   setVerificationCode('');
                 }}
-                variant="outline"
+                variant="ghost"
               >
-                Cancel
+                {t('common.cancel')}
               </Button>
             </div>
           </div>
         </DialogContent>
       </Dialog>
+
+      <VerificationModal
+        isOpen={showVerificationModal}
+        onClose={handleVerificationClose}
+        onSuccess={handleVerificationSuccess}
+        methods={verificationMethods}
+      />
     </>
   );
 }

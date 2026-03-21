@@ -24,6 +24,7 @@ import type { HomeLayoutProps } from './index';
 import { LargeSearchToggle, SearchToggle } from '../search-toggle';
 import { ThemeToggle } from '../theme-toggle';
 import { LanguageToggle, LanguageToggleText } from '../language-toggle';
+import { LanguageSwitcher } from '../language-switcher';
 import { UserAuth } from '../user-auth';
 import { Icon } from '@iconify/react';
 import { useIsScrollTop } from 'fumadocs-ui/utils/use-is-scroll-top';
@@ -99,6 +100,7 @@ export function Header({
           ))}
         {themeSwitch.enabled !== false &&
           (themeSwitch.component ?? <ThemeToggle mode={themeSwitch?.mode} />)}
+        <LanguageSwitcher />
         {i18n && (
           <LanguageToggle>
             <Icon icon="material-symbols:translate-rounded" className="size-5" />
@@ -156,6 +158,7 @@ export function Header({
               )}
               {themeSwitch.enabled !== false &&
                 (themeSwitch.component ?? <ThemeToggle mode={themeSwitch?.mode} />)}
+              <LanguageSwitcher />
               <UserAuth useDropdown />
             </div>
           </NavigationMenuContent>

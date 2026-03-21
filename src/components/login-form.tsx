@@ -5,6 +5,8 @@ import { useApi, isError } from '@/lib/api';
 import type { VerificationMethod, ApiError } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -30,6 +32,7 @@ export function LoginForm({
     className,
     ...props
 }: React.ComponentProps<'div'>) {
+    const { t } = useTranslation();
     const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -70,7 +73,7 @@ export function LoginForm({
                 router.push('/');
             }
         } catch (err) {
-            setError('An error occurred. Please try again.');
+            setError(t('auth.login.error_occurred'));
             verificationResolveRef.current?.(null);
         } finally {
             verificationResolveRef.current = null;
@@ -99,7 +102,7 @@ export function LoginForm({
                 router.push('/');
             }
         } catch (err) {
-            setError('An error occurred. Please try again.');
+            setError(t('auth.login.error_occurred'));
         } finally {
             setLoading(false);
         }
@@ -109,9 +112,9 @@ export function LoginForm({
         <div className={cn('flex flex-col gap-6', className)} {...props}>
             <Card className="border-fd-border/50 shadow-lg">
                 <CardHeader className="text-center pb-10">
-                    <CardTitle className="text-xl font-semibold">Welcome back</CardTitle>
+                    <CardTitle className="text-xl font-semibold">{t('auth.login.title')}</CardTitle>
                     <CardDescription className="text-fd-muted-foreground/80">
-                        Login to your account to continue.
+                        {t('auth.login.description')}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="pb-6">
@@ -120,7 +123,7 @@ export function LoginForm({
                             {error && (
                                 <Alert variant="destructive" className='mb-4'>
                                     <Icon icon="material-symbols:error-circle-rounded" />
-                                    <AlertTitle>Login Failed</AlertTitle>
+                                    <AlertTitle>{t('auth.login.failed')}</AlertTitle>
                                     <AlertDescription>
                                         {error}
                                     </AlertDescription>
@@ -129,7 +132,7 @@ export function LoginForm({
 
                             <Field>
                                 <div className="flex items-center justify-between">
-                                    <FieldLabel htmlFor="identifier">Username / Email</FieldLabel>
+                                    <FieldLabel htmlFor="identifier">{t('auth.login.username_email')}</FieldLabel>
                                 </div>
                                 <Input
                                     id="identifier"
@@ -143,12 +146,12 @@ export function LoginForm({
 
                             <Field>
                                 <div className="flex items-center justify-between">
-                                    <FieldLabel htmlFor="password">Password</FieldLabel>
+                                    <FieldLabel htmlFor="password">{t('auth.login.password')}</FieldLabel>
                                     <Link
                                         href="/forgot-password"
                                         className="text-sm text-fd-muted-foreground underline-offset-4 hover:underline"
                                     >
-                                        Forgot your password?
+                                        {t('auth.login.forgot_password')}
                                     </Link>
                                 </div>
                                 <Input
@@ -167,12 +170,12 @@ export function LoginForm({
                                     disabled={loading}
                                     className="w-full"
                                 >
-                                    {loading ? 'Signing in...' : 'Login'}
+                                    {loading ? t('auth.login.signing_in') : t('auth.login.sign_in')}
                                 </Button>
                                 <FieldDescription className="text-center">
-                                    Don&apos;t have an account?{' '}
+                                    {t('auth.login.no_account')}{' '}
                                     <Link href="/register" className="text-fd-foreground underline-offset-4 hover:underline">
-                                        Sign up
+                                        {t('auth.login.sign_up')}
                                     </Link>
                                 </FieldDescription>
                             </Field>
@@ -182,13 +185,13 @@ export function LoginForm({
             </Card>
 
             <FieldDescription className="text-center text-xs text-fd-muted-foreground/70">
-                By clicking continue, you agree to our{' '}
+                {t('auth.login.terms_text')}{' '}
                 <Link href="/terms" className="underline hover:text-fd-foreground">
-                    Terms of Service
+                    {t('auth.login.terms_of_service')}
                 </Link>{' '}
                 and{' '}
                 <Link href="/privacy" className="underline hover:text-fd-foreground">
-                    Privacy Policy
+                    {t('auth.login.privacy_policy')}
                 </Link>
                 .
             </FieldDescription>

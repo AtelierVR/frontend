@@ -12,24 +12,24 @@ export const usePageTree = (currentUser: CurrentUser | null): Root => {
 
     function getConversationData(conv: Conversation) {
         const cu = currentUser?.alias?.find(a => a.key === 'iid')?.value;
-        const om = conv.members.filter(m => m.user_ref !== cu);
+        const om = conv.members.filter(m => m.reference !== cu);
         
         let title = conv.title?.trim() || '';
-        let avatar = conv.avatar;
+        let avatar = conv.thumbnail;
         const isGroup = om.length > 1;
         
         if (!title) {
             if (om.length === 0) {
                 title = currentUser?.display || currentUser?.username || 'Unknown';
-                avatar = currentUser?.thumbnail;
+                avatar = currentUser?.thumbnail ?? null;
             } else if (om.length === 1) {
-                const user = users.get(om[0].user_ref);
-                title = user?.display || user?.username || om[0].user_ref;
-                avatar = user?.thumbnail;
+                const user = users.get(om[0].reference);
+                title = user?.display || user?.username || om[0].reference;
+                avatar = user?.thumbnail ?? null;
             } else {
                 title = om.slice(0, 3).map(m => {
-                    const user = users.get(m.user_ref);
-                    return user?.display || user?.username || m.user_ref;
+                    const user = users.get(m.reference);
+                    return user?.display || user?.username || m.reference;
                 }).join(', ') + (om.length > 3 ? ` +${om.length - 3}` : '');
             }
         }

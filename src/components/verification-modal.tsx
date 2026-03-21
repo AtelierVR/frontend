@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Icon } from '@iconify/react';
 import type { VerificationMethod } from '@/lib/api';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 import {
     Dialog,
     DialogContent,
@@ -46,6 +48,7 @@ export function VerificationModal({
     title = 'Two-Factor Verification',
     username,
 }: VerificationModalProps) {
+    const { t } = useTranslation();
     const api = useApi();
     const inputRef = useRef<HTMLInputElement>(null);
     const [selectedMethod, setSelectedMethod] = useState<VerificationMethod | null>(null);
@@ -108,7 +111,7 @@ export function VerificationModal({
                 setResendCooldown(current.cooldown || 5);
             }
         } catch (err) {
-            setError('Failed to send verification code');
+            setError(t('auth.verification.failed_to_send'));
         }
 
         setLoading(false);
@@ -133,7 +136,7 @@ export function VerificationModal({
                             {title}
                         </CardTitle>
                         <CardDescription>
-                            {selectedMethod?.description || `Enter the verification code for ${username}.`}
+                            {selectedMethod?.description || t('auth.verification.enter_code_for', { username: username })}
                         </CardDescription>
                     </CardHeader>
 
@@ -142,7 +145,7 @@ export function VerificationModal({
                             {error && (
                                 <Alert variant="destructive">
                                     <Icon icon="material-symbols:error-circle-rounded" />
-                                    <AlertTitle>Verification Failed</AlertTitle>
+                                    <AlertTitle>{t('auth.verification.failed')}</AlertTitle>
                                     <AlertDescription>
                                         {error}
                                     </AlertDescription>
@@ -151,7 +154,7 @@ export function VerificationModal({
 
                             {showMethodSelector && (
                                 <Field>
-                                    <FieldLabel>Choose verification method</FieldLabel>
+                                    <FieldLabel>{t('auth.verification.choose_method')}</FieldLabel>
                                     <Select
                                         value={selectedMethod?.type}
                                         onValueChange={(value) => {
@@ -161,7 +164,7 @@ export function VerificationModal({
                                             setError(null);
                                         }}>
                                         <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select method" />
+                                            <SelectValue placeholder={t('auth.verification.select_method')} />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {enabledMethods.map(m => <SelectItem
@@ -179,7 +182,7 @@ export function VerificationModal({
                                 <Field>
                                     <div className="flex items-center justify-between">
                                         <FieldLabel htmlFor="otp-verification">
-                                            Verification code
+                                            {t('auth.verification.verification_code')}
                                         </FieldLabel>
                                         {selectedMethod.can_send && (
                                             <Button
@@ -190,7 +193,7 @@ export function VerificationModal({
                                                 disabled={loading || resendCooldown > 0}
                                             >
                                                 <Icon icon="material-symbols:refresh-rounded" className="h-3 w-3" />
-                                                {resendCooldown > 0 ? `Resend (${resendCooldown}s)` : 'Resend Code'}
+                                                {resendCooldown > 0 ? t('auth.verification.resend_cooldown', { seconds: resendCooldown }) : t('auth.verification.resend_code')}
                                             </Button>
                                         )}
                                     </div>
@@ -230,12 +233,12 @@ export function VerificationModal({
                             disabled={loading || verificationCode.trim().length !== 6}
                             className="w-full"
                         >
-                            {loading ? 'Verifying...' : 'Verify'}
+                            {loading ? t('auth.verification.verifying') : t('auth.verification.verify')}
                         </Button>
                         <div className="text-sm text-fd-muted-foreground">
-                            Having trouble signing in?{' '}
+                            {t('auth.verification.having_trouble')}{' '}
                             <a href="#" className="hover:text-fd-primary underline underline-offset-4 transition-colors">
-                                Contact support
+                                {t('auth.verification.contact_support')}
                             </a>
                         </div>
                     </CardFooter>

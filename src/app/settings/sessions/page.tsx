@@ -25,6 +25,8 @@ import { useApi, isError, IRSession } from '@/lib/api';
 import { useCountries } from '@/lib/hooks/useCountries';
 import { UAParser } from 'ua-parser-js';
 import { cn } from '@/lib/cn';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 
 const SESSIONS_PER_PAGE = 10;
 
@@ -112,6 +114,7 @@ function SessionCard({
   const [ipLocations, setIpLocations] = useState<Record<string, IpLocation | null>>({});
   const [loadingIps, setLoadingIps] = useState<Record<string, boolean>>({});
   const { countries } = useCountries();
+  const { t } = useTranslation();
 
   const fetchIpLocation = async (ip: string) => {
     if (ipLocations[ip] !== undefined || loadingIps[ip]) return;
@@ -162,7 +165,7 @@ function SessionCard({
                       {device.result.browser.name} • <span className="capitalize">{device.result.os.name}</span>
                     </>
                   ) : (
-                    'Unknown Device'
+                    t('settings.sessions.unknown_device')
                   )}
                 </div>
                 <div className="text-xs text-fd-muted-foreground">
@@ -177,11 +180,11 @@ function SessionCard({
               {/* Session Info */}
               <div className="rounded-md bg-fd-muted/50 p-3 space-y-1.5">
                 <div className="flex justify-between">
-                  <span className="text-fd-muted-foreground">Created</span>
+                  <span className="text-fd-muted-foreground">{t('settings.sessions.created')}</span>
                   <span className="text-xs">{new Date(session.created_at).toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-fd-muted-foreground">Expires</span>
+                  <span className="text-fd-muted-foreground">{t('settings.sessions.expires')}</span>
                   <span className="text-xs">{new Date(session.expires_at).toLocaleString()}</span>
                 </div>
               </div>
@@ -190,7 +193,7 @@ function SessionCard({
               {session.devices.length > 0 && (
                 <div className="space-y-2">
                   <div className="text-xs font-semibold text-fd-muted-foreground uppercase tracking-wider">
-                    Devices ({session.devices.length})
+                    {t('settings.sessions.devices', { count: session.devices.length })}
                   </div>
                   <div className="space-y-2">
                     {session.devices.map((device, idx) => (
@@ -230,12 +233,12 @@ function SessionCard({
                         </div>
 
                         <div className="flex justify-between">
-                          <span className="text-fd-muted-foreground">Last Seen</span>
+                          <span className="text-fd-muted-foreground">{t('settings.sessions.last_seen')}</span>
                           <span className="text-xs">{new Date(device.last_seen).toLocaleString()}</span>
                         </div>
 
                         <div className="flex justify-between">
-                          <span className="text-fd-muted-foreground">User Agent</span>
+                          <span className="text-fd-muted-foreground">{t('settings.sessions.user_agent')}</span>
                           <span className="font-mono break-all text-xs">{device.user_agent}</span>
                         </div>
 
@@ -253,7 +256,7 @@ function SessionCard({
                   size="sm"
                   className="w-full"
                 >
-                  Revoke Session
+                  {t('settings.sessions.revoke_session')}
                 </Button>
               )}
             </div>
@@ -381,6 +384,8 @@ export default function SessionsPage() {
     }
   };
 
+  const { t } = useTranslation();
+
   useEffect(() => {
     loadPage(0);
   }, []);
@@ -390,9 +395,9 @@ export default function SessionsPage() {
 
   return (
     <DocsPage toc={[]} footer={{ enabled: false }}>
-      <DocsTitle>Sessions</DocsTitle>
+      <DocsTitle>{t('settings.sessions.title')}</DocsTitle>
       <DocsDescription>
-        Manage your active sessions. You can revoke access from any device.
+        {t('settings.sessions.description')}
       </DocsDescription>
       <DocsBody>
         {error && (
@@ -405,7 +410,7 @@ export default function SessionsPage() {
         <div className="space-y-8">
           {/* Current Session */}
           <div className="space-y-3">
-            <h2 className="text-lg font-semibold">Current Session</h2>
+            <h2 className="text-lg font-semibold">{t('settings.sessions.current_session')}</h2>
             {currentSession ? (
               <SessionCard session={currentSession} isCurrent={true} />
             ) : (
@@ -424,7 +429,7 @@ export default function SessionsPage() {
           {/* Other Sessions */}
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <h2 className="text-lg font-semibold">Other Sessions</h2>
+              <h2 className="text-lg font-semibold">{t('settings.sessions.other_sessions')}</h2>
               <div className="flex items-center gap-4">
                 {total > 0 && (
                   <span className="text-sm text-fd-muted-foreground">
@@ -438,7 +443,7 @@ export default function SessionsPage() {
                     size="sm"
                     disabled={loading}
                   >
-                    Revoke All
+                    {t('settings.sessions.revoke_all')}
                   </Button>
                 )}
               </div>
@@ -462,13 +467,13 @@ export default function SessionsPage() {
 
             {total === 0 && (
               <p className="text-center py-8 text-fd-muted-foreground">
-                No other sessions found
+                {t('settings.sessions.no_other_sessions_found')}
               </p>
             )}
 
             {total === 1 && (
               <p className="text-center py-8 text-fd-muted-foreground">
-                No other sessions
+                {t('settings.sessions.no_other_sessions')}
               </p>
             )}
 
@@ -492,7 +497,7 @@ export default function SessionsPage() {
                   disabled={loading}
                   variant="outline"
                 >
-                  {loading ? 'Revoking...' : 'Revoke'}
+                  {loading ? t('settings.sessions.more') : t('settings.sessions.more')}
                 </Button>
               </div>
             )}
@@ -503,14 +508,14 @@ export default function SessionsPage() {
         <Dialog open={!!sessionToDelete} onOpenChange={(open) => !open && setSessionToDelete(null)}>
           <DialogContent className='max-w-lg'>
             <DialogHeader>
-              <DialogTitle>Revoke Session</DialogTitle>
+              <DialogTitle>{t('settings.sessions.revoke_session')}</DialogTitle>
               <DialogDescription>
-                Are you sure you want to revoke this session? This will immediately log out this device.
+                {t('settings.sessions.revoke_session_desc')}
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
               <Button variant="outline" onClick={() => setSessionToDelete(null)}>
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button
                 variant="primary"
@@ -520,10 +525,10 @@ export default function SessionsPage() {
                 {loading ? (
                   <>
                     <Icon icon="material-symbols:progress-activity" className="mr-2 size-4 animate-spin" />
-                    Revoking...
+                    {t('settings.sessions.revoking')}
                   </>
                 ) : (
-                  'Revoke'
+                  t('settings.sessions.revoke')
                 )}
               </Button>
             </DialogFooter>
@@ -533,26 +538,26 @@ export default function SessionsPage() {
         <Dialog open={showRevokeAllDialog} onOpenChange={setShowRevokeAllDialog}>
           <DialogContent className='max-w-lg'>
             <DialogHeader>
-              <DialogTitle>Revoke All Sessions</DialogTitle>
+              <DialogTitle>{t('settings.sessions.revoke_all_title')}</DialogTitle>
               <DialogDescription className="space-y-2">
                 <p>
-                  This action will revoke <strong>all sessions</strong> including your current one.
+                  {t('settings.sessions.revoke_all_desc')}
                 </p>
                 <p className="text-fd-destructive font-medium">
-                  You will be logged out and redirected to the home page.
+                  {t('settings.sessions.revoke_all_warning')}
                 </p>
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowRevokeAllDialog(false)}>
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button
                 variant="primary"
                 onClick={handleRevokeAll}
                 disabled={loading}
               >
-                {loading ? 'Revoking...' : 'Revoke All & Logout'}
+                {loading ? t('settings.sessions.revoking') : t('settings.sessions.revoke_all_logout')}
               </Button>
             </DialogFooter>
           </DialogContent>

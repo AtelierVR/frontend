@@ -3,19 +3,8 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Icon } from '@iconify/react';
 import { cn } from '@/lib/cn';
 import { formatDistanceToNow, format, isToday, isYesterday } from 'date-fns';
-import { fr } from 'date-fns/locale';
-
-function formatTime(timestamp: string): string {
-  const date = new Date(timestamp);
-  
-  if (isToday(date)) {
-    return format(date, 'HH:mm', { locale: fr });
-  } else if (isYesterday(date)) {
-    return 'Hier';
-  } else {
-    return formatDistanceToNow(date, { addSuffix: true, locale: fr });
-  }
-}
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 
 interface ConversationCardProps {
   conversation: Conversation;
@@ -30,21 +19,30 @@ export function ConversationCard({
   currentUserIid, 
   onSelect 
 }: ConversationCardProps) {
-  const otherMembers = conversation.members.filter(m => m.user_ref !== currentUserIid);
+  const { t } = useTranslation();
+
+  const formatTime = (timestamp: number | string): string => {
+    const date = new Date(timestamp);
+    if (isToday(date)) return format(date, 'HH:mm');
+    if (isYesterday(date)) return t('messages.yesterday');
+    return formatDistanceToNow(date, { addSuffix: true });
+  };
+
+  const otherMembers = conversation.members.filter(m => m.reference !== currentUserIid);
   
   let title = conversation.title?.trim() || '';
-  let avatar = conversation.avatar;
+  let avatar = conversation.thumbnail;
   let initials = '';
   const isGroup = otherMembers.length > 1;
   
   if (!title) {
     if (otherMembers.length === 0) {
-      title = 'Moi';
+      title = t('messages.me');
       initials = 'M';
     } else if (otherMembers.length === 1) {
-      const user = users.get(otherMembers[0].user_ref);
-      title = user?.display || user?.username || otherMembers[0].user_ref;
-      avatar = user?.thumbnail;
+      const user = users.get(otherMembers[0].reference);
+      title = user?.display || user?.username || otherMembers[0].reference;
+      avatar = user?.thumbnail ?? null;
       initials = (user?.display || user?.username || 'U')
         .replace(/[^a-zA-Z ]/g, '')
         .split(' ')
@@ -66,10 +64,12 @@ export function ConversationCard({
       .slice(0, 2);
   }
 
-  const lastMessage = conversation.messages?.[conversation.messages.length - 1];
-  const hasUnread = conversation.members.some(m => 
-    m.user_ref === currentUserIid && m.last_read_at && lastMessage && 
-    new Date(m.last_read_at) < new Date(lastMessage.created_at)
+  const lastActivity = conversation.last_message ?? conversation.updated_at;
+  const hasUnread = conversation.members.some(m =>
+    m.reference === currentUserIid &&
+    m.last_read_at !== null &&
+    conversation.last_message !== null &&
+    m.last_read_at < (conversation.last_message as number)
   );
 
   return (
@@ -101,21 +101,14 @@ export function ConversationCard({
           )}>
             {title}
           </span>
-          {lastMessage && (
+          {lastActivity && (
             <span className="text-xs text-fd-muted-foreground shrink-0">
-              {formatTime(lastMessage.created_at)}
+              {formatTime(lastActivity)}
             </span>
           )}
         </div>
         
-        {lastMessage && (
-          <p className={cn(
-            "text-sm text-fd-muted-foreground truncate",
-            hasUnread && "font-medium text-fd-foreground"
-          )}>
-            {lastMessage.content}
-          </p>
-        )}
+
       </div>
     </button>
   );

@@ -1,6 +1,7 @@
 import { RootProvider } from 'fumadocs-ui/provider/next';
 import { ApiProvider } from '@/lib/api';
 import { APP_CONFIG } from '@/lib/api/config';
+import { I18nProvider } from '@/lib/i18n';
 import './global.css';
 import { Inter } from 'next/font/google';
 import type { Metadata } from 'next';
@@ -23,7 +24,9 @@ export default function Layout({ children }: LayoutProps<'/'>) {
       <body className="flex flex-col min-h-screen transition-all">
         <RootProvider>
           <ApiProvider>
-            {children}
+            <I18nProvider>
+              {children}
+            </I18nProvider>
           </ApiProvider>
         </RootProvider>
       </body>

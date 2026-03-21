@@ -11,6 +11,8 @@ import ActionButton from '../ActionButton';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useTranslation } from 'react-i18next';
+import '@/lib/i18n/config';
 
 interface ConfigEntry {
   key: string;
@@ -154,6 +156,7 @@ function ConfigRow({
 }
 
 export default function ConfigsPage() {
+  const { t } = useTranslation();
   const Api = useApi();
   const router = useRouter();
 
@@ -283,7 +286,7 @@ export default function ConfigsPage() {
         await loadConfigs();
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to save');
+      setError(e instanceof Error ? e.message : t('settings.configs.save_failed'));
     } finally {
       setSaving(false);
     }
@@ -292,7 +295,7 @@ export default function ConfigsPage() {
   return (
     <DocsPage toc={[]} footer={{ enabled: false }}>
       <DocsTitle className="flex items-center justify-between">
-        <span>Server Configuration</span>
+        <span>{t('settings.configs.title')}</span>
         <ActionButton
           variant="save"
           onClick={handleSave}
@@ -301,7 +304,7 @@ export default function ConfigsPage() {
         />
       </DocsTitle>
       <DocsDescription>
-        Override server configuration values stored in the database. Set a value to override the environment variable or default. Clear a value (click the restore button) to remove the DB override.
+        {t('settings.configs.description')}
       </DocsDescription>
       <DocsBody>
         {/* Toolbar */}
@@ -316,7 +319,7 @@ export default function ConfigsPage() {
               type="text"
               value={filterText}
               onChange={e => setFilterText(e.target.value)}
-              placeholder="Filter by key, label or description…"
+              placeholder={t('settings.configs.filter_placeholder')}
               className="pl-8 pr-8 h-9 text-sm"
             />
             {filterText && (
@@ -341,7 +344,7 @@ export default function ConfigsPage() {
             )}
           >
             <Icon icon="material-symbols:warning-rounded" className="size-3.5" />
-            Risky
+            {t('settings.configs.risky')}
           </button>
           {/* Source filter chips */}
           <div className="flex items-center gap-1.5 flex-shrink-0">
