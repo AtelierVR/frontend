@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { Icon } from '@iconify/react';
 import { fetchApi, isResponseError } from '@/lib/api/utils';
+import { resolveWellKnown } from '@/lib/api/config';
 import type { ServerInfo, ServerStatistics } from '@/lib/api/services/server';
 import type { RelayDetails, RelayInstanceSummary } from '@/lib/api/types';
 import { Badge } from '@/components/ui/badge';
@@ -228,10 +229,20 @@ export default function HomePage() {
   const [worldsLoading, setWorldsLoading] = useState(true);
   const { t } = useTranslation();
 
-  // Fetch server info (includes statistics)
+  // Fetch server info from well-known
   useEffect(() => {
-    fetchApi<ServerInfo>('/api/server').then((res) => {
-      if (!isResponseError(res)) setInfo(res.data);
+    resolveWellKnown().then((wk) => {
+      if (!wk) { setInfoLoading(false); return; }
+      setInfo({
+        id: wk.id,
+        title: wk.metadata.title,
+        description: wk.metadata.description ?? '',
+        address: wk.address,
+        features: wk.features,
+        version: wk.software.version,
+        icon: wk.metadata.icon ?? undefined,
+        gateway: { http: wk.gateway.api, ws: wk.gateway.ws, web: wk.gateway.web },
+      });
       setInfoLoading(false);
     });
   }, []);

@@ -4,11 +4,11 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Dialog, DialogContent } from '../ui/dialog';
 import { Icon } from '@iconify/react';
 import { fetchApi } from '@/lib/api/utils';
+import { resolveWellKnown } from '@/lib/api/config';
 import { Skeleton } from '../ui/skeleton';
 import { cn } from '@/lib/cn';
 import { buttonVariants } from '../ui/button';
 import Link from 'next/link';
-import type { ServerInfo } from '@/lib/api/services/server';
 
 interface ResultPage {
     items: ResultItem[];
@@ -167,9 +167,9 @@ let cachedFeatures: string[] | null = null;
 
 async function loadFeatures(): Promise<string[]> {
     if (cachedFeatures) return cachedFeatures;
-    const res = await fetchApi<ServerInfo>('/api/server');
-    if (res.error || !res.data) return ['user'];
-    cachedFeatures = res.data.features.filter((f) => f in FEATURE_CONFIG);
+    const wk = await resolveWellKnown();
+    if (!wk) return ['user'];
+    cachedFeatures = wk.features.filter((f) => f in FEATURE_CONFIG);
     if (cachedFeatures.length === 0) cachedFeatures = ['user'];
     return cachedFeatures;
 }

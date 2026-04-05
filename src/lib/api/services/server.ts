@@ -1,5 +1,6 @@
 import type { ApiError } from '../types';
 import { fetchApi, isResponseError } from '../utils';
+import { resolveWellKnown } from '../config';
 
 export interface ServerStatistics {
     users: number;
@@ -31,8 +32,25 @@ export interface ServerInfo {
 
 export class ServerService {
     async fetchServerInfo(): Promise<ServerInfo | ApiError> {
-        const res = await fetchApi<ServerInfo>('/api/server');
-        if (isResponseError(res)) return res.error;
-        return res.data;
+        const wk = await resolveWellKnown();
+        if (!wk) return { status: 503, code: -1, message: 'Well-known unavailable' };
+
+        const base: ServerInfo = {
+            id: wk.id,
+            title: wk.metadata.title,
+            description: wk.metadata.description ?? '',
+            address: wk.address,
+            features: wk.features,
+            version: wk.software.version,
+            icon: wk.metadata.icon ?? undefined,
+            gateway: {
+                http: wk.gateway.api,
+                ws: wk.gateway.ws,
+                web: wk.gateway.web,
+            },
+        };
+
+        // Statistics not yet available from well-known — leave undefined
+        return base;
     }
 }

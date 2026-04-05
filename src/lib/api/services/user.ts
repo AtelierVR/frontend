@@ -1,6 +1,6 @@
 import type { User, CurrentUser, UpdateUser, ApiError } from '../types';
 import { fetchApi, isResponseError } from '../utils';
-import { API_CONFIG } from '../config';
+import { resolveApiConfig } from '../config';
 
 export class UserService {
     async fetchCurrentUser(): Promise<CurrentUser | ApiError> {
@@ -13,8 +13,8 @@ export class UserService {
         let res = await fetchApi<User>(`/api/users/${id}${server ? `@${server}` : ""}`);
         if (isResponseError(res)) return res.error;
         return res.data;
-    }    
-    
+    }
+
     async updateUser(
         data: UpdateUser,
         factor_code?: string,
@@ -28,32 +28,41 @@ export class UserService {
                 factor_code: factor_code
             })
         }, onVerificationRequired);
-        
+
         if (isResponseError(res)) return res.error;
         return res.data;
     }
 
-    async uploadThumbnail(file: Blob): Promise<URL | ApiError> {
-        let formData = new FormData();
-        formData.append("file", file);
-        let res = await fetchApi<Blob>("/api/users/@me/thumbnail", {
-            method: "POST",
-            body: formData
-        });
-        
-        if (isResponseError(res)) return res.error;
-        return new URL(`/api/users/@me/thumbnail`, API_CONFIG.baseUrl);
+    private async _uploadFile(endpoint: string, file: Blob): Promise<{ url: URL } | ApiError> {
+        const config = await resolveApiConfig();
+        try {
+            const formData = new FormData();
+            formData.append("file", file);
+            const res = await fetch(new URL(endpoint, config.baseUrl), {
+                method: "POST",
+                body: formData,
+                credentials: "include",
+            });
+            if (!res.ok) {
+                let err: any;
+                try { err = await res.json(); } catch { err = {}; }
+                return { status: res.status, code: err?.error?.code ?? -1, message: err?.error?.message ?? res.statusText };
+            }
+            return { url: new URL(res.url) };
+        } catch (e) {
+            return {
+                status: 500,
+                code: -1,
+                message: "An error occurred. Please try again later."
+            };
+        }
     }
 
-    async uploadBanner(file: Blob): Promise<URL | ApiError> {
-        let formData = new FormData();
-        formData.append("file", file);
-        let res = await fetchApi<Blob>("/api/users/@me/banner", {
-            method: "POST",
-            body: formData
-        });
-        
-        if (isResponseError(res)) return res.error;
-        return new URL(`/api/users/@me/banner`, API_CONFIG.baseUrl);
+    async uploadThumbnail(file: Blob): Promise<{ url: URL } | ApiError> {
+        return this._uploadFile("/api/users/@me/thumbnail", file);
+    }
+
+    async uploadBanner(file: Blob): Promise<{ url: URL } | ApiError> {
+        return this._uploadFile("/api/users/@me/banner", file);
     }
 }

@@ -5,7 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
 import { Skeleton } from '@/components/ui/skeleton';
-import { API_CONFIG } from '@/lib/api/config';
+import { resolveApiConfig } from '@/lib/api/config';
 
 interface Frontmatter {
     title?: string;
@@ -76,13 +76,15 @@ export default function MarkdownPage({ src, fallbackTitle }: MarkdownPageProps) 
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        fetch(new URL(src, API_CONFIG.baseUrl))
-            .then(res => {
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                return res.text();
-            })
-            .then(raw => setDoc(parseFrontmatter(raw)))
-            .catch(() => setError('Impossible de charger le document. Veuillez réessayer plus tard.'));
+        resolveApiConfig().then(config => {
+            fetch(new URL(src, config.baseUrl))
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    return res.text();
+                })
+                .then(raw => setDoc(parseFrontmatter(raw)))
+                .catch(() => setError('Impossible de charger le document. Veuillez réessayer plus tard.'));
+        });
     }, [src]);
 
     const fm = doc?.frontmatter;

@@ -1,5 +1,5 @@
 import type { ApiError, Response } from '../types';
-import { API_CONFIG } from '../config';
+import { resolveApiConfig } from '../config';
 
 export function isError(result: any): result is ApiError {
     return typeof result === 'object' && 'status' in result && 'code' in result && 'message' in result;
@@ -27,8 +27,9 @@ export async function fetchApi<T = unknown>(
     options: RequestInit = {},
     onVerificationRequired?: any
 ): Promise<Response<T>> {
+    const config = await resolveApiConfig();
     try {
-        let res = await fetch(new URL(url, API_CONFIG.baseUrl), {
+        let res = await fetch(new URL(url, config.baseUrl), {
             ...options,
             credentials: 'include',
             headers: {

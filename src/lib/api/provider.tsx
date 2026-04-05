@@ -3,9 +3,9 @@
 import { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import { AuthService, UserService, VerificationService, SessionService, FollowService, RelayService, MessageService, TotpService } from './services';
 import { getSIDById, isError } from './utils';
-import { API_CONFIG } from './config';
+import { resolveApiConfig } from './config';
 import type { ApiInterface } from './interface';
-import type { User, CurrentUser, UpdateUser } from './types';
+import type { User, CurrentUser, UpdateUser, ApiError } from './types';
 
 const ApiContext = createContext<ApiInterface | null>(null);
 
@@ -52,6 +52,8 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
     };
 
     const updateUser = async (data: UpdateUser, factor_code?: string, onVerificationRequired?: (error: any, methods: any[]) => Promise<string | null>) => {
+        if (Object.keys(data).length === 0)
+            return (currentUser ?? { status: 400, code: 400, message: 'No data to update.' }) as CurrentUser | ApiError;
         const result = await userService.updateUser(data, factor_code, onVerificationRequired);
         if (isError(result)) return result;
 
@@ -64,22 +66,24 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
         const result = await userService.uploadThumbnail(file);
         if (isError(result)) return result;
 
-        if (currentUser) {
-            const updatedUser = { ...currentUser, thumbnail: result.toString() };
-            setCurrentUser(updatedUser);
+        const me = await userService.fetchCurrentUser();
+        if (!isError(me)) {
+            setCurrentUser(me);
+            setUsers(new Map(users.set(getSIDById(me.id, me.server), me)));
         }
-        return result;
+        return result.url;
     };
 
     const uploadUserBanner = async (file: Blob) => {
         const result = await userService.uploadBanner(file);
         if (isError(result)) return result;
 
-        if (currentUser) {
-            const updatedUser = { ...currentUser, banner: result.toString() };
-            setCurrentUser(updatedUser);
+        const me = await userService.fetchCurrentUser();
+        if (!isError(me)) {
+            setCurrentUser(me);
+            setUsers(new Map(users.set(getSIDById(me.id, me.server), me)));
         }
-        return result;
+        return result.url;
     };
 
     // Auth methods
@@ -211,50 +215,50 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
         if (!currentUser) {
             fetchCurrentUser();
         } else if (!webSocket) {
-            let url = new URL(API_CONFIG.wsUrl);
+            resolveApiConfig().then(config => {
+                let ws = new WebSocket(config.wsUrl);
 
-            let ws = new WebSocket(url);
+                ws.onopen = () => {
+                    console.log("WebSocket connected");
+                    setWebSocket(ws);
+                };
 
-            ws.onopen = () => {
-                console.log("WebSocket connected");
-                setWebSocket(ws);
-            };
+                ws.onmessage = (event) => {
+                    try {
+                        const data = JSON.parse(event.data);
+                        let eventType = data.type;
 
-            ws.onmessage = (event) => {
-                try {
-                    const data = JSON.parse(event.data);
-                    let eventType = data.type;
-
-                    // Handle event:xxx messages from subscription system
-                    if (eventType.startsWith('event:')) {
-                        eventType = eventType.substring(6); // Remove 'event:' prefix
-                    }
-
-                    // Notifier tous les listeners pour ce type d'événement exact
-                    const listeners = socketListenersRef.current.get(eventType);
-                    if (listeners) {
-                        listeners.forEach(listener => listener(data.data || data));
-                    }
-
-                    // Notifier tous les listeners avec regex qui matchent
-                    regexListenersRef.current.forEach(({ pattern, callback }) => {
-                        if (pattern.test(eventType)) {
-                            callback(data.data || data);
+                        // Handle event:xxx messages from subscription system
+                        if (eventType.startsWith('event:')) {
+                            eventType = eventType.substring(6); // Remove 'event:' prefix
                         }
-                    });
-                } catch (error) {
-                    console.error('Failed to parse WebSocket message:', error);
-                }
-            };
 
-            ws.onclose = () => {
-                console.log("WebSocket disconnected");
-                setWebSocket(null);
-            };
+                        // Notifier tous les listeners pour ce type d'événement exact
+                        const listeners = socketListenersRef.current.get(eventType);
+                        if (listeners) {
+                            listeners.forEach(listener => listener(data.data || data));
+                        }
 
-            ws.onerror = (error) => {
-                console.error("WebSocket error:", error);
-            };
+                        // Notifier tous les listeners avec regex qui matchent
+                        regexListenersRef.current.forEach(({ pattern, callback }) => {
+                            if (pattern.test(eventType)) {
+                                callback(data.data || data);
+                            }
+                        });
+                    } catch (error) {
+                        console.error('Failed to parse WebSocket message:', error);
+                    }
+                };
+
+                ws.onclose = () => {
+                    console.log("WebSocket disconnected");
+                    setWebSocket(null);
+                };
+
+                ws.onerror = (error) => {
+                    console.error("WebSocket error:", error);
+                };
+            });
         }
 
         return () => {
