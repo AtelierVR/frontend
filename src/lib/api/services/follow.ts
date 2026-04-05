@@ -15,9 +15,9 @@ export class FollowService {
   async fetchMyFollowers(
     limit: number = 100,
     offset: number = 0
-  ): Promise<MultiResponse & { followers: Follower[] } | ApiError> {
-    const response = await fetchApi<MultiResponse & { followers: Follower[] }>(
-      `/api/relations/@me/followers?limit=${limit}&offset=${offset}`
+  ): Promise<MultiResponse & { items: Follower[] } | ApiError> {
+    const response = await fetchApi<MultiResponse & { items: Follower[] }>(
+      `/api/users/@me/followers?limit=${limit}&offset=${offset}`
     );
 
     if (isResponseError(response)) {
@@ -30,9 +30,9 @@ export class FollowService {
   async fetchMyFollowing(
     limit: number = 100,
     offset: number = 0
-  ): Promise<MultiResponse & { following: Following[] } | ApiError> {
-    const response = await fetchApi<MultiResponse & { following: Following[] }>(
-      `/api/relations/@me/following?limit=${limit}&offset=${offset}`
+  ): Promise<MultiResponse & { items: Following[] } | ApiError> {
+    const response = await fetchApi<MultiResponse & { items: Following[] }>(
+      `/api/users/@me/following?limit=${limit}&offset=${offset}`
     );
 
     if (isResponseError(response)) {

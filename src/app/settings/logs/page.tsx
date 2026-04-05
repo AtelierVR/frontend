@@ -17,7 +17,7 @@ interface LogEntry {
 }
 
 interface LogsResponse {
-  logs: LogEntry[];
+  items: LogEntry[];
   total: number;
 }
 
@@ -57,8 +57,8 @@ export default function LogsPage() {
     try {
       // Use 'after' parameter for incremental updates
       const url = incremental && lastTimestamp > 0
-        ? `/api/server/logs?limit=500&after=${lastTimestamp}`
-        : '/api/server/logs?limit=500';
+        ? `/api/logs?limit=500&after=${lastTimestamp}`
+        : '/api/logs?limit=500';
 
       const res = await fetchApi<LogsResponse>(url);
 
@@ -73,17 +73,17 @@ export default function LogsPage() {
         return;
       }
 
-      if (incremental && res.data.logs.length > 0) {
+      if (incremental && res.data.items.length > 0) {
         // Append new logs
-        setLogs(prev => [...prev, ...res.data.logs]);
+        setLogs(prev => [...prev, ...res.data.items]);
       } else if (!incremental) {
         // Full reload: replace all logs
-        setLogs(res.data.logs);
+        setLogs(res.data.items);
       }
 
       // Update last timestamp if we have logs
-      if (res.data.logs.length > 0) {
-        const maxTimestamp = Math.max(...res.data.logs.map(l => l.timestamp));
+      if (res.data.items.length > 0) {
+        const maxTimestamp = Math.max(...res.data.items.map(l => l.timestamp));
         setLastTimestamp(maxTimestamp);
       }
     } catch (err) {

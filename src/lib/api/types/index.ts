@@ -300,5 +300,5 @@ export interface MessagesResponse extends MultiResponse {
 }
 
 export interface SearchUsersResponse extends MultiResponse {
-    users: User[];
+    items: User[];
 }

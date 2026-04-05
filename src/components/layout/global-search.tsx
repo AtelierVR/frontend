@@ -53,7 +53,7 @@ const FEATURE_CONFIG: Record<string, {
             const url = q ? `/api/users?query=${encodeURIComponent(q)}&limit=15` : '/api/users?limit=15';
             const res = await fetchApi<any>(url);
             return {
-                items: res.data?.users?.map((e: any) => ({
+                items: res.data?.items?.map((e: any) => ({
                     id: e.id,
                     label: e.display || e.username,
                     description: getAlias("uid", e.alias),
@@ -77,7 +77,7 @@ const FEATURE_CONFIG: Record<string, {
             const url = q ? `/api/avatars?query=${encodeURIComponent(q)}&limit=15` : '/api/avatars?limit=15';
             const res = await fetchApi<any>(url);
             return {
-                items: res.data?.avatars?.map((e: any) => ({
+                items: res.data?.items?.map((e: any) => ({
                     id: e.id,
                     label: e.title || `Avatar ${e.id}`,
                     description: getAlias("iid", e.alias),
@@ -101,7 +101,7 @@ const FEATURE_CONFIG: Record<string, {
             const url = q ? `/api/worlds?query=${encodeURIComponent(q)}&limit=15` : '/api/worlds?limit=15';
             const res = await fetchApi<any>(url);
             return { 
-                items: res.data?.worlds?.map((e: any) => ({
+                items: res.data?.items?.map((e: any) => ({
                     id: e.id,
                     label: e.title || `World ${e.id}`,
                     description: getAlias("iid", e.alias),

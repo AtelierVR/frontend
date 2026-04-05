@@ -51,8 +51,8 @@ export interface ApiInterface {
     deleteMySessions: () => Promise<{ success: boolean, logout: boolean } | ApiError>;
 
     // Follow methods
-    fetchMyFollowers: (limit?: number, offset?: number) => Promise<MultiResponse & { followers: Array<{ user: string, at: number }> } | ApiError>;
-    fetchMyFollowing: (limit?: number, offset?: number) => Promise<MultiResponse & { following: Array<{ user: string, at: number }> } | ApiError>;
+    fetchMyFollowers: (limit?: number, offset?: number) => Promise<MultiResponse & { items: Array<{ user: string, at: number }> } | ApiError>;
+    fetchMyFollowing: (limit?: number, offset?: number) => Promise<MultiResponse & { items: Array<{ user: string, at: number }> } | ApiError>;
     sendFollow: (id: number | string, server?: string) => Promise<import('./types').Relation | ApiError>;
     sendUnfollow: (id: number | string, server?: string) => Promise<boolean | ApiError>;
     sendFollowRequestResponse: (type: 'accept' | 'reject', id: number | string, server?: string) => Promise<boolean | ApiError>;

@@ -176,7 +176,7 @@ export default function ConfigsPage() {
     setLoading(true);
     setError(undefined);
     try {
-      const res = await fetchApi<ConfigsResponse>('/api/server/configs');
+      const res = await fetchApi<ConfigsResponse>('/api/configs');
       if (isResponseError(res)) {
         if (res.error.status === 403) {
           router.push('/settings');
@@ -265,7 +265,7 @@ export default function ConfigsPage() {
     }
 
     try {
-      const res = await fetchApi<{ results: PatchResult[] }>('/api/server/configs', {
+      const res = await fetchApi<{ results: PatchResult[] }>('/api/configs', {
         method: 'PATCH',
         body: JSON.stringify(payload),
       });

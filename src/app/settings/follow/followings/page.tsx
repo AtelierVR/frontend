@@ -49,7 +49,7 @@ export default function FollowingsPage() {
       // Filter out duplicates based on user ID
       setFollowings((prev) => {
         const existingIds = new Set(prev.map(f => f.user));
-        const newFollowings = res.following.filter(f => !existingIds.has(f.user));
+        const newFollowings = res.items.filter(f => !existingIds.has(f.user));
         return [...prev, ...newFollowings];
       });
     } catch (err) {
