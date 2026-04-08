@@ -381,6 +381,7 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
         // World methods
         fetchWorld: (id, server) => worldService.fetchWorld(id, server),
         fetchWorlds: (limit, offset) => worldService.fetchWorlds(limit, offset),
+        fetchWorldAssets: (id, server, version) => worldService.fetchWorldAssets(id, server, version),
 
         // WebSocket methods
         onSocketEvent,

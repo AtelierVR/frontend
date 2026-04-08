@@ -338,3 +338,7 @@ export interface WorldAsset {
 export interface WorldsResponse extends MultiResponse {
     items: World[];
 }
+
+export interface WorldAssetsResponse extends MultiResponse {
+    items: WorldAsset[];
+}

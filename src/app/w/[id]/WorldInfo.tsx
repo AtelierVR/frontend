@@ -33,7 +33,7 @@ export default function WorldInfo({ world }: { world: World | null }) {
                         <Icon icon="material-symbols:group-rounded" className="size-4" />
                         Capacity
                     </span>
-                    <span className="font-medium">{world.capacity}</span>
+                    <span className="font-medium">{world.capacity || 'Unlimited'}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -44,14 +44,6 @@ export default function WorldInfo({ world }: { world: World | null }) {
                     <span className="font-medium font-mono">
                         {world.release >= 0 ? `v${world.release}` : 'None'}
                     </span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                    <span className="flex items-center gap-2 text-fd-muted-foreground">
-                        <Icon icon="material-symbols:dns-rounded" className="size-4" />
-                        Server
-                    </span>
-                    <span className="font-medium font-mono text-xs">{world.server}</span>
                 </div>
             </CardContent>
         </Card>

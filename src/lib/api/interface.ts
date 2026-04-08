@@ -21,6 +21,7 @@ import type {
     CreateConversationData,
     World,
     WorldsResponse,
+    WorldAssetsResponse,
 } from './types';
 import type { TotpSetupResult, TotpEnableResult, TotpDisableResult } from './services/totp';
 
@@ -84,6 +85,7 @@ export interface ApiInterface {
     // World methods
     fetchWorld: (id: number | string, server?: string) => Promise<World | ApiError>;
     fetchWorlds: (limit?: number, offset?: number) => Promise<WorldsResponse | ApiError>;
+    fetchWorldAssets: (id: number | string, server?: string, version?: number) => Promise<WorldAssetsResponse | ApiError>;
 
     // TOTP / 2FA methods
     setupTotp: () => Promise<TotpSetupResult | ApiError>;

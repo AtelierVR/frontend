@@ -7,31 +7,25 @@ import type { World } from '@/lib/api/types';
 export default function WorldThumbnail({ world }: { world: World | null }) {
     return (
         <div className={cn(
-            "w-[8em] h-[8em]",
-            "border border-fd-border",
-            "rounded-xl overflow-hidden",
-            "absolute -top-[4em]",
-            "bg-fd-background"
+            "relative w-full",
+            "border-b border-fd-border",
+            "bg-fd-muted/50 dark:bg-fd-muted/30"
         )}>
             {(!world || !world.thumbnail) && (
                 <div className={cn(
-                    "flex items-center justify-center",
-                    "w-full h-full",
-                    "bg-fd-muted",
-                    world ? "" : "animate-pulse"
-                )}>
-                    {world && (
-                        <span className="text-3xl select-none">🌍</span>
-                    )}
-                </div>
+                    "w-full h-48",
+                    "bg-gradient-to-br from-emerald-500/20 via-teal-500/10 to-fd-muted/30",
+                    !world && "animate-pulse"
+                )} />
             )}
             {world?.thumbnail && (
                 <Image
                     src={world.thumbnail}
                     alt={world.title}
-                    width={128}
-                    height={128}
-                    className="object-cover w-full h-full"
+                    width={1024}
+                    height={256}
+                    className="object-cover w-full"
+                    style={{ aspectRatio: '128 / 45' }}
                     unoptimized
                 />
             )}
