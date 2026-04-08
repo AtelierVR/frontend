@@ -3,10 +3,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
 import { Icon } from '@iconify/react';
+import Link from 'next/link';
 import type { World } from '@/lib/api/types';
+import { useWorld } from './WorldContext';
 
 export default function WorldInfo({ world }: { world: World | null }) {
+    const { canEdit } = useWorld();
+
     if (!world) {
         return (
             <Card>
@@ -33,7 +38,16 @@ export default function WorldInfo({ world }: { world: World | null }) {
                         <Icon icon="material-symbols:group-rounded" className="size-4" />
                         Capacity
                     </span>
-                    <span className="font-medium">{world.capacity || 'Unlimited'}</span>
+                    <div className="flex items-center gap-1">
+                        <span className="font-medium">{world.capacity || 'Unlimited'}</span>
+                        {canEdit && (
+                            <Link href={`/w/${world.id}@${world.server}/edit#capacity`}>
+                                <Button variant="ghost" size="icon" className="size-6 opacity-0 hover:opacity-100 transition-opacity">
+                                    <Icon icon="material-symbols:edit-rounded" className="size-3" />
+                                </Button>
+                            </Link>
+                        )}
+                    </div>
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -41,9 +55,18 @@ export default function WorldInfo({ world }: { world: World | null }) {
                         <Icon icon="material-symbols:update-rounded" className="size-4" />
                         Version
                     </span>
-                    <span className="font-medium font-mono">
-                        {world.release >= 0 ? `v${world.release}` : 'None'}
-                    </span>
+                    <div className="flex items-center gap-1">
+                        <span className="font-medium font-mono">
+                            {world.release >= 0 ? `v${world.release}` : 'None'}
+                        </span>
+                        {canEdit && (
+                            <Link href={`/w/${world.id}@${world.server}/edit#release`}>
+                                <Button variant="ghost" size="icon" className="size-6 opacity-0 hover:opacity-100 transition-opacity">
+                                    <Icon icon="material-symbols:edit-rounded" className="size-3" />
+                                </Button>
+                            </Link>
+                        )}
+                    </div>
                 </div>
             </CardContent>
         </Card>

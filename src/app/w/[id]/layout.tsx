@@ -3,6 +3,7 @@
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { isError, useApi } from '@/lib/api';
+import { getSIDById } from '@/lib/api/utils';
 import type { World, WorldAsset } from '@/lib/api/types';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -29,6 +30,9 @@ export default function WorldLayout({ children }: { children: React.ReactNode })
     const [allAssets, setAllAssets] = useState<WorldAsset[] | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [refreshTick, setRefreshTick] = useState(0);
+
+    const refresh = () => setRefreshTick(t => t + 1);
 
     useEffect(() => {
         if (!Api || !id || Array.isArray(id)) return;
@@ -61,12 +65,13 @@ export default function WorldLayout({ children }: { children: React.ReactNode })
         }
 
         fetchData();
-    }, [id]);
+    }, [id, refreshTick]);
 
     const baseHref = `/w/${id}`;
     const activeTab =
         pathname === `${baseHref}/versions` ? 'versions' :
         pathname === `${baseHref}/info` ? 'info' :
+        pathname === `${baseHref}/edit` ? 'edit' :
         'description';
 
     // Release-filtered assets for the title (size / platforms of the recommended release)
@@ -116,8 +121,15 @@ export default function WorldLayout({ children }: { children: React.ReactNode })
             </HomeLayout>
         );
 
+    const normalizeRef = (s: string) => s.startsWith('u:') ? s.slice(2) : s;
+    const myRef = Api?.currentUser ? getSIDById(Api.currentUser.id, Api.currentUser.server) : null;
+    const canEdit = world !== null && myRef !== null && (
+        normalizeRef(world.owner) === myRef ||
+        world.contributors.some(c => normalizeRef(c) === myRef)
+    );
+
     return (
-        <WorldContext.Provider value={{ world, allAssets, loading, error }}>
+        <WorldContext.Provider value={{ world, allAssets, loading, error, canEdit, refresh }}>
             <HomeLayout {...baseOptions()}>
                 <div className="container max-w-6xl mx-auto py-8 px-4">
                     <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] gap-6">
@@ -135,6 +147,7 @@ export default function WorldLayout({ children }: { children: React.ReactNode })
                                 onValueChange={v => {
                                     if (v === 'versions') router.push(`${baseHref}/versions`);
                                     else if (v === 'info') router.push(`${baseHref}/info`);
+                                    else if (v === 'edit') router.push(`${baseHref}/edit`);
                                     else router.push(baseHref);
                                 }}
                             >
@@ -142,6 +155,7 @@ export default function WorldLayout({ children }: { children: React.ReactNode })
                                     <TabsTrigger value="description">Description</TabsTrigger>
                                     <TabsTrigger value="versions">Versions</TabsTrigger>
                                     <TabsTrigger value="info" className="md:hidden">Infos</TabsTrigger>
+                                    {canEdit && <TabsTrigger value="edit">Edit</TabsTrigger>}
                                 </TabsList>
                             </Tabs>
 

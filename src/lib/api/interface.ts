@@ -22,6 +22,7 @@ import type {
     World,
     WorldsResponse,
     WorldAssetsResponse,
+    UpdateWorld,
 } from './types';
 import type { TotpSetupResult, TotpEnableResult, TotpDisableResult } from './services/totp';
 
@@ -86,6 +87,8 @@ export interface ApiInterface {
     fetchWorld: (id: number | string, server?: string) => Promise<World | ApiError>;
     fetchWorlds: (limit?: number, offset?: number) => Promise<WorldsResponse | ApiError>;
     fetchWorldAssets: (id: number | string, server?: string, version?: number) => Promise<WorldAssetsResponse | ApiError>;
+    updateWorld: (id: number | string, server: string | undefined, data: UpdateWorld) => Promise<World | ApiError>;
+    uploadWorldThumbnail: (id: number | string, server: string | undefined, file: Blob) => Promise<{ url: URL } | ApiError>;
 
     // TOTP / 2FA methods
     setupTotp: () => Promise<TotpSetupResult | ApiError>;

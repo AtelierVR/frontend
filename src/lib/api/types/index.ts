@@ -335,6 +335,15 @@ export interface WorldAsset {
     uploader: string | null;
 }
 
+export interface UpdateWorld {
+    title?: string;
+    description?: string | null;
+    capacity?: number;
+    release?: number | null;
+    contributors?: string[];
+    tags?: string[];
+}
+
 export interface WorldsResponse extends MultiResponse {
     items: World[];
 }

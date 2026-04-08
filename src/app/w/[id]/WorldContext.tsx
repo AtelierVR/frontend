@@ -8,6 +8,8 @@ export interface WorldContextType {
     allAssets: WorldAsset[] | null;
     loading: boolean;
     error: string | null;
+    canEdit: boolean;
+    refresh: () => void;
 }
 
 const defaultCtx: WorldContextType = {
@@ -15,6 +17,8 @@ const defaultCtx: WorldContextType = {
     allAssets: null,
     loading: true,
     error: null,
+    canEdit: false,
+    refresh: () => {},
 };
 
 export const WorldContext = createContext<WorldContextType>(defaultCtx);

@@ -7,6 +7,7 @@ import { Icon } from '@iconify/react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useApi, isError } from '@/lib/api';
+import { useWorld } from './WorldContext';
 
 const PLATFORM_ICONS: Record<string, { icon: string; label: string }> = {
     windows: { icon: 'mdi:microsoft-windows', label: 'Windows' },
@@ -43,6 +44,7 @@ function ownerHref(sid: string): string {
 
 export default function WorldTitle({ world, assets }: { world: World | null; assets: WorldAsset[] | null }) {
     const Api = useApi();
+    const { canEdit } = useWorld();
     const [copied, setCopied] = useState(false);
     const [owner, setOwner] = useState<User | null>(null);
 
@@ -76,7 +78,16 @@ export default function WorldTitle({ world, assets }: { world: World | null; ass
         <div>
             <h1 className="ms-2.5 text-2xl font-bold flex items-center gap-2">
                 {world ? (
-                    <span className="text-fd-foreground">{world.title}</span>
+                    <>
+                        <span className="text-fd-foreground">{world.title}</span>
+                        {canEdit && (
+                            <Link href={`/w/${world.id}@${world.server}/edit#title`}>
+                                <Button variant="ghost" size="icon" className="opacity-0 hover:opacity-100 transition-opacity size-7">
+                                    <Icon icon="material-symbols:edit-rounded" className="size-4" />
+                                </Button>
+                            </Link>
+                        )}
+                    </>
                 ) : (
                     <div
                         style={{ inlineSize: '30%' }}
@@ -107,12 +118,12 @@ export default function WorldTitle({ world, assets }: { world: World | null; ass
                                 {platforms.map(p => {
                                     const info = PLATFORM_ICONS[p.toLowerCase()];
                                     return info ? (
-                                        <Icon
-                                            key={p}
-                                            icon={info.icon}
-                                            className="size-4"
-                                            title={info.label}
-                                        />
+                                        <span key={p} title={info.label}>
+                                            <Icon
+                                                icon={info.icon}
+                                                className="size-4"
+                                            />
+                                        </span>
                                     ) : (
                                         <span key={p} className="text-xs font-mono">{p}</span>
                                     );
