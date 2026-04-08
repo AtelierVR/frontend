@@ -1,5 +1,6 @@
 export * from './auth';
 export * from './user';
+export * from './world';
 export * from './verification';
 export * from './session';
 export * from './follow';

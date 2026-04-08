@@ -302,3 +302,39 @@ export interface MessagesResponse extends MultiResponse {
 export interface SearchUsersResponse extends MultiResponse {
     items: User[];
 }
+
+export interface World {
+    id: number;
+    server: string;
+    title: string;
+    description: string | null;
+    thumbnail: string | null;
+    tags: string[];
+    capacity: number;
+    /** Recommended asset version. -1 means none uploaded. */
+    release: number;
+    /** NoxIdentifier string of the owner */
+    owner: string;
+    /** NoxIdentifier strings of contributors */
+    contributors: string[];
+    alias: UserAlias[];
+}
+
+export interface WorldAsset {
+    id: number;
+    version: number;
+    engine: string;
+    platform: string;
+    is_empty: boolean;
+    url: string | null;
+    hash: string | null;
+    size: number | null;
+    mods: string[];
+    features: string[];
+    /** NoxIdentifier of the uploader, or null */
+    uploader: string | null;
+}
+
+export interface WorldsResponse extends MultiResponse {
+    items: World[];
+}

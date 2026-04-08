@@ -19,6 +19,8 @@ import type {
     SendMessageData,
     MessagesResponse,
     CreateConversationData,
+    World,
+    WorldsResponse,
 } from './types';
 import type { TotpSetupResult, TotpEnableResult, TotpDisableResult } from './services/totp';
 
@@ -78,6 +80,10 @@ export interface ApiInterface {
     sendMessage(conversationId: string, data: SendMessageData): Promise<Message | ApiError>;
     fetchMessages(conversationId: string, limit?: number, before?: string): Promise<MessagesResponse | ApiError>;
     markAsRead(conversationId: string): Promise<{ success: boolean } | ApiError>;
+
+    // World methods
+    fetchWorld: (id: number | string, server?: string) => Promise<World | ApiError>;
+    fetchWorlds: (limit?: number, offset?: number) => Promise<WorldsResponse | ApiError>;
 
     // TOTP / 2FA methods
     setupTotp: () => Promise<TotpSetupResult | ApiError>;

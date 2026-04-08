@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
-import { AuthService, UserService, VerificationService, SessionService, FollowService, RelayService, MessageService, TotpService } from './services';
+import { AuthService, UserService, VerificationService, SessionService, FollowService, RelayService, MessageService, TotpService, WorldService } from './services';
 import { getSIDById, isError } from './utils';
 import { resolveApiConfig } from './config';
 import type { ApiInterface } from './interface';
@@ -25,6 +25,7 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
     const relayService = new RelayService();
     const messageService = new MessageService();
     const totpService = new TotpService();
+    const worldService = new WorldService();
 
     // User methods
     const fetchCurrentUser = async () => {
@@ -376,6 +377,10 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
         sendMessage: messageService.sendMessage,
         fetchMessages: messageService.fetchMessages,
         markAsRead: messageService.markAsRead,
+
+        // World methods
+        fetchWorld: (id, server) => worldService.fetchWorld(id, server),
+        fetchWorlds: (limit, offset) => worldService.fetchWorlds(limit, offset),
 
         // WebSocket methods
         onSocketEvent,
