@@ -1,4 +1,4 @@
-import type { User, CurrentUser, UpdateUser, ApiError } from '../types';
+import type { User, CurrentUser, UpdateUser, ApiError, PublicTableMeta, PublicTableListResponse, TableListResponse } from '../types';
 import { fetchApi, isResponseError } from '../utils';
 import { resolveApiConfig } from '../config';
 
@@ -64,5 +64,51 @@ export class UserService {
 
     async uploadBanner(file: Blob): Promise<{ url: URL } | ApiError> {
         return this._uploadFile("/api/users/@me/banner", file);
+    }
+
+    async fetchUserPublicList(id: number | string, server?: string, limit = 20, offset = 0): Promise<PublicTableListResponse | ApiError> {
+        const res = await fetchApi<PublicTableListResponse>(`/api/users/${id}${server ? `@${server}` : ''}/public?limit=${limit}&offset=${offset}`);
+        if (isResponseError(res)) return res.error;
+        return res.data;
+    }
+
+    async fetchMyTables(limit = 100, offset = 0): Promise<TableListResponse | ApiError> {
+        const res = await fetchApi<TableListResponse>(`/api/users/@me/tables?limit=${limit}&offset=${offset}`);
+        if (isResponseError(res)) return res.error;
+        return res.data;
+    }
+
+    async fetchMyTable(key: string): Promise<Buffer | Error> {
+        const config = await resolveApiConfig();
+        try {
+            const res = await fetch(new URL(`/api/users/@me/tables/${encodeURIComponent(key)}`, config.baseUrl), {
+                credentials: 'include',
+            });
+            if (!res.ok) {
+                const json = await res.json().catch(() => null);
+                return new Error(json?.error?.message ?? 'An error occurred. Please try again later.');
+            }
+            const arrayBuffer = await res.arrayBuffer();
+            return Buffer.from(arrayBuffer);
+        } catch {
+            return new Error('An error occurred. Please try again later.');
+        }
+    }
+
+    async fetchUserPublic(id: number | string, type: string, server?: string): Promise<Buffer | Error> {
+        const config = await resolveApiConfig();
+        try {
+            const res = await fetch(new URL(`/api/users/${id}${server ? `@${server}` : ''}/public/${type}`, config.baseUrl), {
+                credentials: 'include',
+            });
+            if (!res.ok) {
+                const json = await res.json().catch(() => null);
+                return new Error(json?.error?.message ?? 'An error occurred. Please try again later.');
+            }
+            const arrayBuffer = await res.arrayBuffer();
+            return Buffer.from(arrayBuffer);
+        } catch {
+            return new Error('An error occurred. Please try again later.');
+        }
     }
 }

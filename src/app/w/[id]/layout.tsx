@@ -18,6 +18,7 @@ import WorldTags from './WorldTags';
 import WorldContributors from './WorldContributors';
 import { WorldContext } from './WorldContext';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import FavoriteButton from './FavoriteButton';
 
 export default function WorldLayout({ children }: { children: React.ReactNode }) {
     const params = useParams();
@@ -138,7 +139,11 @@ export default function WorldLayout({ children }: { children: React.ReactNode })
                             <Card className="relative overflow-hidden">
                                 <WorldThumbnail world={world} />
                                 <div className="w-full p-6 space-y-5">
-                                    <WorldTitle world={world} assets={releaseAssets} />
+                                    <WorldTitle
+                                        world={world}
+                                        assets={releaseAssets}
+                                        actions={<FavoriteButton worldSid={`${world.id}@${world.server}`} />}
+                                    />
                                 </div>
                             </Card>
 

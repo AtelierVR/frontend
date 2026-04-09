@@ -56,6 +56,12 @@ export const getPageTree = (currentUser: CurrentUser | null, t: TFunction): Root
       },
       {
         type: 'page',
+        name: 'Tables',
+        url: '/settings/tables',
+        icon: <Icon icon="material-symbols:table-rows-rounded" />,
+      },
+      {
+        type: 'page',
         name: t('settings.nav.security'),
         url: '/settings/security',
         icon: <Icon icon="material-symbols:shield-rounded" />,

@@ -8,3 +8,4 @@ export * from './relay';
 export * from './message';
 export * from './server';
 export * from './totp';
+export * from './table';

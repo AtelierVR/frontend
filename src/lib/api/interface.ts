@@ -23,6 +23,9 @@ import type {
     WorldsResponse,
     WorldAssetsResponse,
     UpdateWorld,
+    PublicTableMeta,
+    PublicTableListResponse,
+    TableListResponse,
 } from './types';
 import type { TotpSetupResult, TotpEnableResult, TotpDisableResult } from './services/totp';
 
@@ -38,6 +41,10 @@ export interface ApiInterface {
     updateUser: (data: UpdateUser, factor_code?: string, onVerificationRequired?: VerificationCallback) => Promise<CurrentUser | ApiError>;
     uploadUserThumbnail: (file: Blob) => Promise<URL | ApiError>;
     uploadUserBanner: (file: Blob) => Promise<URL | ApiError>;
+    fetchUserPublicList: (id: number | string, server?: string, limit?: number, offset?: number) => Promise<PublicTableListResponse | ApiError>;
+    fetchUserPublic: (id: number | string, type: string, server?: string) => Promise<Buffer | Error>;
+    fetchMyTables: (limit?: number, offset?: number) => Promise<TableListResponse | ApiError>;
+    fetchMyTable: (key: string) => Promise<Buffer | Error>;
 
     // Auth methods
     fetchLogin: (identifier: string | number, password: string, factor_code?: string, onVerificationRequired?: VerificationCallback) => Promise<CurrentUser | ApiError>;
@@ -89,6 +96,12 @@ export interface ApiInterface {
     fetchWorldAssets: (id: number | string, server?: string, version?: number) => Promise<WorldAssetsResponse | ApiError>;
     updateWorld: (id: number | string, server: string | undefined, data: UpdateWorld) => Promise<World | ApiError>;
     uploadWorldThumbnail: (id: number | string, server: string | undefined, file: Blob) => Promise<{ url: URL } | ApiError>;
+
+    // Table methods
+    listMyTables: (limit?: number, offset?: number) => Promise<TableListResponse | ApiError>;
+    getMyTable: (key: string) => Promise<unknown | ApiError>;
+    setMyTable: (key: string, content: unknown, mime?: string) => Promise<ApiError | null>;
+    deleteMyTable: (key: string) => Promise<ApiError | null>;
 
     // TOTP / 2FA methods
     setupTotp: () => Promise<TotpSetupResult | ApiError>;

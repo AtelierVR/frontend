@@ -6,8 +6,8 @@ const variants = {
   primary: 'bg-fd-primary text-fd-primary-foreground hover:bg-fd-primary/80',
   outline: 'border hover:bg-fd-accent hover:text-fd-accent-foreground',
   ghost: 'hover:bg-fd-accent hover:text-fd-accent-foreground',
-  secondary:
-    'border bg-fd-secondary text-fd-secondary-foreground hover:bg-fd-accent hover:text-fd-accent-foreground',
+  secondary: 'border bg-fd-secondary text-fd-secondary-foreground hover:bg-fd-accent hover:text-fd-accent-foreground',
+  destructive: 'bg-red-500 text-white hover:bg-red-600',
 } as const;
 
 export const buttonVariants = cva(
@@ -31,7 +31,7 @@ export type ButtonProps = VariantProps<typeof buttonVariants>;
 
 export interface ButtonComponentProps
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'color'>,
-    VariantProps<typeof buttonVariants> {
+  VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 

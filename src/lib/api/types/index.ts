@@ -351,3 +351,32 @@ export interface WorldsResponse extends MultiResponse {
 export interface WorldAssetsResponse extends MultiResponse {
     items: WorldAsset[];
 }
+
+export interface TableMeta {
+    key: string;
+    mime: string;
+    hash: string;
+    created_at: number;
+    updated_at: number;
+}
+
+export interface TableListResponse {
+    items: TableMeta[];
+    limit: number;
+    offset: number;
+    total: number;
+}
+
+export interface PublicTableMeta {
+    key: string;
+    mime: string;
+    hash: string;
+    updated_at: number;
+}
+
+export interface PublicTableListResponse {
+    items: PublicTableMeta[];
+    limit: number;
+    offset: number;
+    total: number;
+}

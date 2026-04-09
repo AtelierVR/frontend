@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 import type { World, WorldAsset, User } from '@/lib/api/types';
 import { Icon } from '@iconify/react';
@@ -43,7 +44,7 @@ function ownerHref(sid: string): string {
     return `/u/${bare}`;
 }
 
-export default function WorldTitle({ world, assets }: { world: World | null; assets: WorldAsset[] | null }) {
+export default function WorldTitle({ world, assets, actions }: { world: World | null; assets: WorldAsset[] | null; actions?: ReactNode }) {
     const Api = useApi();
     const { canEdit } = useWorld();
     const [owner, setOwner] = useState<User | null>(null);
@@ -79,6 +80,7 @@ export default function WorldTitle({ world, assets }: { world: World | null; ass
                                 </Button>
                             </Link>
                         )}
+                        {actions && <span className="ml-auto">{actions}</span>}
                     </>
                 ) : (
                     <div

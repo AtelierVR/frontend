@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
-import { AuthService, UserService, VerificationService, SessionService, FollowService, RelayService, MessageService, TotpService, WorldService } from './services';
+import { AuthService, UserService, VerificationService, SessionService, FollowService, RelayService, MessageService, TotpService, WorldService, TableService } from './services';
 import { getSIDById, isError } from './utils';
 import { resolveApiConfig } from './config';
 import type { ApiInterface } from './interface';
@@ -26,6 +26,7 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
     const messageService = new MessageService();
     const totpService = new TotpService();
     const worldService = new WorldService();
+    const tableService = new TableService();
 
     // User methods
     const fetchCurrentUser = async () => {
@@ -85,6 +86,22 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
             setUsers(new Map(users.set(getSIDById(me.id, me.server), me)));
         }
         return result.url;
+    };
+
+    const fetchUserPublicList = async (id: number | string, server?: string, limit?: number, offset?: number) => {
+        return userService.fetchUserPublicList(id, server, limit, offset);
+    };
+
+    const fetchUserPublic = async (id: number | string, type: string, server?: string) => {
+        return userService.fetchUserPublic(id, type, server);
+    };
+
+    const fetchMyTables = async (limit?: number, offset?: number) => {
+        return userService.fetchMyTables(limit, offset);
+    };
+
+    const fetchMyTable = async (key: string) => {
+        return userService.fetchMyTable(key);
     };
 
     // Auth methods
@@ -329,6 +346,10 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
         updateUser,
         uploadUserThumbnail,
         uploadUserBanner,
+        fetchUserPublicList,
+        fetchUserPublic,
+        fetchMyTables,
+        fetchMyTable,
 
         // Auth methods
         fetchLogin,
@@ -384,6 +405,12 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
         fetchWorldAssets: (id, server, version) => worldService.fetchWorldAssets(id, server, version),
         updateWorld: (id, server, data) => worldService.updateWorld(id, server, data),
         uploadWorldThumbnail: (id, server, file) => worldService.uploadWorldThumbnail(id, server, file),
+
+        // Table methods
+        listMyTables: (limit, offset) => tableService.listMyTables(limit, offset),
+        getMyTable: (key) => tableService.getMyTable(key),
+        setMyTable: (key, content, mime) => tableService.setMyTable(key, content, mime),
+        deleteMyTable: (key) => tableService.deleteMyTable(key),
 
         // WebSocket methods
         onSocketEvent,
