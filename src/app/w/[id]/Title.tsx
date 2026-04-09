@@ -5,17 +5,18 @@ import { cn } from '@/lib/cn';
 import type { World, WorldAsset, User } from '@/lib/api/types';
 import { Icon } from '@iconify/react';
 import { Button } from '@/components/ui/button';
+import { IdentifierCopy } from '@/components/ui/identifier-copy';
 import Link from 'next/link';
 import { useApi, isError } from '@/lib/api';
 import { useWorld } from './WorldContext';
 
-const PLATFORM_ICONS: Record<string, { icon: string; label: string }> = {
-    windows: { icon: 'mdi:microsoft-windows', label: 'Windows' },
-    linux: { icon: 'mdi:linux', label: 'Linux' },
-    macos: { icon: 'mdi:apple', label: 'macOS' },
-    android: { icon: 'mdi:android', label: 'Android' },
-    ios: { icon: 'mdi:apple-ios', label: 'iOS' },
-    visionos: { icon: 'mdi:glasses', label: 'visionOS' },
+const PLATFORM_ICONS: Record<string, { icon: string; label: string; color: string }> = {
+    windows: { icon: 'mdi:microsoft-windows', label: 'Windows', color: '#0079D5' },
+    linux: { icon: 'mdi:linux', label: 'Linux', color: '#F7C530' },
+    macos: { icon: 'mdi:apple', label: 'macOS', color: '#A2AAAD' },
+    android: { icon: 'mdi:android', label: 'Android', color: '#2FD77F' },
+    ios: { icon: 'mdi:apple-ios', label: 'iOS', color: '#A2AAAD' },
+    visionos: { icon: 'mdi:glasses', label: 'visionOS', color: '#BA50B1' },
 };
 
 function formatSize(bytes: number): string {
@@ -45,7 +46,6 @@ function ownerHref(sid: string): string {
 export default function WorldTitle({ world, assets }: { world: World | null; assets: WorldAsset[] | null }) {
     const Api = useApi();
     const { canEdit } = useWorld();
-    const [copied, setCopied] = useState(false);
     const [owner, setOwner] = useState<User | null>(null);
 
     useEffect(() => {
@@ -55,14 +55,6 @@ export default function WorldTitle({ world, assets }: { world: World | null; ass
             if (!isError(res)) setOwner(res);
         });
     }, [world?.owner, Api]);
-
-    const handleCopy = () => {
-        if (world) {
-            navigator.clipboard.writeText(`${world.id}@${world.server}`);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-        }
-    };
 
     const sized = assets ? assets.filter(a => a.size !== null && a.size! > 0) : null;
     const maxSize = sized && sized.length > 0 ? Math.max(...sized.map(a => a.size!)) : null;
@@ -76,13 +68,13 @@ export default function WorldTitle({ world, assets }: { world: World | null; ass
 
     return (
         <div>
-            <h1 className="ms-2.5 text-2xl font-bold flex items-center gap-2">
+            <h1 className="group text-2xl font-bold flex items-center gap-2">
                 {world ? (
                     <>
                         <span className="text-fd-foreground">{world.title}</span>
                         {canEdit && (
                             <Link href={`/w/${world.id}@${world.server}/edit#title`}>
-                                <Button variant="ghost" size="icon" className="opacity-0 hover:opacity-100 transition-opacity size-7">
+                                <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity size-7">
                                     <Icon icon="material-symbols:edit-rounded" className="size-4" />
                                 </Button>
                             </Link>
@@ -97,7 +89,7 @@ export default function WorldTitle({ world, assets }: { world: World | null; ass
             </h1>
 
             {world ? (
-                <div className={cn("flex flex-wrap items-center gap-x-2 gap-y-1 ms-2.5 mt-1 text-sm text-fd-muted-foreground")}>
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1 text-sm text-fd-muted-foreground">
                     <span>By</span>
                     <Link
                         href={ownerHref(world.owner)}
@@ -122,6 +114,7 @@ export default function WorldTitle({ world, assets }: { world: World | null; ass
                                             <Icon
                                                 icon={info.icon}
                                                 className="size-4"
+                                                style={{ color: info.color }}
                                             />
                                         </span>
                                     ) : (
@@ -132,18 +125,7 @@ export default function WorldTitle({ world, assets }: { world: World | null; ass
                         </>
                     )}
                     <span>·</span>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleCopy}
-                        className="text-fd-muted-foreground hover:text-fd-foreground font-mono h-auto py-0 px-1"
-                    >
-                        {copied ? (
-                            <Icon icon="material-symbols:check-rounded" className="size-4" />
-                        ) : (
-                            <span className="text-sm">{world.id}@{world.server}</span>
-                        )}
-                    </Button>
+                    <IdentifierCopy identifier={`${world.id}@${world.server}`} />
                 </div>
             ) : (
                 <div className="ms-2.5 mt-1 animate-pulse rounded-md bg-fd-muted h-4 w-2/3" />

@@ -8,15 +8,17 @@ import { useEffect, useState } from 'react';
 import { useApi, isError } from '@/lib/api';
 import type { WorldAsset, User } from '@/lib/api/types';
 import { useWorld } from '../WorldContext';
+import Link from 'next/link';
 
-const PLATFORM_ICONS: Record<string, { icon: string; label: string }> = {
-    windows: { icon: 'mdi:microsoft-windows', label: 'Windows' },
-    linux: { icon: 'mdi:linux', label: 'Linux' },
-    macos: { icon: 'mdi:apple', label: 'macOS' },
-    android: { icon: 'mdi:android', label: 'Android' },
-    ios: { icon: 'mdi:apple-ios', label: 'iOS' },
-    visionos: { icon: 'mdi:glasses', label: 'visionOS' },
+const PLATFORM_ICONS: Record<string, { icon: string; label: string; color: string }> = {
+    windows: { icon: 'mdi:microsoft-windows', label: 'Windows', color: '#0079D5' },
+    linux: { icon: 'mdi:linux', label: 'Linux', color: '#F7C530' },
+    macos: { icon: 'mdi:apple', label: 'macOS', color: '#A2AAAD' },
+    android: { icon: 'mdi:android', label: 'Android', color: '#2FD77F' },
+    ios: { icon: 'mdi:apple-ios', label: 'iOS', color: '#A2AAAD' },
+    visionos: { icon: 'mdi:glasses', label: 'visionOS', color: '#BA50B1' },
 };
+
 
 function formatSize(bytes: number): string {
     if (bytes >= 1_000_000_000) return `${(bytes / 1_000_000_000).toFixed(2)} Go`;
@@ -54,13 +56,16 @@ function UploaderLabel({ sid }: { sid: string }) {
         : (sid.startsWith('u:') ? sid.slice(2) : sid);
 
     return (
-        <span className="flex items-center gap-1 text-xs text-fd-muted-foreground">
+        <Link
+            className="group flex items-center gap-1 text-xs text-fd-muted-foreground"
+            href={`/u/${sid}`}
+        >
             <Icon icon="material-symbols:upload-rounded" className="size-3.5 flex-shrink-0" />
             {user === undefined
                 ? <span className="inline-block w-20 h-3 rounded animate-pulse bg-fd-muted" />
-                : <span className="font-mono truncate max-w-[12rem]">{label}</span>
+                : <span className="font-mono truncate max-w-[12rem] group-hover:underline">{label}</span>
             }
-        </span>
+        </Link>
     );
 }
 
@@ -73,7 +78,7 @@ function AssetRow({ asset, isRelease }: { asset: WorldAsset; isRelease: boolean 
             <div className="flex items-center gap-3 flex-wrap">
                 <div className="flex items-center gap-2 w-36 flex-shrink-0">
                     {platformInfo ? (
-                        <Icon icon={platformInfo.icon} className="size-4 text-fd-muted-foreground flex-shrink-0" />
+                        <Icon icon={platformInfo.icon} className="size-4 text-fd-muted-foreground flex-shrink-0" style={{ color: platformInfo.color }} />
                     ) : (
                         <Icon icon="material-symbols:devices-rounded" className="size-4 text-fd-muted-foreground flex-shrink-0" />
                     )}

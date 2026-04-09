@@ -151,11 +151,11 @@ export default function WorldLayout({ children }: { children: React.ReactNode })
                                     else router.push(baseHref);
                                 }}
                             >
-                                <TabsList>
+                                <TabsList className="w-full justify-start">
                                     <TabsTrigger value="description">Description</TabsTrigger>
                                     <TabsTrigger value="versions">Versions</TabsTrigger>
                                     <TabsTrigger value="info" className="md:hidden">Infos</TabsTrigger>
-                                    {canEdit && <TabsTrigger value="edit">Edit</TabsTrigger>}
+                                    {canEdit && <TabsTrigger value="edit" className="ml-auto">Edit</TabsTrigger>}
                                 </TabsList>
                             </Tabs>
 

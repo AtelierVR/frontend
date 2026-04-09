@@ -50,8 +50,7 @@ export default function LinkBox({ user }: { user: User | null }) {
         >
             <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                    <div className={cn("size-6", !isSame && "invisible")} />
-                    <h2 className="text-lg font-semibold">Links</h2>
+                    <h2 className="text-sm font-medium text-fd-muted-foreground uppercase tracking-wide">Links</h2>
                     {isSame ? (
                         <Link href="/settings/profile#links">
                             <Button 

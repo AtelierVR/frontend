@@ -33,7 +33,8 @@ export default function Banner({ user }: { user: User | null }) {
                 <Image
                     className={cn(
                         "object-cover",
-                        "w-full relative"
+                        "w-full relative",
+                        "rounded-b-lg"
                     )}
                     style={{ aspectRatio: '128 / 45' }}
                     src={user?.banner}

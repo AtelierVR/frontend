@@ -38,7 +38,7 @@ export default function WorldThumbnail({ world }: { world: World | null }) {
                     alt={world.title}
                     width={1024}
                     height={256}
-                    className="object-cover w-full"
+                    className="object-cover w-full rounded-b-lg"
                     style={{ aspectRatio: '128 / 45' }}
                     unoptimized
                 />

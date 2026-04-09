@@ -103,8 +103,7 @@ export default function TagBox({ user }: { user: User | null }) {
         >
             <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                    <div className={cn("size-6", !isSame && "invisible")} />
-                    <h2 className="text-lg font-semibold">Tags</h2>
+                    <h2 className="text-sm font-medium text-fd-muted-foreground uppercase tracking-wide">Tags</h2>
                     {isSame ? (
                         <Link href="/settings/account#tags">
                             <Button 

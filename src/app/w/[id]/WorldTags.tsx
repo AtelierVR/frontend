@@ -93,8 +93,7 @@ export default function WorldTags({ world }: { world: World | null }) {
         >
             <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                    <div className={cn('size-6', !canEdit && 'invisible')} />
-                    <h2 className="text-base font-semibold">Tags</h2>
+                    <h2 className="text-sm font-medium text-fd-muted-foreground uppercase tracking-wide">Tags</h2>
                     {canEdit && world ? (
                         <Link href={`/w/${world.id}@${world.server}/edit#tags`}>
                             <Button
