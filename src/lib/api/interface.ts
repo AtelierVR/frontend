@@ -29,10 +29,13 @@ import type {
 } from './types';
 import type { TotpSetupResult, TotpEnableResult, TotpDisableResult } from './services/totp';
 
+import type { NoxWellKnown } from './config';
+
 type VerificationCallback = (error: ApiError, methods: VerificationMethod[]) => Promise<string | null>;
 
 export interface ApiInterface {
     currentUser: CurrentUser | null;
+    server: NoxWellKnown | Error | null;
 
     // User methods
     fetchCurrentUser: () => Promise<CurrentUser | ApiError>;

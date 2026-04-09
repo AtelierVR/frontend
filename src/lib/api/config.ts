@@ -19,6 +19,24 @@ export interface NoxWellKnownMetadata {
     description: string | null;
     icon: string | null;
     contact: string | null;
+    [key: string]: string | null;
+}
+
+export interface NoxWellKnownEndpoints {
+    wellknown: string;
+    webfinger: string;
+    nodeinfo: string;
+    hostmeta: string;
+    terms: string;
+    privacy: string;
+    rules: string;
+    [key: string]: string;
+}
+
+export interface NoxWellKnownSoftware {
+    name: string;
+    version: string;
+    repository: string | null;
 }
 
 export interface NoxWellKnown {
@@ -30,7 +48,8 @@ export interface NoxWellKnown {
     features: string[];
     gateway: NoxWellKnownGateway;
     metadata: NoxWellKnownMetadata;
-    software: { name: string; version: string };
+    endpoints: NoxWellKnownEndpoints;
+    software: NoxWellKnownSoftware;
 }
 
 export interface ResolvedApiConfig {

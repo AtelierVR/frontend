@@ -1,52 +1,31 @@
 'use client';
 
-import { useTheme } from 'next-themes';
-import { useEffect, useState } from 'react';
+import { useApi } from './api';
+import { cn } from './cn';
 
-export function ThemeLogo() {
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+export function ThemeLogo(props: React.HTMLAttributes<HTMLDivElement>) {
+  let api = useApi();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const url = api.server instanceof Error ? '/icon.png' : api.server?.metadata?.icon ?? '/icon.png';
 
-  // Pendant le chargement, afficher le logo par défaut
-  if (!mounted) {
-    return (
-      <div 
-        className="w-8 h-8 relative"
-        style={{
-          WebkitMaskImage: 'url(/icon.png)',
-          WebkitMaskSize: 'contain',
-          WebkitMaskRepeat: 'no-repeat',
-          WebkitMaskPosition: 'center',
-          maskImage: 'url(/icon.png)',
-          maskSize: 'contain',
-          maskRepeat: 'no-repeat',
-          maskPosition: 'center',
-          backgroundColor: 'var(--color-fd-accent-foreground)',
-        }}
-        aria-label="Nox Logo"
-      />
-    );
-  }
-
-  return (
-    <div 
-      className="w-8 h-8 relative"
-      style={{
-        WebkitMaskImage: 'url(/icon.png)',
-        WebkitMaskSize: 'contain',
-        WebkitMaskRepeat: 'no-repeat',
-        WebkitMaskPosition: 'center',
-        maskImage: 'url(/icon.png)',
-        maskSize: 'contain',
-        maskRepeat: 'no-repeat',
-        maskPosition: 'center',
-        backgroundColor: 'var(--color-fd-accent-foreground)',
-      }}
-      aria-label="Nox Logo"
-    />
-  );
+  return <div
+    {...props}
+    className={cn(
+      "w-8 h-8 relative",
+      props.className
+    )}
+    style={{
+      WebkitMaskImage: `url(${url})`,
+      WebkitMaskSize: 'contain',
+      WebkitMaskRepeat: 'no-repeat',
+      WebkitMaskPosition: 'center',
+      maskImage: `url(${url})`,
+      maskSize: 'contain',
+      maskRepeat: 'no-repeat',
+      maskPosition: 'center',
+      backgroundColor: 'var(--color-fd-accent-foreground)',
+      ...props.style
+    }}
+    aria-label={api.server instanceof Error ? 'Nox Node' : api.server?.metadata?.title ?? 'Nox Node'}
+  />;
 }

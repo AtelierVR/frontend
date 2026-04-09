@@ -6,6 +6,5 @@ export * from './session';
 export * from './follow';
 export * from './relay';
 export * from './message';
-export * from './server';
 export * from './totp';
 export * from './table';

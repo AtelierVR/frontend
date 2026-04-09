@@ -3,18 +3,24 @@
 import { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import { AuthService, UserService, VerificationService, SessionService, FollowService, RelayService, MessageService, TotpService, WorldService, TableService } from './services';
 import { getSIDById, isError } from './utils';
-import { resolveApiConfig } from './config';
+import { resolveApiConfig, resolveWellKnown } from './config';
 import type { ApiInterface } from './interface';
 import type { User, CurrentUser, UpdateUser, ApiError } from './types';
+import type { NoxWellKnown } from './config';
 
 const ApiContext = createContext<ApiInterface | null>(null);
 
 export function ApiProvider({ children }: { children: React.ReactNode }) {
     const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+    const [server, setServer] = useState<NoxWellKnown | Error | null>(null);
     const [users, setUsers] = useState(new Map<string, User>());
     const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
     const socketListenersRef = useRef<Map<string, Set<(data: any) => void>>>(new Map());
     const regexListenersRef = useRef<Array<{ pattern: RegExp; callback: (data: any) => void }>>([]);
+
+    useEffect(() => {
+        resolveWellKnown().then(wk => setServer(wk ? wk : new Error("Failed to load server configuration.")));
+    }, []);
 
     // Initialize services
     const authService = new AuthService();
@@ -280,9 +286,7 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
         }
 
         return () => {
-            if (webSocket) {
-                webSocket.close();
-            }
+            webSocket?.close();
         };
     }, [currentUser, webSocket]);
 
@@ -338,6 +342,7 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
 
     const apiValue: ApiInterface = {
         currentUser,
+        server,
 
         // User methods
         fetchCurrentUser,

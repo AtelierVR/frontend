@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function PrivacyPage() {
-    return <MarkdownPage src="/api/privacy.md" fallbackTitle="Politique de confidentialité" />;
+    return <MarkdownPage src={"/api/privacy.md"} fallbackTitle="Politique de confidentialité" />;
 }
