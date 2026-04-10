@@ -84,6 +84,7 @@ export default function WorldEditPage() {
     const releaseFlag = 1 << 5;
     const contributorsFlag = 1 << 6;
     const tagsFlag = 1 << 7;
+    const nameFlag = 1 << 8;
     const loadingFlag = 1;
 
     const normalizeRef = (s: string) => s.startsWith('u:') ? s.slice(2) : s;
@@ -92,6 +93,7 @@ export default function WorldEditPage() {
         : false;
 
     const [canSaveFlag, setCanSaveFlag] = useState(0);
+    const [name, setName] = useState<string | undefined>();
     const [title, setTitle] = useState<string | undefined>();
     const [description, setDescription] = useState<string | undefined>();
     const [capacity, setCapacity] = useState<string | undefined>();
@@ -105,6 +107,7 @@ export default function WorldEditPage() {
     const [success, setSuccess] = useState(false);
 
     useEffect(() => {
+        setName(undefined);
         setTitle(undefined);
         setDescription(undefined);
         setCapacity(undefined);
@@ -154,6 +157,7 @@ export default function WorldEditPage() {
         setSuccess(false);
         try {
             const res = await Api.updateWorld(world.id, world.server, {
+                name: name !== undefined ? (name.trim() || null) : undefined,
                 title: title?.trim() || undefined,
                 description: description !== undefined ? (description.trim() || null) : undefined,
                 capacity: capacity !== undefined && capacity !== '' ? Number(capacity) : undefined,
@@ -178,8 +182,8 @@ export default function WorldEditPage() {
                 setThumbnail(undefined);
             }
 
+            setName(undefined);
             setTitle(undefined);
-            setDescription(undefined);
             setCapacity(undefined);
             setRelease(undefined);
             setContributors(undefined);
@@ -208,6 +212,30 @@ export default function WorldEditPage() {
                     <AlertDescription>Changes saved successfully.</AlertDescription>
                 </Alert>
             )}
+
+            {/* Name */}
+            <section id="name" className="space-y-2">
+                <h2 className="text-lg font-semibold">Short Name</h2>
+                <p className="text-sm text-fd-muted-foreground">Unique identifier used in URLs. 3–8 characters: lowercase letters, digits, hyphens, underscores, or dots.</p>
+                <InputGroup>
+                    <InputGroupInput
+                        id="world-name"
+                        value={name === undefined ? (world.name ?? '') : name}
+                        onChange={e => {
+                            setName(e.target.value);
+                            setCanSaveFlag(f => f | nameFlag);
+                        }}
+                        placeholder={world.name ?? 'shortname'}
+                        maxLength={8}
+                        pattern="[a-z0-9\-_.]{3,8}"
+                    />
+                    <InputGroupAddon align="inline-end">
+                        <InputGroupText className="text-xs tabular-nums">
+                            {(name === undefined ? world.name : name)?.length ?? 0}/8
+                        </InputGroupText>
+                    </InputGroupAddon>
+                </InputGroup>
+            </section>
 
             {/* Title */}
             <section id="title" className="space-y-2">

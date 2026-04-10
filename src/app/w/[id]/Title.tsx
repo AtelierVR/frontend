@@ -127,7 +127,7 @@ export default function WorldTitle({ world, assets, actions }: { world: World | 
                         </>
                     )}
                     <span>·</span>
-                    <IdentifierCopy identifier={`${world.id}@${world.server}`} />
+                    <IdentifierCopy identifier={world.alias?.find((a: any) => a.key === 'nid')?.value ?? `${world.id}@${world.server}`} />
                 </div>
             ) : (
                 <div className="ms-2.5 mt-1 animate-pulse rounded-md bg-fd-muted h-4 w-2/3" />

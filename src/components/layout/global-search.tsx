@@ -104,7 +104,7 @@ const FEATURE_CONFIG: Record<string, {
                 items: res.data?.items?.map((e: any) => ({
                     id: e.id,
                     label: e.title || `World ${e.id}`,
-                    description: getAlias("iid", e.alias),
+                    description: getAlias("nid", e.alias) || getAlias("iid", e.alias),
                     image: e.thumbnail,
                     url: getAlias("profile", e.alias) || `/w/${e.id}`,
                 })) ?? [], 

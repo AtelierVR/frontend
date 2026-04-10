@@ -305,6 +305,7 @@ export interface SearchUsersResponse extends MultiResponse {
 
 export interface World {
     id: number;
+    name: string | null;
     server: string;
     title: string;
     description: string | null;
@@ -336,6 +337,7 @@ export interface WorldAsset {
 }
 
 export interface UpdateWorld {
+    name?: string | null;
     title?: string;
     description?: string | null;
     capacity?: number;
