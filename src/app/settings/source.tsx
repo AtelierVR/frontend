@@ -79,6 +79,12 @@ export const getPageTree = (currentUser: CurrentUser | null, t: TFunction): Root
       },
       {
         type: 'page',
+        name: 'Activities',
+        url: '/settings/activities',
+        icon: <Icon icon="material-symbols:bolt-rounded" />,
+      },
+      {
+        type: 'page',
         name: t('settings.nav.relays'),
         url: '/settings/relays',
         icon: <Icon icon="material-symbols:dns" />,
