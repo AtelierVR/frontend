@@ -1,4 +1,4 @@
-import MarkdownPage from '../_components/MarkdownPage';
+import PrivacyPageClient from './_client';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function PrivacyPage() {
-    return <MarkdownPage src={"/api/privacy.md"} fallbackTitle="Politique de confidentialité" />;
+    return <PrivacyPageClient />;
 }

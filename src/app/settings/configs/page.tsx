@@ -25,7 +25,12 @@ interface ConfigEntry {
   risky: boolean;
 }
 
-type ConfigsResponse = ConfigEntry[];
+type ConfigsResponse = {
+  items: ConfigEntry[];
+  total: number;
+  limit: number;
+  offset: number;
+};
 
 interface PatchResult {
   key: string;
@@ -176,7 +181,7 @@ export default function ConfigsPage() {
     setLoading(true);
     setError(undefined);
     try {
-      const res = await fetchApi<ConfigsResponse>('/api/configs');
+      const res = await fetchApi<ConfigsResponse>('/configs');
       if (isResponseError(res)) {
         if (res.error.status === 403) {
           router.push('/settings');
@@ -185,10 +190,10 @@ export default function ConfigsPage() {
         setError(res.error.message);
         return;
       }
-      setConfigs(res.data);
+      setConfigs(res.data.items);
       // Initialise edits from current db overrides
       const init: Record<string, string> = {};
-      for (const cfg of res.data) {
+      for (const cfg of res.data.items) {
         init[cfg.key] = cfg.override ?? '';
       }
       setEdits(init);
@@ -265,7 +270,7 @@ export default function ConfigsPage() {
     }
 
     try {
-      const res = await fetchApi<{ results: PatchResult[] }>('/api/configs', {
+      const res = await fetchApi<{ results: PatchResult[] }>('/configs', {
         method: 'PATCH',
         body: JSON.stringify(payload),
       });

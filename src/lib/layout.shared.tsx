@@ -30,6 +30,27 @@ export function baseOptions(): BaseLayoutProps {
           },
         ],
       },
+      {
+        type: 'menu',
+        text: 'Legal',
+        items: [
+          {
+            text: 'Terms of Service',
+            description: 'Conditions régissant l\'utilisation de la plateforme.',
+            url: '/terms',
+          },
+          {
+            text: 'Privacy Policy',
+            description: 'Comment nous protégeons vos données personnelles.',
+            url: '/privacy',
+          },
+          {
+            text: 'Community Rules',
+            description: 'Les règles de comportement au sein de la plateforme.',
+            url: '/rules',
+          },
+        ],
+      },
     ],
   };
 }

@@ -43,7 +43,7 @@ function formatDate(dateStr: string): string {
 }
 
 interface MarkdownPageProps {
-    src: string;
+    src: string | null;
     fallbackTitle?: string;
 }
 
@@ -76,6 +76,7 @@ export default function MarkdownPage({ src, fallbackTitle }: MarkdownPageProps) 
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        if (!src) return;
         resolveApiConfig().then(config => {
             fetch(new URL(src, config.baseUrl))
                 .then(res => {

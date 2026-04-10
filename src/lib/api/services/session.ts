@@ -6,7 +6,7 @@ export class SessionService {
     limit?: number,
     offset?: number
   ): Promise<(MultiResponse & { sessions: IRSession[] }) | ApiError> {
-    let url = `/api/users/@me/sessions`;
+    let url = `/users/@me/sessions`;
     const params = new URLSearchParams();
     if (limit) params.set('limit', limit.toString());
     if (offset) params.set('offset', offset.toString());
@@ -18,14 +18,14 @@ export class SessionService {
   }
 
   async fetchCurrentSession(): Promise<IRSession | ApiError> {
-    const res = await fetchApi<IRSession>(`/api/users/@me/session`);
+    const res = await fetchApi<IRSession>(`/users/@me/session`);
     if (isResponseError(res)) return res.error;
     return res.data;
   }
 
   async deleteMySession(id: string): Promise<{ success: boolean; logout: boolean } | ApiError> {
     const res = await fetchApi<{ success: boolean; logout: boolean }>(
-      `/api/users/@me/sessions/${id}`,
+      `/users/@me/sessions/${id}`,
       { method: 'DELETE' }
     );
     if (isResponseError(res)) return res.error;
@@ -34,7 +34,7 @@ export class SessionService {
 
   async deleteMySessions(): Promise<{ success: boolean; logout: boolean } | ApiError> {
     const res = await fetchApi<{ success: boolean; logout: boolean }>(
-      `/api/users/@me/sessions`,
+      `/users/@me/sessions`,
       { method: 'DELETE' }
     );
     if (isResponseError(res)) return res.error;

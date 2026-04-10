@@ -4,13 +4,13 @@ import { resolveApiConfig } from '../config';
 
 export class WorldService {
     async fetchWorld(id: number | string, server?: string): Promise<World | ApiError> {
-        const res = await fetchApi<World>(`/api/worlds/${id}${server ? `@${server}` : ''}`);
+        const res = await fetchApi<World>(`/worlds/${id}${server ? `@${server}` : ''}`);
         if (isResponseError(res)) return res.error;
         return res.data;
     }
 
     async fetchWorlds(limit = 20, offset = 0): Promise<WorldsResponse | ApiError> {
-        const res = await fetchApi<WorldsResponse>(`/api/worlds?limit=${limit}&offset=${offset}`);
+        const res = await fetchApi<WorldsResponse>(`/worlds?limit=${limit}&offset=${offset}`);
         if (isResponseError(res)) return res.error;
         return res.data;
     }
@@ -19,13 +19,13 @@ export class WorldService {
         const qs = new URLSearchParams();
         if (version !== undefined && version >= 0) qs.set('version', String(version));
         const query = qs.toString() ? `?${qs.toString()}` : '';
-        const res = await fetchApi<WorldAssetsResponse>(`/api/worlds/${id}${server ? `@${server}` : ''}/assets${query}`);
+        const res = await fetchApi<WorldAssetsResponse>(`/worlds/${id}${server ? `@${server}` : ''}/assets${query}`);
         if (isResponseError(res)) return res.error;
         return res.data;
     }
 
     async updateWorld(id: number | string, server: string | undefined, data: UpdateWorld): Promise<World | ApiError> {
-        const res = await fetchApi<World>(`/api/worlds/${id}${server ? `@${server}` : ''}`, {
+        const res = await fetchApi<World>(`/worlds/${id}${server ? `@${server}` : ''}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
@@ -39,7 +39,7 @@ export class WorldService {
         try {
             const formData = new FormData();
             formData.append('file', file);
-            const res = await fetch(new URL(`/api/worlds/${id}${server ? `@${server}` : ''}/thumbnail`, config.baseUrl), {
+            const res = await fetch(new URL(`worlds/${id}${server ? `@${server}` : ''}/thumbnail`, config.baseUrl), {
                 method: 'POST',
                 body: formData,
                 credentials: 'include',

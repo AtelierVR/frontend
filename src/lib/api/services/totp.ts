@@ -19,13 +19,13 @@ export interface TotpDisableResult {
 
 export class TotpService {
     async setup(): Promise<TotpSetupResult | ApiError> {
-        const res = await fetchApi<TotpSetupResult>('/api/auth/totp/setup', { method: 'POST' });
+        const res = await fetchApi<TotpSetupResult>('/auth/totp/setup', { method: 'POST' });
         if (isResponseError(res)) return res.error;
         return res.data;
     }
 
     async enable(secret: string, token: string): Promise<TotpEnableResult | ApiError> {
-        const res = await fetchApi<TotpEnableResult>('/api/auth/totp/enable', {
+        const res = await fetchApi<TotpEnableResult>('/auth/totp/enable', {
             method: 'POST',
             body: JSON.stringify({ secret, token }),
         });
@@ -37,7 +37,7 @@ export class TotpService {
         factor_code?: string,
         onVerificationRequired?: (error: any, methods: any[]) => Promise<string | null>
     ): Promise<TotpDisableResult | ApiError> {
-        const res = await fetchApi<TotpDisableResult>('/api/auth/totp/disable', {
+        const res = await fetchApi<TotpDisableResult>('/auth/totp/disable', {
             method: 'POST',
             body: JSON.stringify({ factor_code }),
         }, onVerificationRequired);

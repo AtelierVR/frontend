@@ -29,7 +29,7 @@ export async function fetchApi<T = unknown>(
 ): Promise<Response<T>> {
     const config = await resolveApiConfig();
     try {
-        let res = await fetch(new URL(url, config.baseUrl), {
+        let res = await fetch(new URL(url.replace(/^\/+/, ''), config.baseUrl), {
             ...options,
             credentials: 'include',
             headers: {

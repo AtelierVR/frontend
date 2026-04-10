@@ -4,13 +4,13 @@ import { resolveApiConfig } from '../config';
 
 export class UserService {
     async fetchCurrentUser(): Promise<CurrentUser | ApiError> {
-        let res = await fetchApi<CurrentUser>("/api/users/@me");
+        let res = await fetchApi<CurrentUser>("/users/@me");
         if (isResponseError(res)) return res.error;
         return res.data;
     }
 
     async fetchUser(id: number | string, server?: string): Promise<User | ApiError> {
-        let res = await fetchApi<User>(`/api/users/${id}${server ? `@${server}` : ""}`);
+        let res = await fetchApi<User>(`/users/${id}${server ? `@${server}` : ""}`);
         if (isResponseError(res)) return res.error;
         return res.data;
     }
@@ -20,7 +20,7 @@ export class UserService {
         factor_code?: string,
         onVerificationRequired?: (error: any, methods: any[]) => Promise<string | null>
     ): Promise<CurrentUser | ApiError> {
-        let res = await fetchApi<CurrentUser>("/api/users/@me", {
+        let res = await fetchApi<CurrentUser>("/users/@me", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -38,7 +38,7 @@ export class UserService {
         try {
             const formData = new FormData();
             formData.append("file", file);
-            const res = await fetch(new URL(endpoint, config.baseUrl), {
+            const res = await fetch(new URL(endpoint.replace(/^\/+/, ''), config.baseUrl), {
                 method: "POST",
                 body: formData,
                 credentials: "include",
@@ -59,21 +59,21 @@ export class UserService {
     }
 
     async uploadThumbnail(file: Blob): Promise<{ url: URL } | ApiError> {
-        return this._uploadFile("/api/users/@me/thumbnail", file);
+        return this._uploadFile("/users/@me/thumbnail", file);
     }
 
     async uploadBanner(file: Blob): Promise<{ url: URL } | ApiError> {
-        return this._uploadFile("/api/users/@me/banner", file);
+        return this._uploadFile("/users/@me/banner", file);
     }
 
     async fetchUserPublicList(id: number | string, server?: string, limit = 20, offset = 0): Promise<PublicTableListResponse | ApiError> {
-        const res = await fetchApi<PublicTableListResponse>(`/api/users/${id}${server ? `@${server}` : ''}/public?limit=${limit}&offset=${offset}`);
+        const res = await fetchApi<PublicTableListResponse>(`/users/${id}${server ? `@${server}` : ''}/public?limit=${limit}&offset=${offset}`);
         if (isResponseError(res)) return res.error;
         return res.data;
     }
 
     async fetchMyTables(limit = 100, offset = 0): Promise<TableListResponse | ApiError> {
-        const res = await fetchApi<TableListResponse>(`/api/users/@me/tables?limit=${limit}&offset=${offset}`);
+        const res = await fetchApi<TableListResponse>(`/users/@me/tables?limit=${limit}&offset=${offset}`);
         if (isResponseError(res)) return res.error;
         return res.data;
     }
@@ -81,7 +81,7 @@ export class UserService {
     async fetchMyTable(key: string): Promise<Buffer | Error> {
         const config = await resolveApiConfig();
         try {
-            const res = await fetch(new URL(`/api/users/@me/tables/${encodeURIComponent(key)}`, config.baseUrl), {
+            const res = await fetch(new URL(`users/@me/tables/${encodeURIComponent(key)}`, config.baseUrl), {
                 credentials: 'include',
             });
             if (!res.ok) {
@@ -98,7 +98,7 @@ export class UserService {
     async fetchUserPublic(id: number | string, type: string, server?: string): Promise<Buffer | Error> {
         const config = await resolveApiConfig();
         try {
-            const res = await fetch(new URL(`/api/users/${id}${server ? `@${server}` : ''}/public/${type}`, config.baseUrl), {
+            const res = await fetch(new URL(`users/${id}${server ? `@${server}` : ''}/public/${type}`, config.baseUrl), {
                 credentials: 'include',
             });
             if (!res.ok) {

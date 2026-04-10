@@ -64,6 +64,7 @@ function fetchWellKnown(): Promise<NoxWellKnown | null> {
     if (_wk) return Promise.resolve(_wk);
     if (_wkPending) return _wkPending;
 
+    console.debug(`Fetching well-known document from ${WK_URL}...`);
     _wkPending = fetch(WK_URL)
         .then(res => {
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -88,17 +89,20 @@ export async function resolveWellKnown(): Promise<NoxWellKnown | null> {
 
 export async function resolveApiConfig(): Promise<ResolvedApiConfig> {
     const wk = await fetchWellKnown();
-    if (wk) {
-        return {
-            baseUrl: wk.gateway.api.replace(/\/$/, ''),
-            wsUrl: wk.gateway.ws,
-        };
-    }
+    if (wk) return {
+        baseUrl: wk.gateway.api,
+        wsUrl: wk.gateway.ws,
+    };
+
     // Fallback: derive from well-known URL origin
+    console.warn('Failed to fetch well-known document, falling back to origin-based API config');
     const origin = new URL(WK_URL).origin;
+    let baseUrl = new URL('/api/', origin);
+    const wsUrl = new URL('/api/ws', baseUrl);
+    wsUrl.protocol = wsUrl.protocol === 'https:' ? 'wss:' : 'ws:';
     return {
-        baseUrl: `${origin}/api`,
-        wsUrl: `${origin.replace(/^http/, 'ws')}/api/ws`,
+        baseUrl: baseUrl.href,
+        wsUrl: wsUrl.href,
     };
 }
 

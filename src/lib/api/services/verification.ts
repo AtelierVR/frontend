@@ -3,7 +3,7 @@ import { fetchApi, isResponseError } from '../utils';
 
 export class VerificationService {
     async sendVerificationCode(type: string, data: Record<string, any>): Promise<SendVerificationCodeResponse | ApiError> {
-        let res = await fetchApi<SendVerificationCodeResponse>(`/api/auth/${type}/send`, {
+        let res = await fetchApi<SendVerificationCodeResponse>(`/auth/${type}/send`, {
             method: 'POST',
             body: JSON.stringify(data),
         });
@@ -12,7 +12,7 @@ export class VerificationService {
     }
 
     async resendEmailVerification(): Promise<{ success: boolean } | ApiError> {
-        let res = await fetchApi<{ success: boolean }>(`/api/email/resend`, {
+        let res = await fetchApi<{ success: boolean }>(`/email/resend`, {
             method: 'POST',
         });
         if (isResponseError(res)) return res.error;

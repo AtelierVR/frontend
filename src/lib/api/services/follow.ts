@@ -17,7 +17,7 @@ export class FollowService {
     offset: number = 0
   ): Promise<MultiResponse & { items: Follower[] } | ApiError> {
     const response = await fetchApi<MultiResponse & { items: Follower[] }>(
-      `/api/users/@me/followers?limit=${limit}&offset=${offset}`
+      `/users/@me/followers?limit=${limit}&offset=${offset}`
     );
 
     if (isResponseError(response)) {
@@ -32,7 +32,7 @@ export class FollowService {
     offset: number = 0
   ): Promise<MultiResponse & { items: Following[] } | ApiError> {
     const response = await fetchApi<MultiResponse & { items: Following[] }>(
-      `/api/users/@me/following?limit=${limit}&offset=${offset}`
+      `/users/@me/following?limit=${limit}&offset=${offset}`
     );
 
     if (isResponseError(response)) {
@@ -47,7 +47,7 @@ export class FollowService {
     server?: string
   ): Promise<Relation | ApiError> {
     const response = await fetchApi<Relation>(
-      `/api/relations/${getSIDById(id, server)}/follow`,
+      `/relations/${getSIDById(id, server)}/follow`,
       {
         method: 'POST'
       }
@@ -65,7 +65,7 @@ export class FollowService {
     server?: string
   ): Promise<boolean | ApiError> {
     const response = await fetchApi(
-      `/api/relations/${getSIDById(id, server)}/unfollow`,
+      `/relations/${getSIDById(id, server)}/unfollow`,
       {
         method: 'POST'
       }
@@ -84,7 +84,7 @@ export class FollowService {
     server?: string
   ): Promise<boolean | ApiError> {
     const response = await fetchApi(
-      `/api/relations/${getSIDById(id, server)}/request`,
+      `/relations/${getSIDById(id, server)}/request`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

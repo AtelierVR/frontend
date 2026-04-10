@@ -22,7 +22,8 @@ export default function Banner({ user }: { user: User | null }) {
             className={cn(
                 "relative flex items-center",
                 "bg-fd-muted/50 dark:bg-fd-muted/30",
-                "border-b border-fd-border"
+                "border-b border-fd-border",
+                "rounded-b-lg",
             )}
         >
             {(error || !user?.banner) && (

@@ -8,7 +8,7 @@ export class AuthService {
         factor_code?: string,
         onVerificationRequired?: (error: any, methods: any[]) => Promise<string | null>
     ): Promise<CurrentUser | ApiError> {
-        let res = await fetchApi<Auth>("/api/auth/login", {
+        let res = await fetchApi<Auth>("/auth/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -24,14 +24,14 @@ export class AuthService {
     }
 
     async logout(): Promise<boolean | ApiError> {
-        let res = await fetchApi<Logout>("/api/auth/logout");
+        let res = await fetchApi<Logout>("/auth/logout");
         if (isResponseError(res)) return res.error;
         
         return true;
     }
 
     async register(data: RegisterForm): Promise<CurrentUser | ApiError> {
-        let res = await fetchApi<Auth>("/api/auth/register", {
+        let res = await fetchApi<Auth>("/auth/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

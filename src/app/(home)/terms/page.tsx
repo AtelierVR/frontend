@@ -1,4 +1,4 @@
-import MarkdownPage from '../_components/MarkdownPage';
+import TermsPageClient from './_client';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function TermsPage() {
-    return <MarkdownPage src="/api/terms.md" fallbackTitle="Conditions générales d'utilisation" />;
+    return <TermsPageClient />;
 }

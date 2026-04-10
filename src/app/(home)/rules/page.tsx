@@ -1,4 +1,4 @@
-import MarkdownPage from '../_components/MarkdownPage';
+import RulesPageClient from './_client';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function RulesPage() {
-    return <MarkdownPage src="/api/rules.md" fallbackTitle="Règlement de la communauté" />;
+    return <RulesPageClient />;
 }

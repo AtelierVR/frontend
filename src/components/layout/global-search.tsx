@@ -50,7 +50,7 @@ const FEATURE_CONFIG: Record<string, {
             hint: 'Type a username or display name',
         },
         search: async (q) => {
-            const url = q ? `/api/users?query=${encodeURIComponent(q)}&limit=15` : '/api/users?limit=15';
+            const url = q ? `/users?query=${encodeURIComponent(q)}&limit=15` : '/users?limit=15';
             const res = await fetchApi<any>(url);
             return {
                 items: res.data?.items?.map((e: any) => ({
@@ -74,7 +74,7 @@ const FEATURE_CONFIG: Record<string, {
             hint: 'Type an avatar name',
         },
         search: async (q) => {
-            const url = q ? `/api/avatars?query=${encodeURIComponent(q)}&limit=15` : '/api/avatars?limit=15';
+            const url = q ? `/avatars?query=${encodeURIComponent(q)}&limit=15` : '/avatars?limit=15';
             const res = await fetchApi<any>(url);
             return {
                 items: res.data?.items?.map((e: any) => ({
@@ -98,7 +98,7 @@ const FEATURE_CONFIG: Record<string, {
             hint: 'Type a world name',
         },
         search: async (q) => {
-            const url = q ? `/api/worlds?query=${encodeURIComponent(q)}&limit=15` : '/api/worlds?limit=15';
+            const url = q ? `/worlds?query=${encodeURIComponent(q)}&limit=15` : '/worlds?limit=15';
             const res = await fetchApi<any>(url);
             return { 
                 items: res.data?.items?.map((e: any) => ({
@@ -122,7 +122,7 @@ const FEATURE_CONFIG: Record<string, {
             hint: 'Type a world name or instance ID',
         },
         search: async (q) => {
-            const url = q ? `/api/instances?query=${encodeURIComponent(q)}&limit=15` : '/api/instances?limit=15';
+            const url = q ? `/instances?query=${encodeURIComponent(q)}&limit=15` : '/instances?limit=15';
             const res = await fetchApi<any>(url);
             return { 
                 items: res.data?.instances?.map((e: any) => ({
@@ -146,7 +146,7 @@ const FEATURE_CONFIG: Record<string, {
             hint: 'Type a server name or address',
         },
         search: async (q) => {
-            const url = q ? `/api/servers?query=${encodeURIComponent(q)}&limit=15` : '/api/servers?limit=15';
+            const url = q ? `/servers?query=${encodeURIComponent(q)}&limit=15` : '/servers?limit=15';
             const res = await fetchApi<any>(url);
             return { 
                 items: res.data?.servers?.map((e: any) => ({

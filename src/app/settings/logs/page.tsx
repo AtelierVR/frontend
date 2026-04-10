@@ -57,8 +57,8 @@ export default function LogsPage() {
     try {
       // Use 'after' parameter for incremental updates
       const url = incremental && lastTimestamp > 0
-        ? `/api/logs?limit=500&after=${lastTimestamp}`
-        : '/api/logs?limit=500';
+        ? `/logs?limit=500&after=${lastTimestamp}`
+        : '/logs?limit=500';
 
       const res = await fetchApi<LogsResponse>(url);
 
