@@ -357,6 +357,8 @@ export interface WorldAssetsResponse extends MultiResponse {
 export interface Avatar {
     id: number;
     server: string;
+    /** Short unique name [a-z0-9-_.]{3,8} or null */
+    name: string | null;
     title: string;
     description: string | null;
     thumbnail: string | null;
@@ -383,6 +385,7 @@ export interface AvatarAsset {
 }
 
 export interface UpdateAvatar {
+    name?: string | null;
     title?: string;
     description?: string | null;
     release?: number | null;

@@ -8,6 +8,8 @@ import {
     InputGroup,
     InputGroupInput,
     InputGroupTextarea,
+    InputGroupAddon,
+    InputGroupText,
 } from '@/components/ui/input-group';
 import ImageUploader from '@/components/ui/image-uploader';
 import { Button } from '@/components/ui/button';
@@ -79,6 +81,7 @@ export default function AvatarEditPage() {
     const releaseFlag = 1 << 4;
     const tagsFlag = 1 << 5;
     const contributorsFlag = 1 << 6;
+    const nameFlag = 1 << 7;
     const loadingFlag = 1;
 
     const normalizeRef = (s: string) => s.startsWith('u:') ? s.slice(2) : s;
@@ -87,6 +90,7 @@ export default function AvatarEditPage() {
         : false;
 
     const [canSaveFlag, setCanSaveFlag] = useState(0);
+    const [name, setName] = useState<string | undefined>();
     const [title, setTitle] = useState<string | undefined>();
     const [description, setDescription] = useState<string | undefined>();
     const [release, setRelease] = useState<string | undefined>();
@@ -99,6 +103,7 @@ export default function AvatarEditPage() {
     const [success, setSuccess] = useState(false);
 
     useEffect(() => {
+        setName(undefined);
         setTitle(undefined);
         setDescription(undefined);
         setRelease(undefined);
@@ -147,6 +152,7 @@ export default function AvatarEditPage() {
         setSuccess(false);
         try {
             const res = await Api.updateAvatar(avatar.id, avatar.server, {
+                name: name !== undefined ? (name.trim() || null) : undefined,
                 title: title?.trim() || undefined,
                 description: description !== undefined ? (description.trim() || null) : undefined,
                 release: release !== undefined && release !== '' ? Number(release) : undefined,
@@ -170,6 +176,7 @@ export default function AvatarEditPage() {
                 setThumbnail(undefined);
             }
 
+            setName(undefined);
             setTitle(undefined);
             setDescription(undefined);
             setRelease(undefined);
@@ -199,6 +206,30 @@ export default function AvatarEditPage() {
                     <AlertDescription>Changes saved successfully.</AlertDescription>
                 </Alert>
             )}
+
+            {/* Name */}
+            <section id="name" className="space-y-2">
+                <h2 className="text-lg font-semibold">Short Name</h2>
+                <p className="text-sm text-fd-muted-foreground">Unique identifier used in URLs. 3–8 characters: lowercase letters, digits, hyphens, underscores, or dots.</p>
+                <InputGroup>
+                    <InputGroupInput
+                        id="avatar-name"
+                        value={name === undefined ? (avatar.name ?? '') : name}
+                        onChange={e => {
+                            setName(e.target.value);
+                            setCanSaveFlag(f => f | nameFlag);
+                        }}
+                        placeholder={avatar.name ?? 'shortname'}
+                        maxLength={8}
+                        pattern="[a-z0-9\-_.]{3,8}"
+                    />
+                    <InputGroupAddon align="inline-end">
+                        <InputGroupText className="text-xs tabular-nums">
+                            {(name === undefined ? avatar.name : name)?.length ?? 0}/8
+                        </InputGroupText>
+                    </InputGroupAddon>
+                </InputGroup>
+            </section>
 
             {/* Title */}
             <section id="title" className="space-y-2">
