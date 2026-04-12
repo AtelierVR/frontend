@@ -23,6 +23,10 @@ import type {
     WorldsResponse,
     WorldAssetsResponse,
     UpdateWorld,
+    Avatar,
+    AvatarsResponse,
+    AvatarAssetsResponse,
+    UpdateAvatar,
     PublicTableMeta,
     PublicTableListResponse,
     TableListResponse,
@@ -99,6 +103,13 @@ export interface ApiInterface {
     fetchWorldAssets: (id: number | string, server?: string, version?: number) => Promise<WorldAssetsResponse | ApiError>;
     updateWorld: (id: number | string, server: string | undefined, data: UpdateWorld) => Promise<World | ApiError>;
     uploadWorldThumbnail: (id: number | string, server: string | undefined, file: Blob) => Promise<{ url: URL } | ApiError>;
+
+    // Avatar methods
+    fetchAvatar: (id: number | string, server?: string) => Promise<Avatar | ApiError>;
+    fetchAvatars: (limit?: number, offset?: number) => Promise<AvatarsResponse | ApiError>;
+    fetchAvatarAssets: (id: number | string, server?: string, version?: number) => Promise<AvatarAssetsResponse | ApiError>;
+    updateAvatar: (id: number | string, server: string | undefined, data: UpdateAvatar) => Promise<Avatar | ApiError>;
+    uploadAvatarThumbnail: (id: number | string, server: string | undefined, file: Blob) => Promise<{ url: URL } | ApiError>;
 
     // Table methods
     listMyTables: (limit?: number, offset?: number) => Promise<TableListResponse | ApiError>;

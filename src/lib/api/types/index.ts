@@ -354,6 +354,47 @@ export interface WorldAssetsResponse extends MultiResponse {
     items: WorldAsset[];
 }
 
+export interface Avatar {
+    id: number;
+    server: string;
+    title: string;
+    description: string | null;
+    thumbnail: string | null;
+    tags: string[];
+    /** Recommended asset version. -1 means none uploaded. */
+    release: number;
+    /** NoxIdentifier string of the owner */
+    owner: string;
+    alias: UserAlias[];
+}
+
+export interface AvatarAsset {
+    id: number;
+    version: number;
+    engine: string;
+    platform: string;
+    is_empty: boolean;
+    url: string | null;
+    hash: string | null;
+    size: number | null;
+    features: string[];
+}
+
+export interface UpdateAvatar {
+    title?: string;
+    description?: string | null;
+    release?: number | null;
+    tags?: string[];
+}
+
+export interface AvatarsResponse extends MultiResponse {
+    items: Avatar[];
+}
+
+export interface AvatarAssetsResponse extends MultiResponse {
+    items: AvatarAsset[];
+}
+
 export interface TableMeta {
     key: string;
     mime: string;

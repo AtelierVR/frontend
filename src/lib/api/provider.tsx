@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
-import { AuthService, UserService, VerificationService, SessionService, FollowService, RelayService, MessageService, TotpService, WorldService, TableService } from './services';
+    import { AuthService, UserService, VerificationService, SessionService, FollowService, RelayService, MessageService, TotpService, WorldService, TableService, AvatarService } from './services';
 import { getSIDById, isError } from './utils';
 import { resolveApiConfig, resolveWellKnown } from './config';
 import type { ApiInterface } from './interface';
@@ -33,6 +33,7 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
     const totpService = new TotpService();
     const worldService = new WorldService();
     const tableService = new TableService();
+    const avatarService = new AvatarService();
 
     // User methods
     const fetchCurrentUser = async () => {
@@ -410,6 +411,13 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
         fetchWorldAssets: (id, server, version) => worldService.fetchWorldAssets(id, server, version),
         updateWorld: (id, server, data) => worldService.updateWorld(id, server, data),
         uploadWorldThumbnail: (id, server, file) => worldService.uploadWorldThumbnail(id, server, file),
+
+        // Avatar methods
+        fetchAvatar: (id, server) => avatarService.fetchAvatar(id, server),
+        fetchAvatars: (limit, offset) => avatarService.fetchAvatars(limit, offset),
+        fetchAvatarAssets: (id, server, version) => avatarService.fetchAvatarAssets(id, server, version),
+        updateAvatar: (id, server, data) => avatarService.updateAvatar(id, server, data),
+        uploadAvatarThumbnail: (id, server, file) => avatarService.uploadAvatarThumbnail(id, server, file),
 
         // Table methods
         listMyTables: (limit, offset) => tableService.listMyTables(limit, offset),
