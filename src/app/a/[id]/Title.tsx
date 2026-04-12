@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useApi, isError } from '@/lib/api';
 import { useAvatar } from './AvatarContext';
+import { IdentifierCopy } from '@/components/ui/identifier-copy';
 
 const PLATFORM_ICONS: Record<string, { icon: string; label: string; color: string }> = {
     windows: { icon: 'mdi:microsoft-windows', label: 'Windows', color: '#0079D5' },
@@ -121,6 +122,8 @@ export default function AvatarTitle({ avatar, assets, actions }: { avatar: Avata
                             <span>{formatSize(maxSize)}</span>
                         </>
                     )}
+                    <span>·</span>
+                    <IdentifierCopy identifier={avatar.alias?.find((a: any) => a.key === 'iid')?.value ?? `${avatar.id}@${avatar.server}`} />
                 </div>
             ) : (
                 <div className="mt-1 animate-pulse rounded-sm bg-fd-muted h-4 w-48" />

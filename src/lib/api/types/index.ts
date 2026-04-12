@@ -382,6 +382,8 @@ export interface AvatarAsset {
     hash: string | null;
     size: number | null;
     features: string[];
+    /** NoxIdentifier of the uploader, or null */
+    uploader: string | null;
 }
 
 export interface UpdateAvatar {

@@ -4,8 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Icon } from '@iconify/react';
-import type { AvatarAsset } from '@/lib/api/types';
+import { useEffect, useState } from 'react';
+import { useApi, isError } from '@/lib/api';
+import type { AvatarAsset, User } from '@/lib/api/types';
 import { useAvatar } from '../AvatarContext';
+import Link from 'next/link';
 
 const PLATFORM_ICONS: Record<string, { icon: string; label: string; color: string }> = {
     windows: { icon: 'mdi:microsoft-windows', label: 'Windows', color: '#0079D5' },
@@ -23,11 +26,54 @@ function formatSize(bytes: number): string {
     return `${bytes} o`;
 }
 
+function parseSid(sid: string): { id: number | string; server?: string } {
+    const bare = sid.startsWith('u:') ? sid.slice(2) : sid;
+    const atIdx = bare.lastIndexOf('@');
+    if (atIdx === -1) return { id: bare };
+    const id = bare.slice(0, atIdx);
+    const server = bare.slice(atIdx + 1);
+    return {
+        id: isNaN(parseInt(id, 10)) ? id : parseInt(id, 10),
+        server: server === '::' ? undefined : server || undefined,
+    };
+}
+
+function UploaderLabel({ sid }: { sid: string }) {
+    const Api = useApi();
+    const [user, setUser] = useState<User | null | undefined>(undefined);
+
+    useEffect(() => {
+        if (!Api) return;
+        const { id, server } = parseSid(sid);
+        Api.getOrFetchUser(id, server).then(res => {
+            setUser(isError(res) ? null : res);
+        });
+    }, [sid, Api]);
+
+    const label = user
+        ? (user.display || user.username)
+        : (sid.startsWith('u:') ? sid.slice(2) : sid);
+
+    return (
+        <Link
+            className="group flex items-center gap-1 text-xs text-fd-muted-foreground"
+            href={`/u/${sid}`}
+        >
+            <Icon icon="material-symbols:upload-rounded" className="size-3.5 flex-shrink-0" />
+            {user === undefined
+                ? <span className="inline-block w-20 h-3 rounded animate-pulse bg-fd-muted" />
+                : <span className="font-mono truncate max-w-[12rem] group-hover:underline">{label}</span>
+            }
+        </Link>
+    );
+}
+
 function AssetRow({ asset, isRelease }: { asset: AvatarAsset; isRelease: boolean }) {
     const platformInfo = PLATFORM_ICONS[asset.platform.toLowerCase()];
 
     return (
         <div className="py-3 border-b border-fd-border last:border-0 space-y-2">
+            {/* Top row: platform / engine / size / hash / release badge */}
             <div className="flex items-center gap-3 flex-wrap">
                 <div className="flex items-center gap-2 w-36 flex-shrink-0">
                     {platformInfo ? (
@@ -59,8 +105,12 @@ function AssetRow({ asset, isRelease }: { asset: AvatarAsset; isRelease: boolean
                 )}
             </div>
 
-            {asset.features.length > 0 && (
+            {/* Bottom row: uploader + feature badges */}
+            {(asset.uploader || asset.features.length > 0) && (
                 <div className="flex flex-wrap items-center gap-2">
+                    {asset.uploader && (
+                        <UploaderLabel sid={asset.uploader} />
+                    )}
                     {asset.features.map(f => (
                         <Badge key={f} variant="outline" className="text-xs font-normal">
                             {f}
