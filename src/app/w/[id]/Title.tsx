@@ -99,12 +99,6 @@ export default function WorldTitle({ world, assets, actions }: { world: World | 
                     >
                         {ownerLabel}
                     </Link>
-                    {maxSize !== null && (
-                        <>
-                            <span>·</span>
-                            <span className="font-medium">{formatSize(maxSize)}</span>
-                        </>
-                    )}
                     {platforms && platforms.length > 0 && (
                         <>
                             <span>·</span>
@@ -124,6 +118,12 @@ export default function WorldTitle({ world, assets, actions }: { world: World | 
                                     );
                                 })}
                             </span>
+                        </>
+                    )}
+                    {maxSize !== null && (
+                        <>
+                            <span>·</span>
+                            <span className="font-medium">{formatSize(maxSize)}</span>
                         </>
                     )}
                     <span>·</span>
