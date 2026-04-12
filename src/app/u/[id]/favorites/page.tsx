@@ -3,7 +3,7 @@
 import { useEffect, useState, useContext } from 'react';
 import { useParams } from 'next/navigation';
 import { isError, useApi } from '@/lib/api';
-import type { PublicTableMeta, TableMeta, World } from '@/lib/api/types';
+import type { PublicTableMeta, TableMeta, World, Avatar } from '@/lib/api/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Icon } from '@iconify/react';
 import Link from 'next/link';
@@ -34,15 +34,15 @@ function WorldCard({ world }: { world: World | null }) {
                 )}
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pt-6 pb-1.5 px-2">
                     <span className="text-xs font-medium text-white truncate block leading-tight">{world.title}</span>
-                    <span className="text-[10px] text-white/60 truncate block leading-tight">{world.id}@{world.server}</span>
+                    <span className="text-[10px] text-white/60 truncate block leading-tight">{world.alias?.find(a => a.key === 'nid')?.value ?? `${world.id}@${world.server}`}</span>
                 </div>
             </div>
         </Link>
     );
 }
 
-function AvatarCard({ sid }: { sid: string | null }) {
-    if (!sid) {
+function AvatarCard({ avatar }: { avatar: Avatar | null }) {
+    if (!avatar) {
         return (
             <div className="relative rounded-lg overflow-hidden border bg-fd-muted aspect-[4/3]">
                 <Skeleton className="w-full h-full" />
@@ -51,13 +51,22 @@ function AvatarCard({ sid }: { sid: string | null }) {
     }
 
     return (
-        <Link href={`/a/${sid}`}>
+        <Link href={`/a/${avatar.id}@${avatar.server}`}>
             <div className="relative rounded-lg overflow-hidden border bg-fd-muted aspect-[4/3] hover:ring-2 hover:ring-fd-primary transition-all">
-                <div className="w-full h-full flex items-center justify-center">
-                    <Icon icon="material-symbols:person-rounded" className="size-8 text-fd-muted-foreground" />
-                </div>
+                {avatar.thumbnail ? (
+                    <img
+                        src={avatar.thumbnail}
+                        alt={avatar.title}
+                        className="w-full h-full object-cover"
+                    />
+                ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                        <Icon icon="material-symbols:person-rounded" className="size-8 text-fd-muted-foreground" />
+                    </div>
+                )}
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pt-6 pb-1.5 px-2">
-                    <span className="text-[10px] text-white/60 truncate block leading-tight">{sid}</span>
+                    <span className="text-xs font-medium text-white truncate block leading-tight">{avatar.title}</span>
+                    <span className="text-[10px] text-white/60 truncate block leading-tight">{avatar.alias?.find(a => a.key === 'nid')?.value ?? `${avatar.id}@${avatar.server}`}</span>
                 </div>
             </div>
         </Link>
@@ -132,7 +141,7 @@ function WorldTableSection({ table, userId, userServer, isSelf }: { table: Publi
 
 function AvatarTableSection({ table, userId, userServer, isSelf }: { table: PublicTableMeta | TableMeta; userId: string | number; userServer?: string; isSelf: boolean }) {
     const Api = useApi();
-    const [avatars, setAvatars] = useState<string[] | null>(null);
+    const [avatars, setAvatars] = useState<(Avatar | null)[] | null>(null);
     const [label, setLabel] = useState<string | null>(null);
     const [error, setError] = useState(false);
     const tableType = table.key.slice('public.'.length);
@@ -142,7 +151,7 @@ function AvatarTableSection({ table, userId, userServer, isSelf }: { table: Publ
         const fetch = isSelf
             ? Api.fetchMyTable(table.key)
             : Api.fetchUserPublic(userId, tableType, userServer);
-        fetch.then(raw => {
+        fetch.then(async raw => {
             if (raw instanceof Error) { setError(true); return; }
             let parsed: { label?: string; values: unknown[] } | unknown;
             try { parsed = JSON.parse(raw.toString('utf-8')); } catch { setError(true); return; }
@@ -154,7 +163,20 @@ function AvatarTableSection({ table, userId, userServer, isSelf }: { table: Publ
             else if (Array.isArray(parsed))
                 ids = parsed.filter((v): v is string => typeof v === 'string');
             else { setError(true); return; }
-            setAvatars(ids);
+
+            if (ids.length === 0) { setAvatars([]); return; }
+
+            setAvatars(ids.map(() => null));
+
+            const resolved = await Promise.all(ids.map(async sid => {
+                const atIdx = sid.lastIndexOf('@');
+                const avatarId = atIdx !== -1 ? sid.slice(0, atIdx) : sid;
+                const server = atIdx !== -1 ? sid.slice(atIdx + 1) : undefined;
+                const res = await Api.fetchAvatar(avatarId, server);
+                return isError(res) ? null : res;
+            }));
+
+            setAvatars(resolved.filter((a): a is Avatar => a !== null));
         });
     }, [tableType, userId, userServer, isSelf, Api]);
 
@@ -167,13 +189,13 @@ function AvatarTableSection({ table, userId, userServer, isSelf }: { table: Publ
             </h2>
             {avatars === null ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {[0, 1, 2].map(i => <AvatarCard key={i} sid={null} />)}
+                    {[0, 1, 2].map(i => <AvatarCard key={i} avatar={null} />)}
                 </div>
             ) : avatars.length === 0 ? (
                 <p className="text-sm text-fd-muted-foreground">No avatars in this list.</p>
             ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {avatars.map((sid, i) => <AvatarCard key={i} sid={sid} />)}
+                    {avatars.map((a, i) => <AvatarCard key={i} avatar={a} />)}
                 </div>
             )}
         </section>

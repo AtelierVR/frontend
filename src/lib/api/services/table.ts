@@ -18,7 +18,7 @@ export class TableService {
     async getMyTable(key: string): Promise<unknown | ApiError> {
         const config = await resolveApiConfig();
         try {
-            const res = await fetch(new URL(`/users/@me/tables/${encodeURIComponent(key)}`, config.baseUrl), {
+            const res = await fetch(new URL(`users/@me/tables/${encodeURIComponent(key)}`, config.baseUrl), {
                 credentials: 'include',
             });
             if (!res.ok) {
@@ -43,7 +43,7 @@ export class TableService {
         const config = await resolveApiConfig();
         try {
             const body = JSON.stringify(content);
-            const res = await fetch(new URL(`/users/@me/tables/${encodeURIComponent(key)}`, config.baseUrl), {
+            const res = await fetch(new URL(`users/@me/tables/${encodeURIComponent(key)}`, config.baseUrl), {
                 method: 'POST',
                 credentials: 'include',
                 headers: { 'Content-Type': mime },

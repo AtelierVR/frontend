@@ -18,6 +18,7 @@ import AvatarTags from './AvatarTags';
 import AvatarContributors from './AvatarContributors';
 import { AvatarContext } from './AvatarContext';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import FavoriteButton from './FavoriteButton';
 
 export default function AvatarLayout({ children }: { children: React.ReactNode }) {
     const params = useParams();
@@ -140,6 +141,7 @@ export default function AvatarLayout({ children }: { children: React.ReactNode }
                                     <AvatarTitle
                                         avatar={avatar}
                                         assets={releaseAssets}
+                                        actions={<FavoriteButton avatarSid={`${avatar.id}@${avatar.server}`} />}
                                     />
                                 </div>
                             </Card>
