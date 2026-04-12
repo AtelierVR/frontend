@@ -137,7 +137,6 @@ export default function FavoriteButton({ worldSid }: { worldSid: string }) {
                     icon={isFavorited ? 'material-symbols:bookmark' : 'material-symbols:bookmark-outline-rounded'}
                     className="size-4"
                 />
-                {isFavorited ? 'Saved' : 'Save'}
             </Button>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>

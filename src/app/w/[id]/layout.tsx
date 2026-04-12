@@ -19,6 +19,7 @@ import WorldContributors from './WorldContributors';
 import { WorldContext } from './WorldContext';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import FavoriteButton from './FavoriteButton';
+import SetHomeButton from './SetHomeButton';
 
 export default function WorldLayout({ children }: { children: React.ReactNode }) {
     const params = useParams();
@@ -142,7 +143,12 @@ export default function WorldLayout({ children }: { children: React.ReactNode })
                                     <WorldTitle
                                         world={world}
                                         assets={releaseAssets}
-                                        actions={<FavoriteButton worldSid={`${world.id}@${world.server}`} />}
+                                        actions={
+                                            <div className="flex items-center gap-2">
+                                                <SetHomeButton worldSid={`${world.id}@${world.server}`} />
+                                                <FavoriteButton worldSid={`${world.id}@${world.server}`} />
+                                            </div>
+                                        }
                                     />
                                 </div>
                             </Card>

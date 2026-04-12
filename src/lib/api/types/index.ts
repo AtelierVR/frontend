@@ -76,6 +76,8 @@ export interface CurrentUser extends User {
     twofa_enabled: boolean;
     email_verified: boolean;
     presence: Presence;
+    home: string | null;
+    avatar: string | null;
 }
 
 export interface RegisterForm {
@@ -97,6 +99,8 @@ export interface UpdateUser {
     links?: UserLink[];
     password?: string;
     current_password?: string;
+    home?: string | null;
+    avatar?: string | null;
 }
 
 export interface MultiResponse {

@@ -19,6 +19,7 @@ import AvatarContributors from './AvatarContributors';
 import { AvatarContext } from './AvatarContext';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import FavoriteButton from './FavoriteButton';
+import SetAvatarButton from './SetAvatarButton';
 
 export default function AvatarLayout({ children }: { children: React.ReactNode }) {
     const params = useParams();
@@ -141,7 +142,12 @@ export default function AvatarLayout({ children }: { children: React.ReactNode }
                                     <AvatarTitle
                                         avatar={avatar}
                                         assets={releaseAssets}
-                                        actions={<FavoriteButton avatarSid={`${avatar.id}@${avatar.server}`} />}
+                                        actions={
+                                            <div className="flex items-center gap-2">
+                                                <SetAvatarButton avatarSid={`${avatar.id}@${avatar.server}`} />
+                                                <FavoriteButton avatarSid={`${avatar.id}@${avatar.server}`} />
+                                            </div>
+                                        }
                                     />
                                 </div>
                             </Card>
