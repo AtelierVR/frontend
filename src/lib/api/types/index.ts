@@ -365,6 +365,8 @@ export interface Avatar {
     release: number;
     /** NoxIdentifier string of the owner */
     owner: string;
+    /** NoxIdentifier strings of contributors */
+    contributors: string[];
     alias: UserAlias[];
 }
 
@@ -385,6 +387,7 @@ export interface UpdateAvatar {
     description?: string | null;
     release?: number | null;
     tags?: string[];
+    contributors?: string[];
 }
 
 export interface AvatarsResponse extends MultiResponse {

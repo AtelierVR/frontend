@@ -15,6 +15,7 @@ import AvatarThumbnail from './Thumbnail';
 import AvatarTitle from './Title';
 import AvatarInfo from './AvatarInfo';
 import AvatarTags from './AvatarTags';
+import AvatarContributors from './AvatarContributors';
 import { AvatarContext } from './AvatarContext';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -121,8 +122,10 @@ export default function AvatarLayout({ children }: { children: React.ReactNode }
 
     const normalizeRef = (s: string) => s.startsWith('u:') ? s.slice(2) : s;
     const myRef = Api?.currentUser ? getSIDById(Api.currentUser.id, Api.currentUser.server) : null;
-    const canEdit = avatar !== null && myRef !== null &&
-        normalizeRef(avatar.owner) === myRef;
+    const canEdit = avatar !== null && myRef !== null && (
+        normalizeRef(avatar.owner) === myRef ||
+        avatar.contributors.some(c => normalizeRef(c) === myRef)
+    );
 
     return (
         <AvatarContext.Provider value={{ avatar, allAssets, loading, error, canEdit, refresh }}>
@@ -164,6 +167,7 @@ export default function AvatarLayout({ children }: { children: React.ReactNode }
                         {/* Sidebar */}
                         <div className="hidden md:block space-y-6">
                             <AvatarInfo avatar={avatar} />
+                            <AvatarContributors avatar={avatar} />
                             <AvatarTags avatar={avatar} />
                         </div>
                     </div>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAvatar } from '../AvatarContext';
 import { useApi, isError } from '@/lib/api';
+import { getSIDById } from '@/lib/api/utils';
 import {
     InputGroup,
     InputGroupInput,
@@ -13,6 +14,60 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Icon } from '@iconify/react';
+import type { User } from '@/lib/api/types';
+import Link from 'next/link';
+import { cn } from '@/lib/cn';
+
+function parseSid(sid: string): { id: number | string; server?: string } {
+    const bare = sid.startsWith('u:') ? sid.slice(2) : sid;
+    const atIdx = bare.lastIndexOf('@');
+    if (atIdx === -1) return { id: bare };
+    const id = bare.slice(0, atIdx);
+    const server = bare.slice(atIdx + 1);
+    return {
+        id: isNaN(parseInt(id, 10)) ? id : parseInt(id, 10),
+        server: server === '::' ? undefined : server || undefined,
+    };
+}
+
+function ContributorRow({ sid, onRemove }: { sid: string; onRemove?: () => void }) {
+    const Api = useApi();
+    const [user, setUser] = useState<User | null | undefined>(undefined);
+    const [imageError, setImageError] = useState(false);
+
+    useEffect(() => {
+        if (!Api) return;
+        const { id, server } = parseSid(sid);
+        Api.getOrFetchUser(id, server).then(res => setUser(isError(res) ? null : res));
+    }, [sid, Api]);
+
+    const bare = sid.startsWith('u:') ? sid.slice(2) : sid;
+    const displayName = user ? (user.display || user.username) : null;
+    const subLabel = user ? `${user.username}@${user.server}` : bare;
+
+    return (
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-fd-card hover:bg-fd-muted/50 transition-colors">
+            <div className={cn('size-6 rounded-full overflow-hidden flex-shrink-0 bg-fd-muted', user === undefined && 'animate-pulse')}>
+                {user !== undefined && (!imageError && user?.thumbnail ? (
+                    <img src={user.thumbnail} alt={displayName || bare} className="size-6 object-cover" onError={() => setImageError(true)} />
+                ) : (
+                    <div className="size-6 rounded-full bg-fd-primary/20 flex items-center justify-center">
+                        <Icon icon="material-symbols:person-rounded" className="size-3.5 text-fd-muted-foreground" />
+                    </div>
+                ))}
+            </div>
+            <Link href={`/u/${bare}`} className="flex-1 min-w-0 flex items-center gap-2 text-sm group">
+                <span className="font-medium truncate">{displayName ?? bare}</span>
+                {displayName && <span className="text-xs text-fd-muted-foreground font-mono truncate">{subLabel}</span>}
+            </Link>
+            {onRemove && (
+                <Button variant="ghost" size="sm" onClick={onRemove} className="h-6 w-6 p-0 hover:bg-fd-muted flex-shrink-0">
+                    <Icon icon="material-symbols:close-rounded" className="size-3.5" />
+                </Button>
+            )}
+        </div>
+    );
+}
 
 export default function AvatarEditPage() {
     const { avatar, canEdit, refresh } = useAvatar();
@@ -23,13 +78,21 @@ export default function AvatarEditPage() {
     const descriptionFlag = 1 << 3;
     const releaseFlag = 1 << 4;
     const tagsFlag = 1 << 5;
+    const contributorsFlag = 1 << 6;
     const loadingFlag = 1;
+
+    const normalizeRef = (s: string) => s.startsWith('u:') ? s.slice(2) : s;
+    const isOwner = Api?.currentUser && avatar
+        ? normalizeRef(avatar.owner) === getSIDById(Api.currentUser.id, Api.currentUser.server)
+        : false;
 
     const [canSaveFlag, setCanSaveFlag] = useState(0);
     const [title, setTitle] = useState<string | undefined>();
     const [description, setDescription] = useState<string | undefined>();
     const [release, setRelease] = useState<string | undefined>();
     const [thumbnail, setThumbnail] = useState<string | null | undefined>();
+    const [contributors, setContributors] = useState<string[] | undefined>();
+    const [newContributor, setNewContributor] = useState('');
     const [tags, setTags] = useState<string[] | undefined>();
 
     const [error, setError] = useState<string | null>(null);
@@ -40,6 +103,8 @@ export default function AvatarEditPage() {
         setDescription(undefined);
         setRelease(undefined);
         setThumbnail(undefined);
+        setContributors(undefined);
+        setNewContributor('');
         setTags(undefined);
         setCanSaveFlag(0);
     }, [avatar?.id]);
@@ -58,6 +123,23 @@ export default function AvatarEditPage() {
     const isSaving = (canSaveFlag & loadingFlag) !== 0;
     const canSave = canSaveFlag > 0 && !isSaving;
 
+    const currentContributors = contributors ?? avatar.contributors;
+
+    const addContributor = () => {
+        const sid = newContributor.trim();
+        if (!sid || currentContributors.includes(sid)) return;
+        const next = [...currentContributors, sid];
+        setContributors(next);
+        setNewContributor('');
+        setCanSaveFlag(f => f | contributorsFlag);
+    };
+
+    const removeContributor = (sid: string) => {
+        const next = currentContributors.filter(c => c !== sid);
+        setContributors(next);
+        setCanSaveFlag(f => f | contributorsFlag);
+    };
+
     const handleSave = async () => {
         if (!Api || !avatar || !canSave) return;
         setCanSaveFlag(f => f | loadingFlag);
@@ -68,6 +150,7 @@ export default function AvatarEditPage() {
                 title: title?.trim() || undefined,
                 description: description !== undefined ? (description.trim() || null) : undefined,
                 release: release !== undefined && release !== '' ? Number(release) : undefined,
+                contributors: contributors,
                 tags: tags,
             });
             if (isError(res)) {
@@ -90,6 +173,7 @@ export default function AvatarEditPage() {
             setTitle(undefined);
             setDescription(undefined);
             setRelease(undefined);
+            setContributors(undefined);
             setTags(undefined);
             setCanSaveFlag(0);
             setSuccess(true);
@@ -249,6 +333,54 @@ export default function AvatarEditPage() {
                             </>
                         );
                     })()}
+                </div>
+            </section>
+
+            {/* Contributors */}
+            <section id="contributors" className="space-y-2">
+                <h2 className="text-lg font-semibold">Contributors</h2>
+                <p className="text-sm text-fd-muted-foreground">
+                    {isOwner
+                        ? 'People who can edit this avatar. Enter their NoxIdentifier (e.g. 42@nox.example) to add them.'
+                        : 'People who can edit this avatar.'}
+                </p>
+
+                <div className="space-y-2 pt-2">
+                    {currentContributors.length === 0 && (
+                        <div className="text-sm text-fd-muted-foreground text-center py-4 border border-dashed border-fd-border rounded-lg">
+                            No contributors yet.
+                        </div>
+                    )}
+
+                    {currentContributors.length > 0 && (
+                        <div className="border border-fd-border rounded-lg overflow-hidden divide-y divide-fd-border">
+                            {currentContributors.map(sid => (
+                                <ContributorRow
+                                    key={sid}
+                                    sid={sid}
+                                    onRemove={isOwner ? () => removeContributor(sid) : undefined}
+                                />
+                            ))}
+                        </div>
+                    )}
+
+                    {isOwner && (
+                        <div className="flex items-center gap-2 pt-1">
+                            <InputGroup className="flex-1">
+                                <InputGroupInput
+                                    id="avatar-contributor-add"
+                                    value={newContributor}
+                                    onChange={e => setNewContributor(e.target.value)}
+                                    onKeyDown={e => e.key === 'Enter' && addContributor()}
+                                    placeholder="42@nox.example"
+                                />
+                            </InputGroup>
+                            <Button variant="ghost" size="sm" onClick={addContributor} disabled={!newContributor.trim()} className="h-9">
+                                <Icon icon="material-symbols:add-rounded" className="size-4" />
+                                Add
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </section>
 
