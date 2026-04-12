@@ -123,7 +123,7 @@ export default function AvatarTitle({ avatar, assets, actions }: { avatar: Avata
                         </>
                     )}
                     <span>·</span>
-                    <IdentifierCopy identifier={avatar.alias?.find((a: any) => a.key === 'iid')?.value ?? `${avatar.id}@${avatar.server}`} />
+                    <IdentifierCopy identifier={avatar.alias?.find((a: any) => a.key === 'nid')?.value ?? `${avatar.id}@${avatar.server}`} />
                 </div>
             ) : (
                 <div className="mt-1 animate-pulse rounded-sm bg-fd-muted h-4 w-48" />
