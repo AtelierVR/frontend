@@ -5,7 +5,6 @@ import { CurrentUser } from '@/lib/api/types';
 import { CheckCircle, XCircle, Mail, Loader2, Trash2, Plus, Pencil } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useApi, isError } from '@/lib/api';
-import type { VerificationMethod, ApiError } from '@/lib/api';
 import { useTranslation } from 'react-i18next';
 import '@/lib/i18n/config';
 import { VerificationModal } from '@/components/verification-modal';
@@ -17,6 +16,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
+import { useVerificationModal } from '@/lib/hooks/useVerificationModal';
 
 interface EmailSectionProps {
   email: string;
@@ -51,24 +51,25 @@ export default function EmailSection({
   const [isSendingVerification, setIsSendingVerification] = useState(false);
   const [isSavingEmail, setIsSavingEmail] = useState(false);
   const [isDeletingEmail, setIsDeletingEmail] = useState(false);
-  const [showVerificationModal, setShowVerificationModal] = useState(false);
-  const [verificationMethods, setVerificationMethods] = useState<VerificationMethod[]>([]);
-  const verificationResolveRef = useRef<((code: string | null) => void) | null>(null);
+  const {
+    showVerificationModal,
+    verificationMethods,
+    verificationResolveRef,
+    handleVerificationRequired,
+    setShowVerificationModal,
+  } = useVerificationModal();
   // undefined = no pending action, null = delete pending, string = save with this email
   const pendingEmailRef = useRef<string | null | undefined>(undefined);
 
+  const handleVerificationClose = () => {
+    setShowVerificationModal(false);
+    verificationResolveRef.current?.(null);
+    verificationResolveRef.current = null;
+    pendingEmailRef.current = undefined;
+  };
+
   const hasEmail = !!currentUser?.email;
   const isEmailVerified = currentUser?.email_verified || false;
-
-  const handleVerificationRequired = async (_error: ApiError, methods: VerificationMethod[]): Promise<string | null> => {
-    setVerificationMethods(methods);
-    setShowVerificationModal(true);
-    setIsSavingEmail(false);
-    setIsDeletingEmail(false);
-    return new Promise((resolve) => {
-      verificationResolveRef.current = resolve;
-    });
-  };
 
   const handleVerificationSuccess = async (code: string) => {
     setShowVerificationModal(false);
@@ -117,13 +118,6 @@ export default function EmailSection({
         setIsDeletingEmail(false);
       }
     }
-  };
-
-  const handleVerificationClose = () => {
-    setShowVerificationModal(false);
-    verificationResolveRef.current?.(null);
-    verificationResolveRef.current = null;
-    pendingEmailRef.current = undefined;
   };
 
   const handleSaveEmail = async () => {

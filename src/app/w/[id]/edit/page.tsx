@@ -13,65 +13,10 @@ import {
 } from '@/components/ui/input-group';
 import ImageUploader from '@/components/ui/image-uploader';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Icon } from '@iconify/react';
-import type { User } from '@/lib/api/types';
-import Link from 'next/link';
-import { cn } from '@/lib/cn';
-
-function parseSid(sid: string): { id: number | string; server?: string } {
-    const bare = sid.startsWith('u:') ? sid.slice(2) : sid;
-    const atIdx = bare.lastIndexOf('@');
-    if (atIdx === -1) return { id: bare };
-    const id = bare.slice(0, atIdx);
-    const server = bare.slice(atIdx + 1);
-    return {
-        id: isNaN(parseInt(id, 10)) ? id : parseInt(id, 10),
-        server: server === '::' ? undefined : server || undefined,
-    };
-}
-
-function ContributorRow({ sid, onRemove }: { sid: string; onRemove?: () => void }) {
-    const Api = useApi();
-    const [user, setUser] = useState<User | null | undefined>(undefined);
-    const [imageError, setImageError] = useState(false);
-
-    useEffect(() => {
-        if (!Api) return;
-        const { id, server } = parseSid(sid);
-        Api.getOrFetchUser(id, server).then(res => setUser(isError(res) ? null : res));
-    }, [sid, Api]);
-
-    const bare = sid.startsWith('u:') ? sid.slice(2) : sid;
-    const displayName = user ? (user.display || user.username) : null;
-    const subLabel = user ? `${user.username}@${user.server}` : bare;
-
-    return (
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-fd-card hover:bg-fd-muted/50 transition-colors">
-            {/* Avatar */}
-            <div className={cn('size-6 rounded-full overflow-hidden flex-shrink-0 bg-fd-muted', user === undefined && 'animate-pulse')}>
-                {user !== undefined && (!imageError && user?.thumbnail ? (
-                    <img src={user.thumbnail} alt={displayName || bare} className="size-6 object-cover" onError={() => setImageError(true)} />
-                ) : (
-                    <div className="size-6 rounded-full bg-fd-primary/20 flex items-center justify-center">
-                        <Icon icon="material-symbols:person-rounded" className="size-3.5 text-fd-muted-foreground" />
-                    </div>
-                ))}
-            </div>
-            {/* Name */}
-            <Link href={`/u/${bare}`} className="flex-1 min-w-0 flex items-center gap-2 text-sm group">
-                <span className="font-medium truncate">{displayName ?? bare}</span>
-                {displayName && <span className="text-xs text-fd-muted-foreground font-mono truncate">{subLabel}</span>}
-            </Link>
-            {onRemove && (
-                <Button variant="ghost" size="sm" onClick={onRemove} className="h-6 w-6 p-0 hover:bg-fd-muted flex-shrink-0">
-                    <Icon icon="material-symbols:close-rounded" className="size-3.5" />
-                </Button>
-            )}
-        </div>
-    );
-}
+import { EditorContributorRow } from '@/components/editor-contributor-row';
+import { TagEditor } from '@/components/tag-editor';
 
 export default function WorldEditPage() {
     const { world, canEdit, refresh } = useWorld();
@@ -340,62 +285,13 @@ export default function WorldEditPage() {
             <section id="tags" className="space-y-2">
                 <h2 className="text-lg font-semibold">Tags</h2>
                 <p className="text-sm text-fd-muted-foreground">User-defined tags for this world. Only <code className="text-xs">usr:</code> tags can be set.</p>
-
-                <div className="space-y-2 pt-2">
-                    {(() => {
-                        const currentTags = (tags ?? world.tags ?? []).filter(t => t.startsWith('usr:'));
-                        const TAG_EDIT_REGEX = /^usr:([a-z_]+)?$/;
-                        const TAG_UPLOAD_REGEX = /^usr:([a-z_])([a-z_]+)?$/;
-
-                        const handleChange = (index: number, value: string) => {
-                            if (!TAG_EDIT_REGEX.test(value)) return;
-                            const next = [...currentTags];
-                            next[index] = value;
-                            setTags(next);
-                            setCanSaveFlag(f => f | tagsFlag);
-                        };
-                        const handleRemove = (index: number) => {
-                            const next = currentTags.filter((_, i) => i !== index);
-                            setTags(next);
-                            setCanSaveFlag(f => f | tagsFlag);
-                        };
-                        const handleAdd = () => {
-                            setTags([...currentTags, 'usr:']);
-                            setCanSaveFlag(f => f | tagsFlag);
-                        };
-
-                        return (
-                            <>
-                                {currentTags.length === 0 && (
-                                    <div className="text-sm text-fd-muted-foreground text-center py-4 border border-dashed border-fd-border rounded-lg">
-                                        No tags yet.
-                                    </div>
-                                )}
-                                {currentTags.length > 0 && (
-                                    <div className="border border-fd-border rounded-lg overflow-hidden divide-y divide-fd-border">
-                                        {currentTags.map((tag, index) => (
-                                            <div key={index} className="flex items-center gap-2 px-3 py-1.5 bg-fd-card hover:bg-fd-muted/50 transition-colors">
-                                                <Input
-                                                    value={tag}
-                                                    onChange={e => handleChange(index, e.target.value)}
-                                                    className="flex-1 h-7 border-0 bg-transparent focus-visible:ring-0 px-0 text-sm shadow-none"
-                                                />
-                                                <Button variant="ghost" size="sm" onClick={() => handleRemove(index)} className="h-6 w-6 p-0 hover:bg-fd-muted">
-                                                    <Icon icon="material-symbols:close-rounded" className="size-3.5" />
-                                                </Button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                                <div className="flex items-center justify-center pt-2">
-                                    <Button onClick={handleAdd} variant="ghost" size="sm" className="w-3/4 h-8 hover:bg-fd-muted">
-                                        <Icon icon="material-symbols:add-rounded" className="size-4" />
-                                    </Button>
-                                </div>
-                            </>
-                        );
-                    })()}
-                </div>
+                <TagEditor
+                    tags={tags ?? world.tags ?? []}
+                    onChange={next => {
+                        setTags(next);
+                        setCanSaveFlag(f => f | tagsFlag);
+                    }}
+                />
             </section>
 
             {/* Contributors */}
@@ -417,7 +313,7 @@ export default function WorldEditPage() {
                     {currentContributors.length > 0 && (
                         <div className="border border-fd-border rounded-lg overflow-hidden divide-y divide-fd-border">
                             {currentContributors.map(sid => (
-                                <ContributorRow
+                                <EditorContributorRow
                                     key={sid}
                                     sid={sid}
                                     onRemove={isOwner ? () => removeContributor(sid) : undefined}

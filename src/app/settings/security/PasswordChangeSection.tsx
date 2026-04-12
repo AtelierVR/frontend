@@ -1,8 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { InputGroup, InputGroupInput } from '@/components/ui/input-group';
 import { Button } from '@/components/ui/button';
 import { useApi, isError } from '@/lib/api';
-import type { VerificationMethod, ApiError } from '@/lib/api';
 import { Icon } from '@iconify/react';
 import { VerificationModal } from '@/components/verification-modal';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useVerificationModal } from '@/lib/hooks/useVerificationModal';
 
 interface PasswordChangeSectionProps {
   setError: (error: string | undefined) => void;
@@ -34,9 +34,16 @@ export default function PasswordChangeSection({
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [showVerificationModal, setShowVerificationModal] = useState(false);
-  const [verificationMethods, setVerificationMethods] = useState<VerificationMethod[]>([]);
-  const verificationResolveRef = useRef<((code: string | null) => void) | null>(null);
+  const {
+    showVerificationModal,
+    verificationMethods,
+    verificationResolveRef,
+    handleVerificationRequired,
+    handleVerificationClose,
+    setShowVerificationModal,
+  } = useVerificationModal(() => {
+    setIsLoading(false);
+  });
 
   const resetForm = () => {
     setCurrentPassword('');
@@ -50,16 +57,6 @@ export default function PasswordChangeSection({
   const handleDialogClose = (open: boolean) => {
     if (!open) resetForm();
     setShowDialog(open);
-  };
-
-  const handleVerificationRequired = async (_error: ApiError, methods: VerificationMethod[]): Promise<string | null> => {
-    setVerificationMethods(methods);
-    setShowVerificationModal(true);
-    setIsLoading(false);
-
-    return new Promise((resolve) => {
-      verificationResolveRef.current = resolve;
-    });
   };
 
   const handleVerificationSuccess = async (code: string) => {
@@ -88,13 +85,6 @@ export default function PasswordChangeSection({
       verificationResolveRef.current = null;
       setIsLoading(false);
     }
-  };
-
-  const handleVerificationClose = () => {
-    setShowVerificationModal(false);
-    setIsLoading(false);
-    verificationResolveRef.current?.(null);
-    verificationResolveRef.current = null;
   };
 
   const handleChangePassword = async () => {

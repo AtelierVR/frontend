@@ -1,8 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useApi, isError } from '@/lib/api';
-import type { VerificationMethod, ApiError } from '@/lib/api';
 import { CurrentUser } from '@/lib/api/types';
 import { Icon } from '@iconify/react';
 import { useTranslation } from 'react-i18next';
@@ -17,6 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import { InputGroup, InputGroupInput } from '@/components/ui/input-group';
 import { Loader2, Trash2 } from 'lucide-react';
+import { useVerificationModal } from '@/lib/hooks/useVerificationModal';
 
 interface TwoFactorAuthSectionProps {
   currentUser: CurrentUser | null;
@@ -37,9 +37,16 @@ export default function TwoFactorAuthSection({
   const [qrCode, setQrCode] = useState<string>('');
   const [secret, setSecret] = useState<string>('');
   const [verificationCode, setVerificationCode] = useState('');
-  const [showVerificationModal, setShowVerificationModal] = useState(false);
-  const [verificationMethods, setVerificationMethods] = useState<VerificationMethod[]>([]);
-  const verificationResolveRef = useRef<((code: string | null) => void) | null>(null);
+  const {
+    showVerificationModal,
+    verificationMethods,
+    verificationResolveRef,
+    handleVerificationRequired,
+    handleVerificationClose,
+    setShowVerificationModal,
+  } = useVerificationModal(() => {
+    setIsLoading(false);
+  });
 
   useEffect(() => {
     if (currentUser) {
@@ -92,15 +99,6 @@ export default function TwoFactorAuthSection({
     }
   };
 
-  const handleVerificationRequired = async (_error: ApiError, methods: VerificationMethod[]): Promise<string | null> => {
-    setVerificationMethods(methods);
-    setShowVerificationModal(true);
-    setIsLoading(false);
-    return new Promise((resolve) => {
-      verificationResolveRef.current = resolve;
-    });
-  };
-
   const handleVerificationSuccess = async (code: string) => {
     setShowVerificationModal(false);
     setIsLoading(true);
@@ -121,13 +119,6 @@ export default function TwoFactorAuthSection({
       verificationResolveRef.current = null;
       setIsLoading(false);
     }
-  };
-
-  const handleVerificationClose = () => {
-    setShowVerificationModal(false);
-    setIsLoading(false);
-    verificationResolveRef.current?.(null);
-    verificationResolveRef.current = null;
   };
 
   const handleDisable2FA = async () => {

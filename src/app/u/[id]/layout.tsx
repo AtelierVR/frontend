@@ -25,6 +25,8 @@ import { FollowRemoveButton } from "./FollowRemoveButton";
 import { FollowRequestButton } from "./FollowRequest";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserContext } from "./UserContext";
+import { UserLayoutSkeleton } from "./LayoutSkeleton";
+import { UserLayoutError } from "./LayoutError";
 
 const PRESENCE_CONFIG: Record<string, { bgColor: string; label: string }> = {
     'oja': { bgColor: 'cyan', label: 'Online - Join All' },
@@ -93,50 +95,9 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
     const activeTab =
         pathname === `${baseHref}/favorites` ? 'favorites' : 'description';
 
-    if (loading) {
-        return (
-            <HomeLayout {...baseOptions()}>
-                <div className="container max-w-6xl mx-auto py-8 px-4">
-                    <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] gap-6">
-                        <div className="space-y-6">
-                            <Card className="relative overflow-hidden">
-                                <Skeleton className="w-full h-48" />
-                                <div className="relative flex items-center ms-12 h-16">
-                                    <Skeleton className="w-[8em] h-[8em] rounded-xl absolute -top-[4em]" />
-                                </div>
-                                <div className="p-6 space-y-4">
-                                    <Skeleton className="h-8 w-1/3" />
-                                    <Skeleton className="h-5 w-1/2" />
-                                </div>
-                            </Card>
-                            <Skeleton className="h-9 w-64 rounded-lg" />
-                            <Card className="p-6">
-                                <Skeleton className="h-24 w-full" />
-                            </Card>
-                        </div>
-                        <div className="hidden md:block space-y-6">
-                            <Card className="p-6">
-                                <Skeleton className="h-32 w-full" />
-                            </Card>
-                        </div>
-                    </div>
-                </div>
-            </HomeLayout>
-        );
-    }
+    if (loading) return <UserLayoutSkeleton />;
 
-    if (error || !user) {
-        return (
-            <HomeLayout {...baseOptions()}>
-                <div className="container max-w-6xl mx-auto py-8 px-4">
-                    <Alert variant="destructive">
-                        <Icon icon="material-symbols:error-circle-rounded" className="h-4 w-4" />
-                        <AlertDescription>{error || 'User not found'}</AlertDescription>
-                    </Alert>
-                </div>
-            </HomeLayout>
-        );
-    }
+    if (error || !user) return <UserLayoutError message={error || 'User not found'} />;
 
     return (
         <UserContext.Provider value={{ user, setUser, isSame }}>

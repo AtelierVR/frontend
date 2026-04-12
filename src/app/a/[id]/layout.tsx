@@ -6,9 +6,6 @@ import { isError, useApi } from '@/lib/api';
 import { getSIDById } from '@/lib/api/utils';
 import type { Avatar, AvatarAsset } from '@/lib/api/types';
 import { Card } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Icon } from '@iconify/react';
 import { HomeLayout } from '@/components/layout/home';
 import { baseOptions } from '@/lib/layout.shared';
 import AvatarThumbnail from './Thumbnail';
@@ -20,6 +17,8 @@ import { AvatarContext } from './AvatarContext';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import FavoriteButton from './FavoriteButton';
 import SetAvatarButton from './SetAvatarButton';
+import { AvatarLayoutSkeleton } from './LayoutSkeleton';
+import { AvatarLayoutError } from './LayoutError';
 
 export default function AvatarLayout({ children }: { children: React.ReactNode }) {
     const params = useParams();
@@ -81,46 +80,9 @@ export default function AvatarLayout({ children }: { children: React.ReactNode }
             ? allAssets.filter(a => a.version === avatar.release)
             : null;
 
-    if (loading)
-        return (
-            <HomeLayout {...baseOptions()}>
-                <div className="container max-w-6xl mx-auto py-8 px-4">
-                    <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] gap-6">
-                        <div className="space-y-6">
-                            <Card className="relative overflow-hidden">
-                                <Skeleton className="w-full h-48" />
-                                <div className="p-6 space-y-4">
-                                    <Skeleton className="h-8 w-1/3" />
-                                    <Skeleton className="h-5 w-2/3" />
-                                    <Skeleton className="h-5 w-1/4" />
-                                </div>
-                            </Card>
-                            <Skeleton className="h-9 w-64 rounded-lg" />
-                            <Card>
-                                <Skeleton className="h-24 w-full" />
-                            </Card>
-                        </div>
-                        <div className="hidden md:block space-y-6">
-                            <Card className="p-6">
-                                <Skeleton className="h-32 w-full" />
-                            </Card>
-                        </div>
-                    </div>
-                </div>
-            </HomeLayout>
-        );
+    if (loading) return <AvatarLayoutSkeleton />;
 
-    if (error || !avatar)
-        return (
-            <HomeLayout {...baseOptions()}>
-                <div className="container max-w-6xl mx-auto py-8 px-4">
-                    <Alert variant="destructive">
-                        <Icon icon="material-symbols:error-circle-rounded" className="h-4 w-4" />
-                        <AlertDescription>{error || 'Avatar not found'}</AlertDescription>
-                    </Alert>
-                </div>
-            </HomeLayout>
-        );
+    if (error || !avatar) return <AvatarLayoutError message={error || 'Avatar not found'} />;
 
     const normalizeRef = (s: string) => s.startsWith('u:') ? s.slice(2) : s;
     const myRef = Api?.currentUser ? getSIDById(Api.currentUser.id, Api.currentUser.server) : null;
